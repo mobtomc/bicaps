@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState,useId } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 
@@ -12,7 +12,8 @@ const Add = () => {
   const[Client,setClient]=useState("");
   const[Entity,setEntity]=useState("");
   const history = useNavigate();
-
+  const idprefix = useId();
+  const uniqueId = `${idprefix}-${name}`;
   const header={"Access-Control-Allow-Origin":"*"};
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -25,6 +26,7 @@ const Add = () => {
         Pan:Pan,
         ClientGroup :Client,
         Entity:Entity,
+        UniqueId:uniqueId,
       })
       .then(() => {
         history("/read");
@@ -44,12 +46,13 @@ const Add = () => {
   <h2 class="my-4 bg-violet-200 mx-8 w-24 h-6">Add clients</h2>
         <form class="mx-4">
         <div class="mb-3">
+
           <label for="exampleInputPassword1" class="form-label">
             Client Group:
           </label>
           <select required id="exampleInputPassword1" class="form-control" value={state.client} onChange={handleChange}>
           <option >Choose-ClientGroup</option>
-          <option >1</option>
+          <option >adgips</option>
           <option>2</option>
           <option>3</option>
           <option>4</option>
