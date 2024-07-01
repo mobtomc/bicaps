@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState,useId } from "react";
+import React, { useState,useId,useEffect} from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 
@@ -11,6 +11,8 @@ const Add = () => {
   const[Pan,setPan]=useState("");
   const[Client,setClient]=useState("");
   const[Entity,setEntity]=useState("");
+  const [clientOptions, setClientOptions] = useState([]);
+  const [entityOptions, setEntityOptions] = useState([]);
   const history = useNavigate();
   const idprefix = useId();
   const uniqueId = `${idprefix}-${name}`;
@@ -41,7 +43,34 @@ const Add = () => {
       };
       const [state, setState] = useState({
        client: "",
+       entity:'',
       });
+      useEffect(() => {
+        // Fetch client options
+        const fetchClientOptions = async () => {
+          try {
+            const response = await axios.get('');
+            setClientOptions(response.data); // Assuming response.data is an array of client options
+          } catch (error) {
+            console.error('Error fetching client data:', error);
+          }
+        };
+    
+        // Fetch entity options
+        const fetchEntityOptions = async () => {
+          try {
+            const response = await axios.get('');
+            setEntityOptions(response.data); // Assuming response.data is an array of entity options
+          } catch (error) {
+            console.error('Error fetching entity data:', error);
+          }
+        };
+    
+        fetchClientOptions();
+        fetchEntityOptions();
+      }, []);
+    
+     
   return <>
   <h2 class="my-4 bg-violet-200 mx-8 w-24 h-6">Add clients</h2>
         <form class="mx-4">
@@ -50,12 +79,14 @@ const Add = () => {
           <label for="exampleInputPassword1" class="form-label">
             Client Group:
           </label>
-          <select required id="exampleInputPassword1" class="form-control" value={state.client} onChange={handleChange}>
-          <option >Choose-ClientGroup</option>
-          <option >adgips</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
+          <select required id="exampleInputPassword1" name="client" class="form-control" value={state.client} onChange={handleChange}>
+          <option value="">Choose-ClientGroup</option>
+          <option value="">Choose-ClientGroup</option>
+            {clientOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name}
+              </option>
+            ))}
         </select>
         </div>
         <div class="mb-3">
@@ -63,12 +94,13 @@ const Add = () => {
           <label for="exampleInputPassword1" class="form-label">
             Entity Type:
           </label>
-          <select name="department" required id="exampleInputPassword1" class="form-control" value={state.entity} onChange={handleChange}>
-          <option >Choose-Entity Type</option>
-          <option >1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
+          <select name="entity" required id="exampleInputPassword1" class="form-control" value={state.entity} onChange={handleChange}>
+          <option value="">Choose-EntityGroup</option>
+            {entityOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name}
+              </option>
+            ))}
         </select>
         </div>
         </div>
