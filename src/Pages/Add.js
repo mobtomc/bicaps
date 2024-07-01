@@ -50,7 +50,7 @@ const Add = () => {
         const fetchClientOptions = async () => {
           try {
             const response = await axios.get('');
-            setClientOptions(response.data); // Assuming response.data is an array of client options
+            setClientOptions(response.data); 
           } catch (error) {
             console.error('Error fetching client data:', error);
           }
@@ -60,7 +60,7 @@ const Add = () => {
         const fetchEntityOptions = async () => {
           try {
             const response = await axios.get('');
-            setEntityOptions(response.data); // Assuming response.data is an array of entity options
+            setEntityOptions(response.data); 
           } catch (error) {
             console.error('Error fetching entity data:', error);
           }
@@ -80,7 +80,6 @@ const Add = () => {
             Client Group:
           </label>
           <select required id="exampleInputPassword1" name="client" class="form-control" value={state.client} onChange={handleChange}>
-          <option value="">Choose-ClientGroup</option>
           <option value="">Choose-ClientGroup</option>
             {clientOptions.map((option) => (
               <option key={option.id} value={option.id}>
