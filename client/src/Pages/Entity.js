@@ -14,9 +14,9 @@ const Entity = () => {
     e.preventDefault();
     console.log("clicked");
     axios
-      .post("https://formspree.io/f/movaqjqv", {
-        name: name,
-        Entity:Entity,
+      .post("http://localhost:8080/api/entitytypes", {
+        entityname: name,
+        description:description,
        
       })
       .then(() => {
@@ -25,22 +25,23 @@ const Entity = () => {
     };
   return <>
   <h2 class="my-4 bg-violet-200 mx-8 w-24 h-auto">Create Entities</h2>
-        <form class="mx-4">
+        <form class="mx-4 " onSubmit={handleSubmit}>
        
       <div className="mb-3">
         <label className="form-label mr-8">Entity Name</label>
-        <input type="text" className="form-control" onChange={(e)=>setName(e.target.value)}/>
+        <input type="text" className="form-control" onChange={(e)=>setName(e.target.value)} value={name}
+            required/>
        
       </div>
        
       <div className="mb-3">
         <label className="form-label mr-8">Desciption</label>
-        <input type="text" className="form-control" onChange={(e)=>setDescription(e.target.value)}/>      
+        <input type="text" className="form-control" onChange={(e)=>setDescription(e.target.value)}  value={description} required/>      
       </div>
       <div className="mb-3 form-check">
         <label className="form-check-label" for="exampleCheck1"></label>
       </div>
-      <button type="submit" className="btn btn-primary"   onClick={handleSubmit}>Submit</button>
+      <button type="submit" className="btn btn-primary"   >Submit</button>
     </form>
   </>
 }
