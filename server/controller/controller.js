@@ -39,6 +39,7 @@ const getClientGroups = async (req, res) => {
       res.status(500).send(error.message);
     }
   };
+
   const createEntityType = async (req, res) => {
     try {
       console.log('Request body:', req.body); // Log the request body to verify data
