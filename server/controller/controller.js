@@ -26,11 +26,12 @@ const getClientGroups = async (req, res) => {
       res.status(500).send(error.message);
     }
   };
+
   const createEntityType = async (req, res) => {
     try {
       console.log('Request body:', req.body); // Log the request body to verify data
       const { entityName, description } = req.body;
-      const newEntityType = new EntityType({ entityName, description });
+      const newEntityType = new EntityType({ entityName:req.body.entityName, description:req.body.description });
       await newEntityType.save();
       res.status(201).json(newEntityType);
     } catch (error) {
