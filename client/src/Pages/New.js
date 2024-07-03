@@ -18,28 +18,21 @@ const New = () => {
     e.preventDefault();
     console.log("clicked");
     axios
-      .post("https://formspree.io/f/xyzgykgr", {
+      .post("http://localhost:8080/api/clientgroups", {
         name: name,
         email: email,
-
-        Phone:Phone,
-        Person:Person
+        phoneNo:Phone,
+        personName:Person}, {
+          headers: {
+            'Content-Type': 'application/json',
+          }
        
       })
+      
       .then(() => {
         history("/read");
       });
     };
-    const handleChange = (e) => {
-        const value = e.target.value;
-        setState({
-          ...state,
-          [e.target.name]: value,
-        });
-      };
-      const [state, setState] = useState({
-       client: "",
-      });
   return <>
   <h2 class="my-4 bg-violet-200 mx-8 w-24 h-6">Create clients</h2>
         <form class="mx-4">

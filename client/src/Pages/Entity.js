@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
+
 
 
 const Entity = () => {
@@ -20,8 +20,9 @@ const Entity = () => {
        
       })
       .then(() => {
-        history("/read");
+        history("/read");     
       });
+      
     };
   return <>
   <h2 class="my-4 bg-violet-200 mx-8 w-24 h-auto">Create Entities</h2>

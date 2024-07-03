@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState,useId,useEffect} from "react";
 import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
+
 
 
 const Add = () => {
@@ -49,7 +49,7 @@ const Add = () => {
         // Fetch client options
         const fetchClientOptions = async () => {
           try {
-            const response = await axios.get('');
+            const response = await axios.get('http://localhost:8080/api/clientgroups');
             setClientOptions(response.data); 
           } catch (error) {
             console.error('Error fetching client data:', error);
@@ -59,7 +59,7 @@ const Add = () => {
         // Fetch entity options
         const fetchEntityOptions = async () => {
           try {
-            const response = await axios.get('');
+            const response = await axios.get('http://localhost:8080/api/entitytypes');
             setEntityOptions(response.data); 
           } catch (error) {
             console.error('Error fetching entity data:', error);
@@ -80,11 +80,11 @@ const Add = () => {
             Client Group:
           </label>
           <select required id="exampleInputPassword1" name="client" class="form-control" value={state.client} onChange={handleChange}>
-          <option value="">Choose-ClientGroup</option>
+          <option key="default" value="">Choose-ClientGroup</option>
             {clientOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
+               <option key={option.name} value={option.name}>
+               {option.name}
+             </option>
             ))}
         </select>
         </div>
@@ -94,11 +94,11 @@ const Add = () => {
             Entity Type:
           </label>
           <select name="entity" required id="exampleInputPassword1" class="form-control" value={state.entity} onChange={handleChange}>
-          <option value="">Choose-EntityGroup</option>
+          <option key="default" value="">Choose-EntityGroup</option>
             {entityOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
+               <option key={option.name} value={option.name}>
+               {option.name}
+             </option>
             ))}
         </select>
         </div>
