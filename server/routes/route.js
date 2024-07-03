@@ -9,6 +9,8 @@ routes.route('/api/categories')
 routes.route('/api/clientgroups')
     .get(controller.getClientGroups)
     .post(controller.createClientGroup)
+
+    
 routes.route('/api/entitytypes') 
     .get(controller.getEntityTypes)
     .post(controller.createEntityType);
