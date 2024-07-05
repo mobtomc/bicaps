@@ -1,12 +1,26 @@
-const model=require("../models/model")
-const { ClientGroup, EntityType } = require('../models/model');
-// get Category
-async function get_Categories(req,res){
-    // Here you can use various filters also, to get unique clients for ex
-    let data=await model.categories.find({})
 
-    return res.json(data);
-}
+const model=require("../models/model")
+const { ClientGroup, EntityType, Category } = require('../models/model');
+// Fetch all categories
+const getCategories = async (req, res) => {
+  try {
+    const categories = await Category.find();
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Create a new category
+const createCategory = async (req, res) => {
+  try {
+    const newCategory = new Category({ groupName:req.body.groupName, entityName:req.body.entityName, personName:req.body.personName, phoneNo:req.body.phoneNo, pan:req.body.pan, email:req.body.email });
+    await newCategory.save();
+    res.status(201).json(newCategory);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 // Get all client groups
 const getClientGroups = async (req, res) => {
     try {
@@ -53,22 +67,12 @@ const getClientGroups = async (req, res) => {
     }
   };
 
-// Post categories
-async function create_Categories(req,res){
-    const Create=new model.categories({
-        // these are hard coded we should get these fields from the form
-        type:"Manager",
-        colour:"Blue"
-    })
 
-    await Create.save()
-    res.json(Create)
-}
 
 
 module.exports={
-    get_Categories,
-    create_Categories,
+    getCategories,
+    createCategory,
     getClientGroups,
     createClientGroup, 
     getEntityTypes,

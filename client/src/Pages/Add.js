@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 
 
 const Add = () => {
+
   const[name,setName]=useState("");
   const[email,setEmail]=useState("");
   const[Phone,setPhone]=useState("");
@@ -19,9 +20,19 @@ const Add = () => {
   const header={"Access-Control-Allow-Origin":"*"};
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("clicked");
+    console.log("Submitting form with data: ", {
+ 
+      groupName,
+      entityName,
+      name,
+      Phone,
+      Pan,
+      email,
+     
+    });
     axios
-      .post("https://66802d8556c2c76b495b61de.mockapi.io/xrud", {
+      .post("http://localhost:8080/api/categories", {
+
         name: name,
         email: email,
         Phone:Phone,

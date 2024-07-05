@@ -8,7 +8,7 @@ const Records = () => {
 
   function getData() {
     axios
-      .get("https://66802d8556c2c76b495b61de.mockapi.io/xrud")
+      .get("http://localhost:8080/api/categories")
       .then((res) => {
         setData(res.data);
       });
@@ -16,18 +16,18 @@ const Records = () => {
 
   function handleDelete(id) {
     axios
-      .delete(`https://66802d8556c2c76b495b61de.mockapi.io/xrud/${id}`)
+      .delete(`http://localhost:8080/api/categories/${id}`)
       .then(() => {
         getData();
       });
   }
 
-  const setToLocalStorage = (id, name, email,Pan,Phone,groupName,entityName) => {
+  const setToLocalStorage = (id, name, email,pan,phoneNo,groupName,entityName) => {
     localStorage.setItem("id", id);
     localStorage.setItem("name", name);
     localStorage.setItem("email", email);
-    localStorage.setItem("pan",Pan);
-    localStorage.setItem("Phone",Phone);
+    localStorage.setItem("pan",pan);
+    localStorage.setItem("phoneNo",phoneNo);
     localStorage.setItem("clientgroup",groupName);
     localStorage.setItem("entitytype",entityName);
   };
@@ -74,12 +74,13 @@ const Records = () => {
               <tbody>
                 <tr>
                   <th scope="row">{eachData.id}</th>
+                  {/* console.log({`id`}) */}
                   <td>{eachData.groupName}</td>
                   <td>{eachData.entityName}</td>
-                  <td>{eachData.name}</td>
+                  <td>{eachData.personName}</td>
                   <td>{eachData.email}</td>
-                  <td>{eachData.Phone}</td>
-                  <td>{eachData.Pan}</td>
+                  <td>{eachData.phoneNo}</td>
+                  <td>{eachData.pan}</td>
                   <td>
                     <Link to="/update">
                       <button
