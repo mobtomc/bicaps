@@ -20,7 +20,7 @@ const getClientGroups = async (req, res) => {
   const createClientGroup = async (req, res) => {
     try {
       console.log('Received request body:', req.body); // Log the request body for debugging
-      const { groupName, personName, phoneNumber, email } = req.body;
+      // const { groupName, personName, phoneNumber, email } = req.body;
       const newClientGroup = new ClientGroup({ groupName:req.body.groupName, personName:req.body.personName, phoneNo:req.body.phoneNo, email:req.body.email });
       await newClientGroup.save();
       res.status(201).json(newClientGroup);
@@ -43,7 +43,7 @@ const getClientGroups = async (req, res) => {
   const createEntityType = async (req, res) => {
     try {
       console.log('Request body:', req.body); // Log the request body to verify data
-      const { entityName, description } = req.body;
+      // const { entityName, description } = req.body;
       const newEntityType = new EntityType({ entityName:req.body.entityName, description:req.body.description });
       await newEntityType.save();
       res.status(201).json(newEntityType);

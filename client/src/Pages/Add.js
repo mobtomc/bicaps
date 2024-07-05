@@ -82,8 +82,8 @@ const Add = () => {
           <select required id="exampleInputPassword1" name="client" class="form-control" value={state.client} onChange={handleChange}>
           <option key="default" value="">Choose-ClientGroup</option>
             {clientOptions.map((option) => (
-               <option key={option.name} value={option.name}>
-               {option.name}
+               <option key={option?._id} value={option?.groupName}>
+               {option?.groupName}
              </option>
             ))}
         </select>
@@ -95,9 +95,10 @@ const Add = () => {
           </label>
           <select name="entity" required id="exampleInputPassword1" class="form-control" value={state.entity} onChange={handleChange}>
           <option key="default" value="">Choose-EntityGroup</option>
+          {console.log(entityOptions)}
             {entityOptions.map((option) => (
-               <option key={option.name} value={option.name}>
-               {option.name}
+               <option key={option?._id} value={option?.entityName}>
+               {option?.entityName}
              </option>
             ))}
         </select>

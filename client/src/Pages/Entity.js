@@ -15,7 +15,7 @@ const Entity = () => {
     console.log("clicked");
     axios
       .post("http://localhost:8080/api/entitytypes", {
-        entityname: name,
+        entityName: name,
         description:description,
        
       })
@@ -26,7 +26,7 @@ const Entity = () => {
     };
   return <>
   <h2 class="my-4 bg-violet-200 mx-8 w-24 h-auto">Create Entities</h2>
-        <form class="mx-4 " onSubmit={handleSubmit}>
+        <form class="mx-4 " onSubmit={handleSubmit} >
        
       <div className="mb-3">
         <label className="form-label mr-8">Entity Name</label>
@@ -42,7 +42,7 @@ const Entity = () => {
       <div className="mb-3 form-check">
         <label className="form-check-label" for="exampleCheck1"></label>
       </div>
-      <button type="submit" className="btn btn-primary"   >Submit</button>
+      <button type="submit" className="btn btn-primary">Submit</button>
     </form>
   </>
 }

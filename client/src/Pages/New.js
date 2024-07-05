@@ -19,7 +19,7 @@ const New = () => {
     console.log("clicked");
     axios
       .post("http://localhost:8080/api/clientgroups", {
-        name: name,
+        groupName: name,
         email: email,
         phoneNo:Phone,
         personName:Person}, {
