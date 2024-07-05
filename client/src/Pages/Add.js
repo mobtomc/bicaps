@@ -9,8 +9,8 @@ const Add = () => {
   const[email,setEmail]=useState("");
   const[Phone,setPhone]=useState("");
   const[Pan,setPan]=useState("");
-  const[Client,setClient]=useState("");
-  const[Entity,setEntity]=useState("");
+  const[groupName,setgroupName]=useState("");
+  const[entityName,setentityName]=useState("");
   const [clientOptions, setClientOptions] = useState([]);
   const [entityOptions, setEntityOptions] = useState([]);
   const history = useNavigate();
@@ -26,8 +26,8 @@ const Add = () => {
         email: email,
         Phone:Phone,
         Pan:Pan,
-        ClientGroup :Client,
-        Entity:Entity,
+        ClientGroup :groupName,
+        Entitytype:entityName,
         UniqueId:uniqueId,
       })
       .then(() => {
@@ -42,8 +42,8 @@ const Add = () => {
         });
       };
       const [state, setState] = useState({
-       client: "",
-       entity:'',
+       groupName: "",
+       entitytype:'',
       });
       useEffect(() => {
         // Fetch client options
@@ -79,7 +79,7 @@ const Add = () => {
           <label for="exampleInputPassword1" class="form-label">
             Client Group:
           </label>
-          <select required id="exampleInputPassword1" name="client" class="form-control" value={state.client} onChange={handleChange}>
+          <select required id="exampleInputPassword1" name="groupName" class="form-control" value={state.groupName} onChange={handleChange}>
           <option key="default" value="">Choose-ClientGroup</option>
             {clientOptions.map((option) => (
                <option key={option?._id} value={option?.groupName}>
@@ -93,7 +93,7 @@ const Add = () => {
           <label for="exampleInputPassword1" class="form-label">
             Entity Type:
           </label>
-          <select name="entity" required id="exampleInputPassword1" class="form-control" value={state.entity} onChange={handleChange}>
+          <select name="entitytype" required id="exampleInputPassword1" class="form-control" value={state.entityName} onChange={handleChange}>
           <option key="default" value="">Choose-EntityGroup</option>
           {console.log(entityOptions)}
             {entityOptions.map((option) => (

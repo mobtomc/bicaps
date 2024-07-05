@@ -22,12 +22,14 @@ const Records = () => {
       });
   }
 
-  const setToLocalStorage = (id, name, email,Pan,Phone) => {
+  const setToLocalStorage = (id, name, email,Pan,Phone,groupName,entityName) => {
     localStorage.setItem("id", id);
     localStorage.setItem("name", name);
     localStorage.setItem("email", email);
-    localStorage.setItem("pan",Pan)
-    localStorage.setItem("Phone",Phone)
+    localStorage.setItem("pan",Pan);
+    localStorage.setItem("Phone",Phone);
+    localStorage.setItem("clientgroup",groupName);
+    localStorage.setItem("entitytype",entityName);
   };
 
   useEffect(() => {
@@ -57,6 +59,7 @@ const Records = () => {
           <tr>
             <th scope="col">#</th>
             <th scope="col">Client-Group</th>
+            <th scope="col">Entity-Type</th>
             <th scope="col">Name</th>
             <th scope="col">Email</th>
             <th scope="col">Pan</th>
@@ -71,7 +74,8 @@ const Records = () => {
               <tbody>
                 <tr>
                   <th scope="row">{eachData.id}</th>
-                  <td>{eachData.Client}</td>
+                  <td>{eachData.groupName}</td>
+                  <td>{eachData.entityName}</td>
                   <td>{eachData.name}</td>
                   <td>{eachData.email}</td>
                   <td>{eachData.Phone}</td>
@@ -86,7 +90,8 @@ const Records = () => {
                             eachData.name,
                             eachData.email,
                             eachData.Pan,
-                            eachData.client,
+                            eachData.groupName,
+                            eachData.entityName,
                           )
                         }
                       >
