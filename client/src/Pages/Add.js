@@ -6,17 +6,17 @@ import { useNavigate } from "react-router";
 
 const Add = () => {
 
-  const[name,setName]=useState("");
+  const[personName,setpersonName]=useState("");
   const[email,setEmail]=useState("");
-  const[Phone,setPhone]=useState("");
-  const[Pan,setPan]=useState("");
+  const[phoneNo,setphoneNo]=useState("");
+  const[pan,setpan]=useState("");
   const[groupName,setgroupName]=useState("");
   const[entityName,setentityName]=useState("");
   const [clientOptions, setClientOptions] = useState([]);
   const [entityOptions, setEntityOptions] = useState([]);
   const history = useNavigate();
-  const idprefix = useId();
-  const uniqueId = `${idprefix}-${name}`;
+
+  
   const header={"Access-Control-Allow-Origin":"*"};
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,22 +24,22 @@ const Add = () => {
  
       groupName,
       entityName,
-      name,
-      Phone,
-      Pan,
+      personName,
+      phoneNo,
+      pan,
       email,
      
     });
     axios
       .post("http://localhost:8080/api/categories", {
 
-        name: name,
+        personName: personName,
         email: email,
-        Phone:Phone,
-        Pan:Pan,
+        Phone:phoneNo,
+        Pan:pan,
         ClientGroup :groupName,
         Entitytype:entityName,
-        UniqueId:uniqueId,
+   
       })
       .then(() => {
         history("/read");
@@ -117,17 +117,17 @@ const Add = () => {
         </div>
       <div className="mb-3">
         <label className="form-label mr-8">Name</label>
-        <input type="text" className="form-control" onChange={(e)=>setName(e.target.value)}/>
+        <input type="text" className="form-control" onChange={(e)=>setpersonName(e.target.value)}/>
        
       </div>
       <div className="mb-3">
         <label className="form-label mr-8">Phone</label>
-        <input type="text" className="form-control" onChange={(e)=>setPhone(e.target.value)}/>
+        <input type="text" className="form-control" onChange={(e)=>setphoneNo(e.target.value)}/>
        
       </div>
       <div className="mb-3">
         <label className="form-label mr-8">Pan-no.</label>
-        <input type="text" className="form-control" onChange={(e)=>setPan(e.target.value)}/>
+        <input type="text" className="form-control" onChange={(e)=>setpan(e.target.value)}/>
        
       </div>
       <div classNameName="mb-3">
