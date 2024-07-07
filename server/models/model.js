@@ -2,10 +2,10 @@ const mongoose=require('mongoose')
 const Schema=mongoose.Schema;
 
 const CategorySchema=new Schema({
-      groupName: {
+      groupName:[ {
       type: String,
       required: true
-    },
+    }],
     entityName: {
       type: String,
       required: true

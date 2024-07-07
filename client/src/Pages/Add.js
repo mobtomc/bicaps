@@ -56,6 +56,22 @@ const Add = () => {
        groupName: "",
        entitytype:'',
       });
+    //attempt to make it multiplechoice dropdown
+    // const handleGroupChange = (e) => {
+    //   const options = Array.from(e.target.selectedOptions).map(option => option.value);
+    //   setgroupName(options);
+    // };
+    //checkbox
+    const handleGroupChange = (e) => {
+      const value = e.target.value;
+      const checked = e.target.checked;
+      setgroupName(prevState => 
+        checked ? [...prevState, value] : prevState.filter(item => item !== value)
+      );
+    };
+  
+   
+  
       useEffect(() => {
         // Fetch client options
         const fetchClientOptions = async () => {
@@ -90,21 +106,35 @@ const Add = () => {
           <label for="exampleInputPassword1" class="form-label">
             Client Group:
           </label>
-          <select required id="exampleInputPassword1" name="groupName" class="form-control" value={state.groupName} onChange={handleChange}>
+          {/* multiple choice dropdown code */}
+          {/* <select multiple required id="groupName" name="groupName" class="form-control" value={groupName}  onChange={handleGroupChange}>
           <option key="default" value="">Choose-ClientGroup</option>
             {clientOptions.map((option) => (
                <option key={option?._id} value={option?.groupName}>
                {option?.groupName}
              </option>
             ))}
-        </select>
+        </select> */}
+        <div>
+            {clientOptions.map(option => (
+              <div key={option._id}>
+                <input
+                  type="checkbox"
+                  id={`groupName-${option._id}`}
+                  value={option.groupName}
+                  onChange={handleGroupChange}
+                />
+                <label htmlFor={`groupName-${option._id}`}>{option.groupName}</label>
+              </div>
+            ))}
+          </div>
         </div>
         <div class="mb-3">
         <div class="mb-3">
           <label for="exampleInputPassword1" class="form-label">
             Entity Type:
           </label>
-          <select name="entitytype" required id="exampleInputPassword1" class="form-control" value={state.entityName} onChange={handleChange}>
+          <select required name="entitytype" id="entitytype" class="form-control" value={state.entityName} onChange={handleChange}>
           <option key="default" value="">Choose-EntityGroup</option>
           {console.log(entityOptions)}
             {entityOptions.map((option) => (
