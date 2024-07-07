@@ -32,18 +32,17 @@ const Add = () => {
     });
     axios
       .post("http://localhost:8080/api/categories", {
-
         personName: personName,
         email: email,
-        Phone:phoneNo,
-        Pan:pan,
-        ClientGroup :groupName,
-        Entitytype:entityName,
+        phoneNo:phoneNo,
+        pan:pan,
+        groupName :groupName,
+        entityName:entityName,
    
-      })
-      .then(() => {
-        history("/read");
-      });
+      }).catch((err)=>console.error(err))
+      // .then(() => {
+      //   history("/read");
+      // })
     };
     const handleChange = (e) => {
         const value = e.target.value;
@@ -147,24 +146,24 @@ const Add = () => {
         </div>
       <div className="mb-3">
         <label className="form-label mr-8">Name</label>
-        <input type="text" className="form-control" onChange={(e)=>setpersonName(e.target.value)}/>
+        <input type="text" className="form-control" onChange={(e)=>setpersonName(e.target.value)} value={personName}/>
        
       </div>
       <div className="mb-3">
         <label className="form-label mr-8">Phone</label>
-        <input type="text" className="form-control" onChange={(e)=>setphoneNo(e.target.value)}/>
+        <input type="text" className="form-control" onChange={(e)=>setphoneNo(e.target.value)} value={phoneNo}/>
        
       </div>
       <div className="mb-3">
         <label className="form-label mr-8">Pan-no.</label>
-        <input type="text" className="form-control" onChange={(e)=>setpan(e.target.value)}/>
+        <input type="text" className="form-control" onChange={(e)=>setpan(e.target.value)} value={pan}/>
        
       </div>
       <div classNameName="mb-3">
         <label for="exampleInputEmail1" className="form-label pr-8">Email</label>
           <input 
             type="email" className="form-control" aria-describedby="emailHelp"
-            onChange={(e)=>setEmail(e.target.value)}/>
+            onChange={(e)=>setEmail(e.target.value)} value={email}/>
           </div>
       <div className="mb-3 form-check">
         <label className="form-check-label" for="exampleCheck1"></label>
