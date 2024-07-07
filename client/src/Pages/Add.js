@@ -14,6 +14,10 @@ const Add = () => {
   const[entityName,setentityName]=useState("");
   const [clientOptions, setClientOptions] = useState([]);
   const [entityOptions, setEntityOptions] = useState([]);
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const [selectedValues, setSelectedValues] = useState([]);
+  const [options, setOptions] = useState([]);
   const history = useNavigate();
 
   
@@ -22,8 +26,8 @@ const Add = () => {
     e.preventDefault();
     console.log("Submitting form with data: ", {
  
-      groupName,
-      entityName,
+      selectedValues,
+      selectedOption,
       personName,
       phoneNo,
       pan,
@@ -36,21 +40,14 @@ const Add = () => {
         email: email,
         phoneNo:phoneNo,
         pan:pan,
-        groupName :groupName,
-        entityName:entityName,
+        groupName :selectedValues,
+        entityName:selectedOption,
    
       }).catch((err)=>console.error(err))
       // .then(() => {
       //   history("/read");
       // })
     };
-    const handleChange = (e) => {
-        const value = e.target.value;
-        setState({
-          ...state,
-          [e.target.name]: value,
-        });
-      };
       const [state, setState] = useState({
        groupName: "",
        entitytype:'',
@@ -61,11 +58,18 @@ const Add = () => {
     //   setgroupName(options);
     // };
     //checkbox
-    const handleGroupChange = (e) => {
+
+    const handleSelectChange = (e) => {
+      setSelectedOption(e.target.value);
+    };
+
+    const handleCheckboxChange = (e) => {
       const value = e.target.value;
       const checked = e.target.checked;
-      setgroupName(prevState => 
-        checked ? [...prevState, value] : prevState.filter(item => item !== value)
+      setSelectedValues((prevSelectedValues) =>
+        checked
+          ? [...prevSelectedValues, value]
+          : prevSelectedValues.filter((v) => v !== value)
       );
     };
   
@@ -121,7 +125,8 @@ const Add = () => {
                   type="checkbox"
                   id={`groupName-${option._id}`}
                   value={option.groupName}
-                  onChange={handleGroupChange}
+                  onChange={handleCheckboxChange}
+                  checked={selectedValues.includes(option.groupName)}
                 />
                 <label htmlFor={`groupName-${option._id}`}>{option.groupName}</label>
               </div>
@@ -133,11 +138,11 @@ const Add = () => {
           <label for="exampleInputPassword1" class="form-label">
             Entity Type:
           </label>
-          <select required name="entitytype" id="entitytype" class="form-control" value={state.entityName} onChange={handleChange}>
+          <select required name="entitytype" id="entitytype" class="form-control" value={entityName} onChange={handleSelectChange}>
           <option key="default" value="">Choose-EntityGroup</option>
           {console.log(entityOptions)}
             {entityOptions.map((option) => (
-               <option key={option?._id} value={option?.entityName}>
+               <option key={option?._id} value={option?.entityName} >
                {option?.entityName}
              </option>
             ))}
