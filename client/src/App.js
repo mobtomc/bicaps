@@ -7,6 +7,7 @@ import Records from "./Pages/Records"
 import Home from "./Pages/Home"
 import New from "./Pages/New"
 import Entity from "./Pages/Entity"
+import Update from './Pages/Update';
 function App() {
   return (
     <div className="App">
@@ -18,6 +19,7 @@ function App() {
           <Route path="/Records" element={<Records />}></Route>
           <Route path="/Entity" element={<Entity/>}></Route>
           <Route path="/New" element={<New />}></Route>
+          <Route path="/update/:id" element={<Update/>} />
       </Routes>
       </BrowserRouter>
     </div>

@@ -57,7 +57,7 @@ const Records = () => {
       <table className={`table ${tabledark}`}>
         <thead>
           <tr>
-            <th scope="col">#</th>
+            <th scope="col">Unique Id</th>
             <th scope="col">Client-Group</th>
             <th scope="col">Entity-Type</th>
             <th scope="col">Name</th>
@@ -71,42 +71,30 @@ const Records = () => {
         {data.map((eachData) => {
           return (
             <>
-              <tbody>
-                <tr>
-                  <th scope="row">{eachData.id}</th>
-                  {/* console.log({`id`}) */}
-                  <td>{eachData.groupName}</td>
-                  <td>{eachData.entityName}</td>
+              <tbody key={eachData._id}>
+                <tr >
+                  <th scope="row">{eachData._id}</th>
+              
+                  <td>{Array.isArray(eachData.groupName) ? eachData.groupName.join(", ") : eachData.groupName}</td>
+                  <td>{eachData.entityName}</td>  
                   <td>{eachData.personName}</td>
                   <td>{eachData.email}</td>
                   <td>{eachData.phoneNo}</td>
                   <td>{eachData.pan}</td>
                   <td>
-                    <Link to="/update">
-                      <button
-                        className="px-4 bg-blue-400"
-                        onClick={() =>
-                          setToLocalStorage(
-                            eachData.id,
-                            eachData.name,
-                            eachData.email,
-                            eachData.Pan,
-                            eachData.groupName,
-                            eachData.entityName,
-                          )
-                        }
-                      >
-                        Edit{" "}
-                      </button>
-                    </Link>
+                 
+                  <Link to={`/update/${eachData._id}`}>
+                  <button className="btn btn-primary mx-1">Edit</button>
+                </Link>
+                    
                   </td>
                   <td>
-                    <button
-                      className="bg-blue-300 px-2"
-                      onClick={() => handleDelete(eachData.id)}
-                    >
-                      Delete
-                    </button>
+                  <button
+                  className="btn btn-danger mx-1"
+                  onClick={() => handleDelete(eachData._id)}
+                >
+                  Delete
+                </button>
                   </td>
                 </tr>
               </tbody>

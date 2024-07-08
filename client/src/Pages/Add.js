@@ -20,6 +20,7 @@ const Add = () => {
   const header={"Access-Control-Allow-Origin":"*"};
   const handleSubmit = async(e) => {
     e.preventDefault();
+    
     console.log("Submitting form with data: ", {
  
       groupName: selectedValues,

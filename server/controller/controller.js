@@ -21,6 +21,49 @@ const createCategory = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// Delete a category
+const deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedCategory = await Category.findByIdAndDelete(id);
+    if (!deletedCategory) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+    res.status(200).json({ message: 'Category deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+// Fetch category by ID
+const getCategoryById = async (req, res) => {
+  try {
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    res.status(200).json(category);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// Update category by ID
+const updateCategory = async (req, res) => {
+  try {
+    const updatedCategory = await Category.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body },
+      { new: true }
+    );
+    if (!updatedCategory) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+    res.status(200).json(updatedCategory);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Get all client groups
 const getClientGroups = async (req, res) => {
     try {
@@ -73,6 +116,9 @@ const getClientGroups = async (req, res) => {
 module.exports={
     getCategories,
     createCategory,
+    deleteCategory,
+    getCategoryById,
+    updateCategory,
     getClientGroups,
     createClientGroup, 
     getEntityTypes,
