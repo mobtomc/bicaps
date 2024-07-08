@@ -10,48 +10,44 @@ const Add = () => {
   const[email,setEmail]=useState("");
   const[phoneNo,setphoneNo]=useState("");
   const[pan,setpan]=useState("");
-  const[groupName,setgroupName]=useState("");
-  const[entityName,setentityName]=useState("");
   const [clientOptions, setClientOptions] = useState([]);
   const [entityOptions, setEntityOptions] = useState([]);
   const [selectedOption, setSelectedOption] = useState("");
-
   const [selectedValues, setSelectedValues] = useState([]);
-  const [options, setOptions] = useState([]);
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   
   const header={"Access-Control-Allow-Origin":"*"};
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     console.log("Submitting form with data: ", {
  
-      selectedValues,
-      selectedOption,
+      groupName: selectedValues,
+      entityName: selectedOption,
       personName,
       phoneNo,
       pan,
       email,
      
     });
-    axios
-      .post("http://localhost:8080/api/categories", {
-        personName: personName,
-        email: email,
-        phoneNo:phoneNo,
-        pan:pan,
-        groupName :selectedValues,
-        entityName:selectedOption,
-   
-      }).catch((err)=>console.error(err))
+    try {
+      await axios.post("http://localhost:8080/api/categories", {
+        personName,
+        email,
+        phoneNo,
+        pan,
+        groupName: selectedValues,
+        entityName: selectedOption,
+      });
+      navigate("/read");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
       // .then(() => {
       //   history("/read");
       // })
     };
-      const [state, setState] = useState({
-       groupName: "",
-       entitytype:'',
-      });
+     
     //attempt to make it multiplechoice dropdown
     // const handleGroupChange = (e) => {
     //   const options = Array.from(e.target.selectedOptions).map(option => option.value);
@@ -103,12 +99,11 @@ const Add = () => {
      
   return <>
   <h2 class="my-4 bg-violet-200 mx-8 w-24 h-6">Add clients</h2>
-        <form class="mx-4">
+        <form class="mx-4"onSubmit={handleSubmit}>
         <div class="mb-3">
 
-          <label for="exampleInputPassword1" class="form-label">
-            Client Group:
-          </label>
+        <label htmlFor="groupName" className="form-label">Client Group:</label>
+          
           {/* multiple choice dropdown code */}
           {/* <select multiple required id="groupName" name="groupName" class="form-control" value={groupName}  onChange={handleGroupChange}>
           <option key="default" value="">Choose-ClientGroup</option>
@@ -118,9 +113,9 @@ const Add = () => {
              </option>
             ))}
         </select> */}
-        <div>
+        <div  className="flex flex-wrap justify-center space-x-4">
             {clientOptions.map(option => (
-              <div key={option._id}>
+              <div key={option._id} className="flex items-center mx-2">
                 <input
                   type="checkbox"
                   id={`groupName-${option._id}`}
@@ -138,7 +133,7 @@ const Add = () => {
           <label for="exampleInputPassword1" class="form-label">
             Entity Type:
           </label>
-          <select required name="entitytype" id="entitytype" class="form-control" value={entityName} onChange={handleSelectChange}>
+          <select required name="entitytype" id="entitytype" class="form-control" value={selectedOption} onChange={handleSelectChange}>
           <option key="default" value="">Choose-EntityGroup</option>
           {console.log(entityOptions)}
             {entityOptions.map((option) => (
@@ -173,7 +168,7 @@ const Add = () => {
       <div className="mb-3 form-check">
         <label className="form-check-label" for="exampleCheck1"></label>
       </div>
-      <button type="submit" className="btn btn-primary"   onClick={handleSubmit}>Submit</button>
+      <button type="submit" className="btn btn-primary"   >Submit</button>
     </form>
   </>
 }
