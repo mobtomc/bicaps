@@ -8,6 +8,8 @@ routes.route('/api/categories/:id')
     .delete(controller.deleteCategory) 
     .get(controller.getCategoryById)
     .put(controller.updateCategory);
+routes.route('/api/categories/search/:personName')
+    .get(controller.searchCategoriesByName);
 
 routes.route('/api/clientgroups')
     .get(controller.getClientGroups)

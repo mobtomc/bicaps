@@ -92,7 +92,7 @@ const Update = () => {
           Update
         </button>
         <Link to={"/records"}>
-          <button className="btn btn-secondary mx-2"> Back </button>
+          <button className="btn bg-green-300 mx-2"> Back </button>
         </Link>
       </form>
     </div>

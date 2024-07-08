@@ -63,6 +63,16 @@ const updateCategory = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// Search categories by personName
+const searchCategoriesByName = async (req, res) => {
+  try {
+    const { personName } = req.params;
+    const categories = await Category.find({ personName: { $regex: personName, $options: 'i' } }); // Case-insensitive search
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // Get all client groups
 const getClientGroups = async (req, res) => {
@@ -119,6 +129,7 @@ module.exports={
     deleteCategory,
     getCategoryById,
     updateCategory,
+    searchCategoriesByName,
     getClientGroups,
     createClientGroup, 
     getEntityTypes,
