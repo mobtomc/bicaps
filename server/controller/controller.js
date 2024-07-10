@@ -86,13 +86,12 @@ const getClientGroups = async (req, res) => {
   //post request for clientgroup
   const createClientGroup = async (req, res) => {
     try {
-      console.log('Received request body:', req.body); // Log the request body for debugging
-      // const { groupName, personName, phoneNumber, email } = req.body;
+      console.log('Received request body:', req.body); 
       const newClientGroup = new ClientGroup({ groupName:req.body.groupName, personName:req.body.personName, phoneNo:req.body.phoneNo, email:req.body.email });
       await newClientGroup.save();
       res.status(201).json(newClientGroup);
     } catch (error) {
-      console.error('Error creating client group:', error); // Log the error
+      console.error('Error creating client group:', error); 
       res.status(500).send(error.message);
     }
   };
@@ -115,31 +114,36 @@ const getClientGroups = async (req, res) => {
       await newEntityType.save();
       res.status(201).json(newEntityType);
     } catch (error) {
-      console.error('Error creating entity type:', error); // Log the error for debugging
+      console.error('Error creating entity type:', error); 
       res.status(500).send(error.message);
     }
   };
   const updateClientGroup = async (req, res) => {
-    const { id } = req.params; // Assuming ID is used for identifying the document
-    const { newGroupName } = req.body; // Assuming newGroupName is the new group name to update
-  
     try {
-      const updatedClientGroup = await ClientGroup.findByIdAndUpdate(
-        id,
-        { groupName: newGroupName }, // Update groupName field
-        { new: true } // Return updated document
+      const { oldGroupName, newGroupName } = req.body;
+  
+      // Update group name in ClientGroup schema
+      const updatedClientGroups = await ClientGroup.updateMany(
+        { groupName: oldGroupName },
+        { $set: { groupName: newGroupName } }
       );
   
-      if (!updatedClientGroup) {
-        return res.status(404).json({ message: 'Client Group not found' });
-      }
+      // Update group name in Category schema
+      const updatedCategories = await Category.updateMany(
+        { groupName: oldGroupName },
+        { $set: { "groupName.$[element]": newGroupName } },
+        { arrayFilters: [{ "element": { $eq: oldGroupName } }] }  // Only update matching element
+      );
   
-      res.status(200).json(updatedClientGroup); // Send updated client group back
+      res.status(200).json({
+        message: `Group name updated successfully in ${updatedClientGroups.nModified} client groups and ${updatedCategories.nModified} categories.`,
+      });
     } catch (error) {
-      console.error('Error updating client group:', error);
-      res.status(500).json({ message: 'Failed to update client group', error: error.message });
+      console.error('Error updating group name:', error);
+      res.status(500).json({ message: 'Failed to update group name' });
     }
   };
+  
 
 
 

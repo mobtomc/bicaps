@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from 'react-select';
+import { useNavigate } from "react-router";
 
 const UpdateGroupName = () => {
   const [clientOptions, setClientOptions] = useState([]);
   const [selectedOldGroupName, setSelectedOldGroupName] = useState(null);
   const [newGroupName, setNewGroupName] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchClientOptions = async () => {
@@ -29,12 +31,14 @@ const UpdateGroupName = () => {
     }
 
     try {
-      const response = await axios.put('http://localhost:8080/api/update-group-name', {
+      const response = await axios.patch('http://localhost:8080/api/clientgroups/update-group-name', {
         oldGroupName: selectedOldGroupName.value,
         newGroupName
       });
 
       alert(response.data.message);
+      // Navigate back to records page after successful update
+      navigate("/records");
     } catch (error) {
       console.error('Error updating group name:', error);
       alert('Failed to update group name');
@@ -67,15 +71,14 @@ const UpdateGroupName = () => {
           />
         </div>
         <button type="submit" className="btn btn-primary">Update Group Name</button>
-       
         <button className="btn bg-green-400 mx-2">
-              <a href="/records">Back</a>
-            </button>
-        
+          <a href="/records">Back</a>
+        </button>
       </form>
     </div>
   );
 };
 
 export default UpdateGroupName;
+
 
