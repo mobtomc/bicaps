@@ -76,7 +76,7 @@ const Update = () => {
     <div>
       <h2 className="mb-6">UPDATE:</h2>
       <form className="mx-4" onSubmit={handleUpdate}>
-      <div className="mb-3">
+        <div className="mb-3">
           <label className="form-label">Client Group</label>
           <Select
             isMulti
@@ -106,7 +106,7 @@ const Update = () => {
             className="form-control"
             value={personName}
             onChange={(e) => setPersonName(e.target.value)}
-            placeholder={personName || "Enter Name"}
+            placeholder="Enter Name"
           />
         </div>
         <div className="mb-3">
@@ -116,7 +116,7 @@ const Update = () => {
             className="form-control"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder={email || "Enter Email"}
+            placeholder="Enter Email"
           />
         </div>
         <div className="mb-3">
@@ -126,7 +126,7 @@ const Update = () => {
             className="form-control"
             value={pan}
             onChange={(e) => setPan(e.target.value)}
-            placeholder={pan || "Enter Pan"}
+            placeholder="Enter Pan"
           />
         </div>
         <div className="mb-3">
@@ -136,7 +136,7 @@ const Update = () => {
             className="form-control"
             value={phoneNo}
             onChange={(e) => setPhoneNo(e.target.value)}
-            placeholder={phoneNo || "Enter Phone No"}
+            placeholder="Enter Phone No"
           />
         </div>
         
@@ -155,3 +155,4 @@ const Update = () => {
 };
 
 export default Update;
+

@@ -21,7 +21,7 @@ const createCategory = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// Delete a category
+// Delete a category by Id
 const deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
@@ -106,7 +106,7 @@ const getClientGroups = async (req, res) => {
       res.status(500).send(error.message);
     }
   };
-
+// post request for entities
   const createEntityType = async (req, res) => {
     try {
       console.log('Request body:', req.body); // Log the request body to verify data
@@ -119,7 +119,27 @@ const getClientGroups = async (req, res) => {
       res.status(500).send(error.message);
     }
   };
-
+  const updateClientGroup = async (req, res) => {
+    const { id } = req.params; // Assuming ID is used for identifying the document
+    const { newGroupName } = req.body; // Assuming newGroupName is the new group name to update
+  
+    try {
+      const updatedClientGroup = await ClientGroup.findByIdAndUpdate(
+        id,
+        { groupName: newGroupName }, // Update groupName field
+        { new: true } // Return updated document
+      );
+  
+      if (!updatedClientGroup) {
+        return res.status(404).json({ message: 'Client Group not found' });
+      }
+  
+      res.status(200).json(updatedClientGroup); // Send updated client group back
+    } catch (error) {
+      console.error('Error updating client group:', error);
+      res.status(500).json({ message: 'Failed to update client group', error: error.message });
+    }
+  };
 
 
 
@@ -133,5 +153,7 @@ module.exports={
     getClientGroups,
     createClientGroup, 
     getEntityTypes,
-    createEntityType
+    createEntityType,
+    updateClientGroup
+
 }

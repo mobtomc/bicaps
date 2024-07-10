@@ -14,9 +14,13 @@ routes.route('/api/categories/search/:personName')
 routes.route('/api/clientgroups')
     .get(controller.getClientGroups)
     .post(controller.createClientGroup);
-
+routes.route('/api/clientgroups/:id') 
+    .put(controller.updateClientGroup);
     
 routes.route('/api/entitytypes') 
     .get(controller.getEntityTypes)
     .post(controller.createEntityType);
+
+
+
 module.exports=routes;
