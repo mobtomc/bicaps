@@ -8,17 +8,17 @@ const UpdateGroupName = () => {
   const [newGroupName, setNewGroupName] = useState("");
 
   useEffect(() => {
+    const fetchClientOptions = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/clientgroups');
+        setClientOptions(response.data.map(client => ({ value: client.groupName, label: client.groupName })));
+      } catch (error) {
+        console.error('Error fetching client data:', error);
+      }
+    };
+
     fetchClientOptions();
   }, []);
-
-  const fetchClientOptions = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/api/clientgroups');
-      setClientOptions(response.data.map(client => ({ value: client.groupName, label: client.groupName })));
-    } catch (error) {
-      console.error('Error fetching client data:', error);
-    }
-  };
 
   const handleUpdateGroupName = async (e) => {
     e.preventDefault();
@@ -35,9 +35,6 @@ const UpdateGroupName = () => {
       });
 
       alert(response.data.message);
-      fetchClientOptions(); // Refresh client options after update
-      setSelectedOldGroupName(null); // Clear selected group name
-      setNewGroupName(""); // Clear new group name input
     } catch (error) {
       console.error('Error updating group name:', error);
       alert('Failed to update group name');
@@ -70,14 +67,15 @@ const UpdateGroupName = () => {
           />
         </div>
         <button type="submit" className="btn btn-primary">Update Group Name</button>
+       
         <button className="btn bg-green-400 mx-2">
-          <a href="/records">Back</a>
-        </button>
+              <a href="/records">Back</a>
+            </button>
+        
       </form>
     </div>
   );
 };
 
 export default UpdateGroupName;
-
 
