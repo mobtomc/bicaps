@@ -60,7 +60,7 @@ const Records = () => {
     localStorage.setItem("email", email);
     localStorage.setItem("pan", pan);
     localStorage.setItem("phoneNo", phoneNo);
-    localStorage.setItem("clientgroup", JSON.stringify(groupName));
+    localStorage.setItem("clientgroup", JSON.stringify(groupName));//convert to string for storage
     localStorage.setItem("entitytype", entityName);
   };
 
@@ -70,23 +70,30 @@ const Records = () => {
   }, []);
 
   useEffect(() => {
-    getData();  // Fetch data when selectedGroup changes
+    getData();  // Fetch data when selectedGroup changes,very very imp. state must be latest
   }, [selectedGroup]);
 
   return (
-    <>
-      <div className="form-check form-switch">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          onClick={() => {
-            setTableDark(tabledark === "table-dark" ? "" : "table-dark");
-          }}
-        />
+    <><div className="">
+        
+        
       </div>
       <div className="d-flex justify-content-between m-2">
-        <h2>Available Records</h2>
+      <div className="form-check form-switch grid grid-rows-2 gap-4 ml-0">
+         
+          <input
+            className="form-check-input p-4"
+            type="checkbox"
+            onClick={() => {
+              setTableDark(tabledark === "table-dark" ? "" : "table-dark");
+            }}
+          />
+          <div className="m-{0}">
+          <button className="bg-slate-500 w-44">export</button>
+          </div>
+        </div>
         <div className="mb-3">
+          
           <div className="d-flex">
             <Select
               options={groupNames}
@@ -119,6 +126,7 @@ const Records = () => {
           </div>
         </div>
       </div>
+      
       <table className={`table ${tabledark}`}>
         <thead>
           <tr>
