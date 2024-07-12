@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Select from 'react-select';
 
+
 const Records = () => {
   const [data, setData] = useState([]);
   const [groupNames, setGroupNames] = useState([]);
@@ -89,7 +90,7 @@ const Records = () => {
             }}
           />
           <div className="m-{0}">
-          <button className="bg-slate-500 w-44">export</button>
+          {/* <ExportButton displayedData={data} />  */}<button className="bg-red-300">export</button>
           </div>
         </div>
         <div className="mb-3">
