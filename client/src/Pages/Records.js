@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Select from 'react-select';
-
+import ExportButton from "../Components/ExportButton";
 
 const Records = () => {
   const [data, setData] = useState([]);
@@ -90,7 +90,7 @@ const Records = () => {
             }}
           />
           <div className="m-{0}">
-          {/* <ExportButton displayedData={data} />  */}<button className="bg-red-300">export</button>
+          <ExportButton displayedData={data} />
           </div>
         </div>
         <div className="mb-3">

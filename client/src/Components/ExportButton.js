@@ -1,76 +1,74 @@
-// import React from "react";
-// import axios from "axios";
-// import { google } from "googleapis";
+import React, { useState } from "react";
+import axios from "axios";
 
-// const CLIENT_ID = "YOUR_CLIENT_ID";
-// const CLIENT_SECRET = "YOUR_CLIENT_SECRET";
-// const REDIRECT_URI = "YOUR_REDIRECT_URI";
+const SHEETDB_API_URL = "https://sheetdb.io/api/v1/x6tvzw3maxfva"; // Replace with your actual SheetDB endpoint
 
-// const ExportButton = ({ displayedData }) => {
-//   const handleExport = async () => {
-//     const oauth2Client = new google.auth.OAuth2(
-//       CLIENT_ID,
-//       CLIENT_SECRET,
-//       REDIRECT_URI
-//     );
+const ExportButton = ({ displayedData }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [timestamp, setTimestamp] = useState("");
 
-//     const authUrl = oauth2Client.generateAuthUrl({
-//       access_type: "offline",
-//       scope: ["https://www.googleapis.com/auth/spreadsheets"],
-//     });
+  const handleExport = async () => {
+    const newTimestamp = new Date().toISOString();
+    const rows = displayedData.map(record => ({
+      id: record._id,
+      groupName: record.groupName.join(", "),
+      entityName: record.entityName,
+      personName: record.personName,
+      email: record.email,
+      phoneNo: record.phoneNo,
+      pan: record.pan,
+      timestamp: newTimestamp,
+    }));
 
-//     // Redirect user to authUrl
-//     window.open(authUrl, "_self");
+    try {
+      await axios.post(SHEETDB_API_URL, { data: rows });
+      setTimestamp(newTimestamp);
+      setShowModal(true);
+    } catch (error) {
+      console.error("Failed to export data:", error);
+      alert("Failed to export data");
+    }
+  };
 
-//     // After getting the code, set up the token
-//     // This requires a separate process to handle the code callback
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(timestamp);
+  };
 
-//     // Get the access token
-//     const code = "YOUR_AUTH_CODE"; // Handle this through a redirect/callback
-//     const { tokens } = await oauth2Client.getToken(code);
-//     oauth2Client.setCredentials(tokens);
+  return (
+    <>
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        onClick={handleExport}
+      >
+        Export
+      </button>
 
-//     const sheets = google.sheets({ version: "v4", auth: oauth2Client });
-//     const createResponse = await sheets.spreadsheets.create({
-//       resource: {
-//         properties: {
-//           title: "Exported Records",
-//         },
-//       },
-//     });
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white p-4 rounded shadow-lg">
+            <h2 className="text-lg font-bold">Data exported successfully!</h2>
+            <p>
+              Timestamp: <span className="font-mono">{timestamp}</span>
+            </p>
+            <button
+              className="mt-2 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+              onClick={copyToClipboard}
+            >
+              Copy Timestamp
+            </button>
+            <button
+              className="mt-2 ml-2 bg-gray-300 hover:bg-gray-400 text-black py-2 px-4 rounded"
+              onClick={() => setShowModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
 
-//     const spreadsheetId = createResponse.data.spreadsheetId;
+export default ExportButton;
 
-//     const rows = displayedData.map(record => [
-//       record._id,
-//       ...(Array.isArray(record.groupName) ? record.groupName : [record.groupName]),
-//       record.entityName,
-//       record.personName,
-//       record.email,
-//       record.phoneNo,
-//       record.pan,
-//     ]);
 
-//     await sheets.spreadsheets.values.append({
-//       spreadsheetId,
-//       range: "Sheet1!A1",
-//       valueInputOption: "RAW",
-//       resource: {
-//         values: rows,
-//       },
-//     });
-
-//     alert("Data exported successfully!");
-//   };
-
-//   return (
-//     <button
-//       className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-//       onClick={handleExport}
-//     >
-//       Export
-//     </button>
-//   );
-// };
-
-// export default ExportButton;
