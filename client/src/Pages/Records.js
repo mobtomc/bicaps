@@ -83,13 +83,14 @@ const Records = () => {
       <div className="form-check form-switch grid grid-rows-2 gap-4 ml-0">
          
           <input
-            className="form-check-input p-4"
+            className="form-check-input p-3"
             type="checkbox"
             onClick={() => {
-              setTableDark(tabledark === "table-dark" ? "" : "table-dark");
+              setTableDark(tabledark === "table-dark" ? "" : "table-dark");           
             }}
+
           />
-          <div className="m-{0}">
+          <div >
           <ExportButton displayedData={data} />
           </div>
         </div>

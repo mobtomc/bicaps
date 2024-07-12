@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const SHEETDB_API_URL = "https://sheetdb.io/api/v1/x6tvzw3maxfva"; // Replace with your actual SheetDB endpoint
+const SHEETDB_API_URL = "https://sheetdb.io/api/v1/x6tvzw3maxfva"; 
 
 const ExportButton = ({ displayedData }) => {
   const [showModal, setShowModal] = useState(false);
