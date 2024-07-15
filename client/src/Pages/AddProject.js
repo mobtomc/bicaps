@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
 
+
 const AddProject = () => {
   const [clientGroupOptions, setClientGroupOptions] = useState([]);
   const [projectTypeOptions, setProjectTypeOptions] = useState([]);
@@ -9,7 +10,6 @@ const AddProject = () => {
   const [years, setYears] = useState([]);
   const [quarters, setQuarters] = useState([]);
   const [months, setMonths] = useState([]);
-  const [semesters, setSemesters] = useState([]);
   const [selectedProjectType, setSelectedProjectType] = useState(null);
   const [formData, setFormData] = useState({
     clientGroupPerson: '',
@@ -53,14 +53,12 @@ const AddProject = () => {
         setClientGroupOptions(groupedClientGroupOptions);
         setProjectTypeOptions(projectTypeOptions);
 
-        // Set years for calendar selection
         const currentYear = new Date().getFullYear();
         setYears(Array.from({ length: 10 }, (_, i) => currentYear + i).map(year => ({
           value: year,
           label: year.toString()
         })));
 
-        // Set quarters
         setQuarters([
           { value: 'Q1', label: 'Q1' },
           { value: 'Q2', label: 'Q2' },
@@ -68,7 +66,6 @@ const AddProject = () => {
           { value: 'Q4', label: 'Q4' }
         ]);
 
-        // Set months
         setMonths([
           { value: 'January', label: 'January' },
           { value: 'February', label: 'February' },
@@ -82,12 +79,6 @@ const AddProject = () => {
           { value: 'October', label: 'October' },
           { value: 'November', label: 'November' },
           { value: 'December', label: 'December' }
-        ]);
-
-        // Set semesters
-        setSemesters([
-          { value: 'Semester 1', label: 'Semester 1' },
-          { value: 'Semester 2', label: 'Semester 2' }
         ]);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -108,7 +99,6 @@ const AddProject = () => {
       projectType: selectedOption.value,
       period: '',
       year: '',
-      semester: '',
       month: '',
       quarter: ''
     });
@@ -119,7 +109,6 @@ const AddProject = () => {
       ...formData,
       period: selectedOption.value,
       year: '',
-      semester: '',
       month: '',
       quarter: ''
     });
@@ -132,24 +121,17 @@ const AddProject = () => {
     });
   };
 
-  const handleSemesterChange = (selectedOption) => {
-    setFormData({
-      ...formData,
-      semester: selectedOption ? selectedOption.value : ''
-    });
-  };
-
   const handleMonthChange = (selectedOption) => {
     setFormData({
       ...formData,
-      month: selectedOption ? selectedOption.value : ''
+      month: selectedOption.value
     });
   };
 
   const handleQuarterChange = (selectedOption) => {
     setFormData({
       ...formData,
-      quarter: selectedOption ? selectedOption.value : ''
+      quarter: selectedOption.value
     });
   };
 
@@ -173,94 +155,96 @@ const AddProject = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Client Group/Person:</label>
-        <Select
-          options={clientGroupOptions}
-          name="clientGroupPerson"
-          onChange={handleFormChange}
-        />
-      </div>
-      <div>
-        <label>Select Project Type:</label>
-        <Select
-          options={projectTypeOptions}
-          name="projectType"
-          onChange={handleProjectTypeChange}
-        />
-      </div>
-      <div>
-        <label>Period:</label>
-        <Select
-          options={periodOptions}
-          name="period"
-          onChange={handlePeriodChange}
-          isDisabled={!selectedProjectType}
-        />
-      </div>
-      {formData.period === 'Quarterly' && (
-        <div>
-          <label>Year:</label>
+    <div className="container mt-5">
+      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light shadow-sm">
+        <h3 className="mb-4">Add Project</h3>
+        <div className="form-group mb-3">
+          <label>Client Group/Person:</label>
           <Select
-            options={years}
-            name="year"
-            onChange={handleYearChange}
-          />
-          <label>Quarter:</label>
-          <Select
-            options={quarters}
-            name="quarter"
-            onChange={handleQuarterChange}
+            options={clientGroupOptions}
+            name="clientGroupPerson"
+            onChange={handleFormChange}
+            className="basic-single"
+            classNamePrefix="select"
           />
         </div>
-      )}
-      {formData.period === 'Monthly' && (
-        <div>
-          <label>Year:</label>
+        <div className="form-group mb-3">
+          <label>Select Project Type:</label>
           <Select
-            options={years}
-            name="year"
-            onChange={handleYearChange}
-          />
-          <label>Month:</label>
-          <Select
-            options={months}
-            name="month"
-            onChange={handleMonthChange}
+            options={projectTypeOptions}
+            name="projectType"
+            onChange={handleProjectTypeChange}
+            className="basic-single"
+            classNamePrefix="select"
           />
         </div>
-      )}
-      {formData.period === 'Semi-Annual' && (
-        <div>
-          <label>Year:</label>
+        <div className="form-group mb-3">
+          <label>Period:</label>
           <Select
-            options={years}
-            name="year"
-            onChange={handleYearChange}
-          />
-          <label>Semester:</label>
-          <Select
-            options={semesters}
-            name="semester"
-            onChange={handleSemesterChange}
+            options={periodOptions}
+            name="period"
+            onChange={handlePeriodChange}
+            isDisabled={!selectedProjectType}
+            className="basic-single"
+            classNamePrefix="select"
           />
         </div>
-      )}
-      {formData.period === 'Annual' && (
-        <div>
-          <label>Year:</label>
-          <Select
-            options={years}
-            name="year"
-            onChange={handleYearChange}
-          />
-        </div>
-      )}
-      <button type="submit">Add Project</button>
-    </form>
+        {formData.period === 'Quarterly' && (
+          <div className="form-group mb-3">
+            <label>Year:</label>
+            <Select
+              options={years}
+              name="year"
+              onChange={handleYearChange}
+              className="basic-single"
+              classNamePrefix="select"
+            />
+            <label>Quarter:</label>
+            <Select
+              options={quarters}
+              name="quarter"
+              onChange={handleQuarterChange}
+              className="basic-single"
+              classNamePrefix="select"
+            />
+          </div>
+        )}
+        {formData.period === 'Monthly' && (
+          <div className="form-group mb-3">
+            <label>Year:</label>
+            <Select
+              options={years}
+              name="year"
+              onChange={handleYearChange}
+              className="basic-single"
+              classNamePrefix="select"
+            />
+            <label>Month:</label>
+            <Select
+              options={months}
+              name="month"
+              onChange={handleMonthChange}
+              className="basic-single"
+              classNamePrefix="select"
+            />
+          </div>
+        )}
+        {formData.period === 'Annual' && (
+          <div className="form-group mb-3">
+            <label>Year:</label>
+            <Select
+              options={years}
+              name="year"
+              onChange={handleYearChange}
+              className="basic-single"
+              classNamePrefix="select"
+            />
+          </div>
+        )}
+        <button type="submit" className="btn btn-primary">Add Project</button>
+      </form>
+    </div>
   );
 };
 
 export default AddProject;
-

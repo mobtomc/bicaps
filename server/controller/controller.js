@@ -168,7 +168,7 @@ const getClientGroups = async (req, res) => {
   };
 //post for project
 const createProject = async (req, res) => {
-  const { clientGroupPerson, projectType, period, year, quarter, month, semester } = req.body;
+  const { clientGroupPerson, projectType, period, year, quarter, month, } = req.body;
 
   try {
     if (!mongoose.Types.ObjectId.isValid(clientGroupPerson) || !mongoose.Types.ObjectId.isValid(projectType)) {
@@ -182,7 +182,7 @@ const createProject = async (req, res) => {
       return res.status(404).json({ error: 'Client Group or Project Type not found' });
     }
 
-    const newProject = new Project({ clientGroupPerson, projectType, period, year, quarter, month, semester });
+    const newProject = new Project({ clientGroupPerson, projectType, period, year, quarter, month, });
     await newProject.save();
 
     res.status(201).json(newProject);

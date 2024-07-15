@@ -3,6 +3,7 @@ import axios from "axios";
 import Select from 'react-select';
 import { useNavigate } from "react-router";
 
+
 const UpdateGroupName = () => {
   const [clientOptions, setClientOptions] = useState([]);
   const [selectedOldGroupName, setSelectedOldGroupName] = useState(null);
@@ -46,10 +47,10 @@ const UpdateGroupName = () => {
   };
 
   return (
-    <div>
-      <h2 className="mb-6">Update Group Name:</h2>
-      <form className="mx-4" onSubmit={handleUpdateGroupName}>
-        <div className="mb-3">
+    <div className="container mt-5">
+      <h2 className="mb-4">Update Group Name</h2>
+      <form onSubmit={handleUpdateGroupName} className="border p-4 rounded bg-light shadow-sm">
+        <div className="form-group mb-3">
           <label className="form-label">Old Group Name</label>
           <Select
             options={clientOptions}
@@ -60,7 +61,7 @@ const UpdateGroupName = () => {
             placeholder="Select Old Group Name"
           />
         </div>
-        <div className="mb-3">
+        <div className="form-group mb-3">
           <label className="form-label">New Group Name</label>
           <input
             type="text"
@@ -68,11 +69,12 @@ const UpdateGroupName = () => {
             value={newGroupName}
             onChange={(e) => setNewGroupName(e.target.value)}
             placeholder="Enter New Group Name"
+            required
           />
         </div>
         <button type="submit" className="btn btn-primary">Update Group Name</button>
-        <button className="btn bg-green-400 mx-2">
-          <a href="/records">Back</a>
+        <button className="btn btn-secondary ml-2" onClick={() => navigate("/records")}>
+          Back
         </button>
       </form>
     </div>
@@ -80,5 +82,4 @@ const UpdateGroupName = () => {
 };
 
 export default UpdateGroupName;
-
 

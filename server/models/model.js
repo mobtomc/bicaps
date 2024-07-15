@@ -80,7 +80,11 @@ const ClientGroupSchema = new Schema({
     period: {
       type: [String],  // Ensure period is an array of strings
       required: true
-    }
+    },
+    year: Number,
+    semester: String,
+    month: String,
+    quarter: String,
   });
 
 

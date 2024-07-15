@@ -1,7 +1,8 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router";
 import Select from 'react-select';
+
 
 const Add = () => {
   const [personName, setPersonName] = useState("");
@@ -67,10 +68,10 @@ const Add = () => {
   }, []);
 
   return (
-    <>
-      <h2 className="my-4 bg-violet-200 mx-8 w-24 h-6">Add clients</h2>
-      <form className="mx-4" onSubmit={handleSubmit}>
-        <div className="mb-3">
+    <div className="container mt-5">
+      <h2 className="mb-4">Add Clients</h2>
+      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light shadow-sm">
+        <div className="form-group mb-3">
           <label htmlFor="groupName" className="form-label">Client Group:</label>
           <Select
             isMulti
@@ -81,7 +82,7 @@ const Add = () => {
             classNamePrefix="select"
           />
         </div>
-        <div className="mb-3">
+        <div className="form-group mb-3">
           <label htmlFor="entityType" className="form-label">Entity Type:</label>
           <Select
             options={entityOptions}
@@ -92,8 +93,8 @@ const Add = () => {
             placeholder="Choose Entity Type"
           />
         </div>
-        <div className="mb-3">
-          <label className="form-label mr-8">Name</label>
+        <div className="form-group mb-3">
+          <label className="form-label">Name</label>
           <input
             type="text"
             className="form-control"
@@ -101,8 +102,8 @@ const Add = () => {
             value={personName}
           />
         </div>
-        <div className="mb-3">
-          <label className="form-label mr-8">Phone</label>
+        <div className="form-group mb-3">
+          <label className="form-label">Phone</label>
           <input
             type="text"
             className="form-control"
@@ -110,8 +111,8 @@ const Add = () => {
             value={phoneNo}
           />
         </div>
-        <div className="mb-3">
-          <label className="form-label mr-8">Pan-no.</label>
+        <div className="form-group mb-3">
+          <label className="form-label">Pan-no.</label>
           <input
             type="text"
             className="form-control"
@@ -119,8 +120,8 @@ const Add = () => {
             value={pan}
           />
         </div>
-        <div className="mb-3">
-          <label htmlFor="exampleInputEmail1" className="form-label pr-8">Email</label>
+        <div className="form-group mb-3">
+          <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
           <input
             type="email"
             className="form-control"
@@ -129,12 +130,9 @@ const Add = () => {
             value={email}
           />
         </div>
-        <div className="mb-3 form-check">
-          <label className="form-check-label" htmlFor="exampleCheck1"></label>
-        </div>
         <button type="submit" className="btn btn-primary">Submit</button>
       </form>
-    </>
+    </div>
   );
 };
 

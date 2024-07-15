@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Select from 'react-select';
 
+
 const Update = () => {
   const [personName, setPersonName] = useState("");
   const [email, setEmail] = useState("");
@@ -56,6 +57,11 @@ const Update = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    if (!selectedEntityType) {
+      alert("Please select an entity type.");
+      return;
+    }
+
     try {
       const updatedData = {
         personName,
@@ -69,14 +75,15 @@ const Update = () => {
       navigate("/records");
     } catch (error) {
       console.error("Error updating data:", error);
+      alert("Failed to update data. Please try again.");
     }
   };
 
   return (
-    <div>
-      <h2 className="mb-6">UPDATE:</h2>
-      <form className="mx-4" onSubmit={handleUpdate}>
-        <div className="mb-3">
+    <div className="container mt-5">
+      <h2 className="mb-4">Update Category</h2>
+      <form onSubmit={handleUpdate} className="border p-4 rounded bg-light shadow-sm">
+        <div className="form-group mb-3">
           <label className="form-label">Client Group</label>
           <Select
             isMulti
@@ -88,7 +95,7 @@ const Update = () => {
             placeholder="Select Client Groups"
           />
         </div>
-        <div className="mb-3">
+        <div className="form-group mb-3">
           <label className="form-label">Entity Type</label>
           <Select
             options={entityOptions}
@@ -99,7 +106,7 @@ const Update = () => {
             placeholder="Select Entity Type"
           />
         </div>
-        <div className="mb-3">
+        <div className="form-group mb-3">
           <label className="form-label">Name</label>
           <input
             type="text"
@@ -107,47 +114,45 @@ const Update = () => {
             value={personName}
             onChange={(e) => setPersonName(e.target.value)}
             placeholder="Enter Name"
+            required
           />
         </div>
-        <div className="mb-3">
-          <label className="form-label">Email address</label>
+        <div className="form-group mb-3">
+          <label className="form-label">Email Address</label>
           <input
             type="email"
             className="form-control"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter Email"
+            required
           />
         </div>
-        <div className="mb-3">
-          <label className="form-label">Pan</label>
+        <div className="form-group mb-3">
+          <label className="form-label">PAN</label>
           <input
             type="text"
             className="form-control"
             value={pan}
             onChange={(e) => setPan(e.target.value)}
-            placeholder="Enter Pan"
+            placeholder="Enter PAN"
+            required
           />
         </div>
-        <div className="mb-3">
-          <label className="form-label">Phone No</label>
+        <div className="form-group mb-3">
+          <label className="form-label">Phone Number</label>
           <input
             type="text"
             className="form-control"
             value={phoneNo}
             onChange={(e) => setPhoneNo(e.target.value)}
-            placeholder="Enter Phone No"
+            placeholder="Enter Phone Number"
+            required
           />
         </div>
-        
-        <button
-          type="submit"
-          className="btn btn-primary mx-2"
-        >
-          Update
-        </button>
+        <button type="submit" className="btn btn-primary mx-2">Update</button>
         <Link to="/records">
-          <button className="btn bg-green-300 mx-2">Back</button>
+          <button type="button" className="btn btn-secondary mx-2">Back</button>
         </Link>
       </form>
     </div>
@@ -155,4 +160,3 @@ const Update = () => {
 };
 
 export default Update;
-

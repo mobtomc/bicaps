@@ -5,7 +5,7 @@ import Select from "react-select";
 const timePeriodOptions = [
   { value: "Monthly", label: "Monthly" },
   { value: "Quarterly", label: "Quarterly" },
-  { value: "Semi-annual", label: "Semi-annual" },
+
   { value: "Annual", label: "Annual" }
 ];
 

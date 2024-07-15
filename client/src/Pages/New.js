@@ -1,19 +1,15 @@
-import axios from "axios";
 import React, { useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
 
 
 const New = () => {
-  const[name,setName]=useState("");
-  const[email,setEmail]=useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [person, setPerson] = useState("");
+  const navigate = useNavigate();
 
-  const[Phone,setPhone]=useState("");
-
-  const[Person,setPerson]=useState("");
-  const history = useNavigate();
-
-  const header={"Access-Control-Allow-Origin":"*"};
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("clicked");
@@ -21,52 +17,69 @@ const New = () => {
       .post("http://localhost:8080/api/clientgroups", {
         groupName: name,
         email: email,
-        phoneNo:Phone,
-        personName:Person}, {
-          headers: {
-            'Content-Type': 'application/json',
-          }
-       
+        phoneNo: phone,
+        personName: person
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
       })
-      
       .then(() => {
-        history("/read");
+        navigate("/read");
+      })
+      .catch((error) => {
+        console.error("Error creating client group:", error);
       });
-    };
-  return <>
-  <h2 class="my-4 bg-violet-200 mx-8 w-24 h-6">Create clients</h2>
-        <form class="mx-4">
-       
-      <div className="mb-3">
-        <label className="form-label mr-8">Group Name</label>
-        <input type="text" className="form-control" onChange={(e)=>setName(e.target.value)}/>
-       
-      </div>
-       
-      <div className="mb-3">
-        <label className="form-label mr-8">Person</label>
-        <input type="text" className="form-control" onChange={(e)=>setPerson(e.target.value)}/>
-       
-      </div>
-      <div className="mb-3">
-        <label className="form-label mr-8">Phone</label>
-        <input type="text" className="form-control" onChange={(e)=>setPhone(e.target.value)}/>
-       
-      </div>
-      
-      <div classNameName="mb-3">
-        <label for="exampleInputEmail1" className="form-label pr-8">Email</label>
-          <input 
-            type="email" className="form-control" aria-describedby="emailHelp"
-            onChange={(e)=>setEmail(e.target.value)}/>
-          </div>
-      <div className="mb-3 form-check">
-        <label className="form-check-label" for="exampleCheck1"></label>
-      </div>
-      <button type="submit" className="btn btn-primary"   onClick={handleSubmit}>Submit</button>
-    </form>
-  </>
-}
+  };
 
-export default New
+  return (
+    <div className="container mt-5">
+      <h2 className="mb-4">Create Clients</h2>
+      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light shadow-sm">
+        <div className="form-group mb-3">
+          <label className="form-label">Group Name</label>
+          <input
+            type="text"
+            className="form-control"
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+            required
+          />
+        </div>
+        <div className="form-group mb-3">
+          <label className="form-label">Person</label>
+          <input
+            type="text"
+            className="form-control"
+            onChange={(e) => setPerson(e.target.value)}
+            value={person}
+            required
+          />
+        </div>
+        <div className="form-group mb-3">
+          <label className="form-label">Phone</label>
+          <input
+            type="text"
+            className="form-control"
+            onChange={(e) => setPhone(e.target.value)}
+            value={phone}
+            required
+          />
+        </div>
+        <div className="form-group mb-3">
+          <label className="form-label">Email</label>
+          <input
+            type="email"
+            className="form-control"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            required
+          />
+        </div>
+        <button type="submit" className="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  );
+};
 
+export default New;
