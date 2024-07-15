@@ -1,0 +1,81 @@
+// src/components/AddProjectType.js
+
+import React, { useState } from "react";
+import axios from "axios";
+import Select from "react-select";
+
+const timePeriodOptions = [
+  { value: "Monthly", label: "Monthly" },
+  { value: "Quaterly", label: "Quaterly" },
+  { value: "Semi-annual", label: "Semi-annual" },
+  {value:"Annual",label:"Annual"}
+];
+
+const AddProjectType = () => {
+  const [projectType, setProjectType] = useState("");
+  const [timePeriod, setTimePeriod] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post("http://localhost:8080/api/projecttypes", {
+        projectType,
+        timePeriod: timePeriod.value
+      });
+
+      if (response.status === 201) {
+        alert("Project type added successfully!");
+        setProjectType("");
+        setTimePeriod(null);
+      } else {
+        alert("Failed to add project type.");
+      }
+    } catch (error) {
+      console.error("There was an error adding the project type!", error);
+      alert("Failed to add project type.");
+    }
+  };
+
+  return (
+    <div className="container mx-auto my-4">
+      <h2 className="text-2xl font-bold mb-4">Add Project Type</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Project Type
+          </label>
+          <input
+            type="text"
+            value={projectType}
+            onChange={(e) => setProjectType(e.target.value)}
+            className="form-control"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="projecttype" className="form-label">
+            Time Period
+          </label>
+          <Select
+            isMulti
+            options={timePeriodOptions}
+            value={timePeriod}
+            onChange={setTimePeriod}
+            className="basic-multi-select"
+            placeholder="Select Time Period"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Add Project Type
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default AddProjectType;

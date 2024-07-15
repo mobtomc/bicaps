@@ -1,6 +1,6 @@
 
 const model=require("../models/model")
-const { ClientGroup, EntityType, Category } = require('../models/model');
+const { ClientGroup, EntityType, Category,ProjectType } = require('../models/model');
 // Fetch all categories
 const getCategories = async (req, res) => {
   try {
@@ -143,6 +143,27 @@ const getClientGroups = async (req, res) => {
       res.status(500).json({ message: 'Failed to update group name' });
     }
   };
+  //post for ProjectTypeSchema
+  const createProjectType = async (req, res) => {
+    const { projectType, timePeriod } = req.body;
+  
+    try {
+      const newProjectType = new ProjectType({ projectType, timePeriod });
+      await newProjectType.save();
+      res.status(201).json(newProjectType);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+  //get for ProjectTypeSchema
+ const getProjectTypes = async (req, res) => {
+    try {
+      const projectTypes = await ProjectType.find();
+      res.status(200).json(projectTypes);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
   
 
 
@@ -158,6 +179,8 @@ module.exports={
     createClientGroup, 
     getEntityTypes,
     createEntityType,
-    updateClientGroup
+    updateClientGroup,
+    createProjectType,
+    getProjectTypes,
 
 }

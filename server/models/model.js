@@ -58,7 +58,18 @@ const ClientGroupSchema = new Schema({
       required: true
     }
   });
-  
+  //schema for projectType
+  const ProjectTypeSchema = new mongoose.Schema({
+    projectType: {
+      type: String,
+      required: true
+    },
+    timePeriod: {
+      type: String,
+      required: true,
+      enum: ["Monthly", "Quaterly", "Semi-annual,Annual"]
+    }
+  });
 
 
 // mongoose.model("name mentioned here","structure mentioned here")
@@ -66,11 +77,12 @@ const ClientGroupSchema = new Schema({
 const Category=mongoose.model("Category",CategorySchema);
 const ClientGroup = mongoose.model('ClientGroup', ClientGroupSchema);
 const EntityType = mongoose.model('EntityType', EntityTypeSchema);
+const ProjectType = mongoose.model('ProjectType',ProjectTypeSchema);
 
 module.exports={
     Category,
     ClientGroup,
-    EntityType
-    
+    EntityType,
+    ProjectType,
 }
 

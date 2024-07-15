@@ -21,6 +21,8 @@ routes.route('/api/entitytypes')
     .get(controller.getEntityTypes)
     .post(controller.createEntityType);
 
-
+routes.route('/api/projecttypes')
+   .get(controller.getProjectTypes)
+   .post(controller.createProjectType)
 
 module.exports=routes;
