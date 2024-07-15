@@ -38,7 +38,7 @@ const AddProjectType = () => {
   return (
     <div className="container mx-auto my-4">
       <h2 className="text-2xl font-bold mb-4">Add Project Type</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light shadow-sm">
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
             Project Type
