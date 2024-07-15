@@ -168,15 +168,13 @@ const getClientGroups = async (req, res) => {
   };
 //post for project
 const createProject = async (req, res) => {
-  const { clientGroupPerson, projectType, period } = req.body;
+  const { clientGroupPerson, projectType, period, year, quarter, month, semester } = req.body;
 
   try {
-    // Validate ObjectId formats
     if (!mongoose.Types.ObjectId.isValid(clientGroupPerson) || !mongoose.Types.ObjectId.isValid(projectType)) {
       return res.status(400).json({ error: 'Invalid ObjectId format' });
     }
 
-    // Check if the referenced objects exist
     const clientGroupExists = await ClientGroup.exists({ _id: clientGroupPerson });
     const projectTypeExists = await ProjectType.exists({ _id: projectType });
 
@@ -184,11 +182,7 @@ const createProject = async (req, res) => {
       return res.status(404).json({ error: 'Client Group or Project Type not found' });
     }
 
-    // Ensure period is always an array
-    const periods = Array.isArray(period) ? period : [period];
-
-    // Create new project
-    const newProject = new Project({ clientGroupPerson, projectType, period: periods });
+    const newProject = new Project({ clientGroupPerson, projectType, period, year, quarter, month, semester });
     await newProject.save();
 
     res.status(201).json(newProject);
@@ -197,6 +191,7 @@ const createProject = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
   //get request for projects
 
   const getProjects = async (req, res) => {
