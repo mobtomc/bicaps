@@ -1,19 +1,17 @@
-// src/components/AddProjectType.js
-
 import React, { useState } from "react";
 import axios from "axios";
 import Select from "react-select";
 
 const timePeriodOptions = [
   { value: "Monthly", label: "Monthly" },
-  { value: "Quaterly", label: "Quaterly" },
+  { value: "Quarterly", label: "Quarterly" },
   { value: "Semi-annual", label: "Semi-annual" },
-  {value:"Annual",label:"Annual"}
+  { value: "Annual", label: "Annual" }
 ];
 
 const AddProjectType = () => {
   const [projectType, setProjectType] = useState("");
-  const [timePeriod, setTimePeriod] = useState(null);
+  const [timePeriods, setTimePeriods] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,13 +19,13 @@ const AddProjectType = () => {
     try {
       const response = await axios.post("http://localhost:8080/api/projecttypes", {
         projectType,
-        timePeriod: timePeriod.value
+        timePeriods: timePeriods.map(option => option.value)  // Convert selected options to their values
       });
 
       if (response.status === 201) {
         alert("Project type added successfully!");
         setProjectType("");
-        setTimePeriod(null);
+        setTimePeriods([]);
       } else {
         alert("Failed to add project type.");
       }
@@ -60,8 +58,8 @@ const AddProjectType = () => {
           <Select
             isMulti
             options={timePeriodOptions}
-            value={timePeriod}
-            onChange={setTimePeriod}
+            value={timePeriods}
+            onChange={setTimePeriods}
             className="basic-multi-select"
             placeholder="Select Time Period"
             required

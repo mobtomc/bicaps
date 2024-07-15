@@ -23,6 +23,13 @@ routes.route('/api/entitytypes')
 
 routes.route('/api/projecttypes')
    .get(controller.getProjectTypes)
-   .post(controller.createProjectType)
+   .post(controller.createProjectType);
+
+routes.route('/api/project')   
+   .get(controller.getProjects)
+   .post(controller.createProject);
+
+routes.route('/api/client-groups-and-categories')   
+   .get(controller.getClientGroupsAndCategories)
 
 module.exports=routes;

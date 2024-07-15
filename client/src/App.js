@@ -10,6 +10,7 @@ import Entity from "./Pages/Entity"
 import Update from './Pages/Update'
 import Replace from './Pages/Replace'
 import ProjectType from './Pages/ProjectType'
+import AddProject from './Pages/AddProject';
 function App() {
   return (
     <div className="App">
@@ -24,6 +25,7 @@ function App() {
           <Route path="/update/:id" element={<Update/>} />
           <Route path="/replace" element={<Replace/>}></Route>
           <Route path="/projecttype" element={<ProjectType/>}></Route>
+          <Route path="/addproject" element={<AddProject/>}></Route>
       </Routes>
       </BrowserRouter>
     </div>

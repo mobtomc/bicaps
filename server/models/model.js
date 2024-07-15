@@ -64,25 +64,38 @@ const ClientGroupSchema = new Schema({
       type: String,
       required: true
     },
-    timePeriod: {
-      type: String,
-      required: true,
-      enum: ["Monthly", "Quaterly", "Semi-annual,Annual"]
+    timePeriods: [String]  // Array of strings
+  });
+  const projectSchema = new mongoose.Schema({
+    clientGroupPerson: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ClientGroup',
+      required: true
+    },
+    projectType: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ProjectType',
+      required: true
+    },
+    period: {
+      type: [String],  // Ensure period is an array of strings
+      required: true
     }
   });
 
 
-// mongoose.model("name mentioned here","structure mentioned here")
 
 const Category=mongoose.model("Category",CategorySchema);
 const ClientGroup = mongoose.model('ClientGroup', ClientGroupSchema);
 const EntityType = mongoose.model('EntityType', EntityTypeSchema);
 const ProjectType = mongoose.model('ProjectType',ProjectTypeSchema);
+const Project= mongoose.model('Project',projectSchema)
 
 module.exports={
     Category,
     ClientGroup,
     EntityType,
     ProjectType,
+    Project
 }
 

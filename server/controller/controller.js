@@ -1,6 +1,6 @@
 
 const model=require("../models/model")
-const { ClientGroup, EntityType, Category,ProjectType } = require('../models/model');
+const { ClientGroup, EntityType, Category,ProjectType,Project } = require('../models/model');
 // Fetch all categories
 const getCategories = async (req, res) => {
   try {
@@ -145,16 +145,18 @@ const getClientGroups = async (req, res) => {
   };
   //post for ProjectTypeSchema
   const createProjectType = async (req, res) => {
-    const { projectType, timePeriod } = req.body;
+    const { projectType, timePeriods } = req.body;
   
     try {
-      const newProjectType = new ProjectType({ projectType, timePeriod });
+      const newProjectType = new ProjectType({ projectType, timePeriods });
       await newProjectType.save();
       res.status(201).json(newProjectType);
     } catch (error) {
+      console.error('Error creating project type:', error);  // Log the error for debugging
       res.status(500).json({ error: error.message });
     }
   };
+  
   //get for ProjectTypeSchema
  const getProjectTypes = async (req, res) => {
     try {
@@ -164,7 +166,62 @@ const getClientGroups = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   };
-  
+//post for project
+const createProject = async (req, res) => {
+  const { clientGroupPerson, projectType, period } = req.body;
+
+  try {
+    // Validate ObjectId formats
+    if (!mongoose.Types.ObjectId.isValid(clientGroupPerson) || !mongoose.Types.ObjectId.isValid(projectType)) {
+      return res.status(400).json({ error: 'Invalid ObjectId format' });
+    }
+
+    // Check if the referenced objects exist
+    const clientGroupExists = await ClientGroup.exists({ _id: clientGroupPerson });
+    const projectTypeExists = await ProjectType.exists({ _id: projectType });
+
+    if (!clientGroupExists || !projectTypeExists) {
+      return res.status(404).json({ error: 'Client Group or Project Type not found' });
+    }
+
+    // Ensure period is always an array
+    const periods = Array.isArray(period) ? period : [period];
+
+    // Create new project
+    const newProject = new Project({ clientGroupPerson, projectType, period: periods });
+    await newProject.save();
+
+    res.status(201).json(newProject);
+  } catch (error) {
+    console.error('Error creating project:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+  //get request for projects
+
+  const getProjects = async (req, res) => {
+    try {
+      // Fetch projects and populate the 'projectType' field
+      const projects = await Project.find().populate('projectType');
+      
+      // Send the projects as the response
+      res.status(200).json(projects);
+    } catch (error) {
+      // Handle any errors that occur
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  //for the project dropdowns
+  const getClientGroupsAndCategories = async (req, res) => {
+    try {
+      const clientGroups = await ClientGroup.find();
+      const categories = await Category.find();
+      res.status(200).json({ clientGroups, categories });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 
 
 
@@ -182,5 +239,8 @@ module.exports={
     updateClientGroup,
     createProjectType,
     getProjectTypes,
+    createProject,
+    getProjects,
+    getClientGroupsAndCategories
 
 }
