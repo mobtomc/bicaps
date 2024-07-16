@@ -66,6 +66,9 @@ const ClientGroupSchema = new Schema({
     },
     timePeriods: [String]  // Array of strings
   });
+
+
+  // project schema
   const projectSchema = new mongoose.Schema({
     clientGroupPerson: {
       type: mongoose.Schema.Types.ObjectId,
@@ -81,10 +84,13 @@ const ClientGroupSchema = new Schema({
       type: [String],  // Ensure period is an array of strings
       required: true
     },
-    year: Number,
-    semester: String,
-    month: String,
-    quarter: String,
+    year: {
+      type:Number,
+      default:""
+    },
+    semester: {type:String,default:""},
+    month: {type:String,default:""},
+    quarter: {type:String,default:""}
   });
 
 
