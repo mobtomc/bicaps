@@ -71,12 +71,12 @@ const ClientGroupSchema = new Schema({
   // project schema
   const projectSchema = new mongoose.Schema({
     clientGroupPerson: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: 'ClientGroup',
       required: true
     },
     projectType: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: 'ProjectType',
       required: true
     },

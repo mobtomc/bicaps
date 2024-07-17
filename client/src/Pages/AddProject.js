@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
 
-
 const AddProject = () => {
   const [clientGroupOptions, setClientGroupOptions] = useState([]);
   const [projectTypeOptions, setProjectTypeOptions] = useState([]);
@@ -96,7 +95,7 @@ const AddProject = () => {
     })));
     setFormData({
       ...formData,
-      projectType: selectedOption.value,
+      projectType: selectedOption.label,
       period: '',
       year: '',
       month: '',
@@ -135,10 +134,10 @@ const AddProject = () => {
     });
   };
 
-  const handleFormChange = (selectedOption, { name }) => {
+  const handleClientGroupChange = (selectedOption) => {
     setFormData({
       ...formData,
-      [name]: selectedOption ? selectedOption.value : ''
+      clientGroupPerson: selectedOption.label
     });
   };
 
@@ -163,7 +162,7 @@ const AddProject = () => {
           <Select
             options={clientGroupOptions}
             name="clientGroupPerson"
-            onChange={handleFormChange}
+            onChange={handleClientGroupChange}
             className="basic-single"
             classNamePrefix="select"
           />
