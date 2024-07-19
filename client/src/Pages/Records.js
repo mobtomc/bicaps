@@ -61,7 +61,7 @@ const Records = () => {
     localStorage.setItem("email", email);
     localStorage.setItem("pan", pan);
     localStorage.setItem("phoneNo", phoneNo);
-    localStorage.setItem("clientgroup", JSON.stringify(groupName));//convert to string for storage
+    localStorage.setItem("clientgroup", JSON.stringify(groupName)); // convert to string for storage
     localStorage.setItem("entitytype", entityName);
   };
 
@@ -71,122 +71,131 @@ const Records = () => {
   }, []);
 
   useEffect(() => {
-    getData();  // Fetch data when selectedGroup changes,very very imp. state must be latest
+    getData();  // Fetch data when selectedGroup changes
   }, [selectedGroup]);
 
   return (
-    <><div className="">
-        
-        
-      </div>
-      <div className="d-flex justify-content-between m-2">
-      <div className="form-check form-switch grid grid-rows-2 gap-4 ml-0">
-         
-          <input
-            className="form-check-input p-3"
-            type="checkbox"
-            onClick={() => {
-              setTableDark(tabledark === "table-dark" ? "" : "table-dark");           
-            }}
-
-          />
-          <div >
-          <ExportButton displayedData={data} />
+    <div className="container mx-auto p-4">
+      {/* Controls */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+        {/* left */}
+        <div className="flex items-center space-x-4 mb-4 md:mb-0">
+          <div className="flex items-center space-x-2">
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={tabledark === "table-dark"}
+                onChange={() => setTableDark(tabledark === "table-dark" ? "" : "table-dark")}
+                className="sr-only"
+              />
+              <div className="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+              <div className={`absolute left-1 top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${tabledark === "table-dark" ? "translate-x-5 bg-blue-600" : ""}`}></div>
+            </label>
+            <label htmlFor="darkModeToggle" className="text-lg"></label>
           </div>
+          <ExportButton displayedData={data} />
         </div>
-        <div className="mb-3">
-          
-          <div className="d-flex">
+        {/* center */}
+        <div className="flex flex-col md:flex-row md:space-x-4 mb-4 md:mb-0">
+          <div className="flex items-center space-x-2">
             <Select
               options={groupNames}
               value={selectedGroup}
               onChange={setSelectedGroup}
               placeholder="Search by Group Name"
+              className="w-full md:w-64"
             />
-            <button className="btn btn-primary mx-2 pr-5" onClick={handleSearchByGroup}>
+            <button className="btn btn-primary" onClick={handleSearchByGroup}>
               Search Group Name
             </button>
           </div>
-          <div className="d-flex mt-2">
+          <div className="flex items-center space-x-2">
             <Select
               options={data.map(item => ({ value: item.personName, label: item.personName }))}
               value={selectedPersonName}
               onChange={setSelectedPersonName}
               placeholder="Search by Person Name"
+              className="w-full md:w-64"
             />
-            <button className="btn btn-primary mx-2" onClick={handleSearchByPersonName}>
+            <button className="btn btn-primary" onClick={handleSearchByPersonName}>
               Search Person Name
             </button>
           </div>
-          <div>
-            <button className="btn bg-green-300 mx-2 mt-2">
-              <a href="/records">Back</a>
-            </button>
-            <button className="btn bg-green-400 mx-2 mt-2">
-              <Link to="/replace">Replace Group</Link>
-            </button>
-          </div>
+        </div>
+        {/* right */}
+        <div className="flex items-center space-x-4 mb-4">
+          <a href="/records" className="btn bg-green-300">
+            Back
+          </a>
+          <Link to="/replace" className="btn bg-green-400">
+            Replace Group
+          </Link>
         </div>
       </div>
-      
-      <table className={`table ${tabledark}`}>
-        <thead>
-          <tr>
-            <th scope="col">Unique Id</th>
-            <th scope="col">Client-Group</th>
-            <th scope="col">Entity-Type</th>
-            <th scope="col">Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Pan</th>
-            <th scope="col">Phone</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        {data.map((eachData) => (
-          <tbody key={eachData._id}>
+
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className={`table ${tabledark} min-w-full`}>
+          <thead>
             <tr>
-              <th scope="row">{eachData._id}</th>
-              <td>{Array.isArray(eachData.groupName) ? eachData.groupName.join(", ") : eachData.groupName}</td>
-              <td>{eachData.entityName}</td>
-              <td>{eachData.personName}</td>
-              <td>{eachData.email}</td>
-              <td>{eachData.phoneNo}</td>
-              <td>{eachData.pan}</td>
-              <td>
-                <Link to={`/update/${eachData._id}`}>
-                  <button
-                    className="btn btn-primary mx-1"
-                    onClick={() =>
-                      setToLocalStorage(
-                        eachData._id,
-                        eachData.personName,
-                        eachData.email,
-                        eachData.pan,
-                        eachData.phoneNo,
-                        eachData.groupName,
-                        eachData.entityName
-                      )
-                    }
-                  >
-                    Edit
-                  </button>
-                </Link>
-              </td>
-              <td>
-                <button
-                  className="btn btn-danger mx-1"
-                  onClick={() => handleDelete(eachData._id)}
-                >
-                  Delete
-                </button>
-              </td>
+              <th scope="col">Unique Id</th>
+              <th scope="col">Client-Group</th>
+              <th scope="col">Entity-Type</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Pan</th>
+              <th scope="col">Phone</th>
+              <th scope="col"></th>
+              <th scope="col"></th>
             </tr>
+          </thead>
+          <tbody>
+            {data.map((eachData) => (
+              <tr key={eachData._id}>
+                <th scope="row">{eachData._id}</th>
+                <td>{Array.isArray(eachData.groupName) ? eachData.groupName.join(", ") : eachData.groupName}</td>
+                <td>{eachData.entityName}</td>
+                <td>{eachData.personName}</td>
+                <td>{eachData.email}</td>
+                <td>{eachData.phoneNo}</td>
+                <td>{eachData.pan}</td>
+                <td>
+                  <Link to={`/update/${eachData._id}`}>
+                    <button
+                      className="btn btn-primary mx-1"
+                      onClick={() =>
+                        setToLocalStorage(
+                          eachData._id,
+                          eachData.personName,
+                          eachData.email,
+                          eachData.pan,
+                          eachData.phoneNo,
+                          eachData.groupName,
+                          eachData.entityName
+                        )
+                      }
+                    >
+                      Edit
+                    </button>
+                  </Link>
+                </td>
+                <td>
+                  <button
+                    className="btn btn-danger mx-1"
+                    onClick={() => handleDelete(eachData._id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
-        ))}
-      </table>
-    </>
+        </table>
+      </div>
+    </div>
   );
 };
 
 export default Records;
+
+
