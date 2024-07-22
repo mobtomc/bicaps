@@ -10,6 +10,7 @@ import Update from './Pages/Update';
 import Replace from './Pages/Replace';
 import ProjectType from './Pages/ProjectType';
 import AddProject from './Pages/AddProject';
+import Timesheet from './Pages/Timesheet'
 import {
   ClerkProvider,
   SignedIn,
@@ -41,6 +42,7 @@ function App() {
               <Route path="/replace" element={<Replace />} />
               <Route path="/projecttype" element={<ProjectType />} />
               <Route path="/addproject" element={<AddProject />} />
+              <Route path="/timesheet" element={<Timesheet/>} />
             </Routes>
           </BrowserRouter>
         </div>

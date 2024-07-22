@@ -68,7 +68,6 @@ const ClientGroupSchema = new Schema({
   });
 
 
-  // project schema
   const projectSchema = new mongoose.Schema({
     clientGroupPerson: {
       type: String,
@@ -85,14 +84,14 @@ const ClientGroupSchema = new Schema({
       required: true
     },
     year: {
-      type:Number,
-      default:""
+      type: Number,
+      default: ""
     },
-    semester: {type:String,default:""},
-    month: {type:String,default:""},
-    quarter: {type:String,default:""}
+    semester: { type: String, default: "" },
+    month: { type: String, default: "" },
+    quarter: { type: String, default: "" }
   });
-
+  
 
 
 const Category=mongoose.model("Category",CategorySchema);

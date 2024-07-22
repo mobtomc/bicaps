@@ -1,0 +1,95 @@
+import React, { useEffect, useState } from 'react';
+import Select from 'react-select';
+import axios from 'axios';
+
+const Timesheet = () => {
+  const [projects, setProjects] = useState([]);
+  const [timesheet, setTimesheet] = useState([{ project: '', startTime: '', endTime: '' }]);
+
+  useEffect(() => {
+    axios.get('/api/project')
+      .then(response => {
+        console.log('API response:', response.data); 
+        const projectOptions = response.data.map(project => ({
+          value: project.value,
+          label: `${project.label} (${project.period.join(', ')})`,
+          period: project.period
+        }));
+        setProjects(projectOptions);
+      })
+      .catch(error => console.error('Error fetching projects:', error));
+  }, []);
+
+  const handleProjectChange = (index, selectedOption) => {
+    console.log('Selected Option:', selectedOption); 
+    const newTimesheet = [...timesheet];
+    newTimesheet[index].project = selectedOption ? selectedOption.value : '';
+    newTimesheet[index].startTime = new Date().toLocaleString();
+    setTimesheet(newTimesheet);
+    if (index === timesheet.length - 1) {
+      setTimesheet([...newTimesheet, { project: '', startTime: '', endTime: '' }]);
+    }
+  };
+
+  const handleEndTime = (index) => {
+    const newTimesheet = [...timesheet];
+    newTimesheet[index].endTime = new Date().toLocaleString();
+    setTimesheet(newTimesheet);
+  };
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-semibold mb-4">Timesheet</h1>
+      <table className="min-w-full bg-white dark:bg-gray-800">
+        <thead>
+          <tr>
+            <th className="py-2 px-4 border-b">Project</th>
+            <th className="py-2 px-4 border-b">Start Time</th>
+            <th className="py-2 px-4 border-b">End Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {timesheet.map((entry, index) => (
+            <tr key={index}>
+              <td className="py-2 px-4 border-b">
+                <Select
+                  value={projects.find(project => project.value === entry.project)}
+                  onChange={(selectedOption) => handleProjectChange(index, selectedOption)}
+                  options={projects}
+                  getOptionLabel={(option) => option.label}
+                  getOptionValue={(option) => option.value}
+                  className="w-full"
+                  placeholder="Select Project"
+                />
+              </td>
+              <td className="py-2 px-4 border-b">{entry.startTime}</td>
+              <td className="py-2 px-4 border-b">
+                {entry.endTime ? entry.endTime : (
+                  index === timesheet.length - 1 ? '' : (
+                    <button
+                      onClick={() => handleEndTime(index)}
+                      className="p-2 bg-blue-500 text-white rounded"
+                    >
+                      Set End Time
+                    </button>
+                  )
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default Timesheet;
+
+
+
+
+
+
+
+
+

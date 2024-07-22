@@ -182,20 +182,30 @@ const createProject = async (req, res) => {
   }
 };
 
-//get request for projects
-
 const getProjects = async (req, res) => {
   try {
-    // Fetch projects and populate the 'projectType' field
-    const projects = await Project.find().populate('projectType');
+    // Fetch all projects
+    const projects = await Project.find().select('clientGroupPerson projectType year semester month quarter');
 
-    // Send the projects as the response
-    res.status(200).json(projects);
+    // Map the projects to include 'value', 'label', and 'period' for react-select
+    const projectOptions = projects.map(project => ({
+      value: project._id.toString(), // Ensure the value is a string
+      label: `${project.clientGroupPerson} - ${project.projectType} (${project.year}, ${project.semester}, ${project.month}, ${project.quarter})`,
+      period: [
+        project.year,
+        project.semester,
+        project.month,
+        project.quarter
+      ].filter(Boolean) // Remove any empty values
+    }));
+
+    res.status(200).json(projectOptions);
   } catch (error) {
-    // Handle any errors that occur
+    console.error('Error fetching projects:', error);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 //for the project dropdowns
 const getClientGroupsAndCategories = async (req, res) => {
@@ -226,6 +236,7 @@ module.exports = {
   getProjectTypes,
   createProject,
   getProjects,
-  getClientGroupsAndCategories
+  getClientGroupsAndCategories,
+
 
 }
