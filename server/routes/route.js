@@ -30,9 +30,9 @@ routes.route('/api/project')
    .post(controller.createProject);
 
 routes.route('/api/client-groups-and-categories')   
-   .get(controller.getClientGroupsAndCategories)
+   .get(controller.getClientGroupsAndCategories);
 //for the timesheet
 routes.route('/api/submit')   
    .post(controller.submitTimesheet)
-
+   .get(controller.submitTimesheet);
 module.exports=routes;

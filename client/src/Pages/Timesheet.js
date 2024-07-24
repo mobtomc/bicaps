@@ -44,9 +44,9 @@ const Timesheet = () => {
   };
 
   const handleSubmit = () => {
-    const userId = user ? user.id : 'someUserId'; // Replace this with the actual user ID if needed
+    const userId = user ? user.id : 'someUserId'; 
     const entries = timesheet
-      .filter(entry => entry.project && entry.startTime && entry.endTime) // Ensure valid entries
+      .filter(entry => entry.project && entry.startTime && entry.endTime) 
       .map(entry => ({
         project: entry.project,
         startTime: entry.startTime,
@@ -89,7 +89,7 @@ const Timesheet = () => {
                   onChange={(selectedOption) => handleProjectChange(index, selectedOption)}
                   options={projects}
                   getOptionLabel={(option) => option.label}
-                  getOptionValue={(option) => option.label} // Changed to label
+                  getOptionValue={(option) => option.label} 
                   className="w-full"
                   placeholder="Select Project"
                 />

@@ -242,6 +242,23 @@ const submitTimesheet = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+//getTimesheet
+const getTimesheets = async (req, res) => {
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  try {
+    const timesheets = await Timesheet.find({ userId });
+    res.status(200).json(timesheets);
+  } catch (error) {
+    console.error('Error fetching timesheets:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 
 
@@ -262,6 +279,7 @@ module.exports = {
   createProject,
   getProjects,
   getClientGroupsAndCategories,
-  submitTimesheet
+  submitTimesheet,
+  getTimesheets
 
 }

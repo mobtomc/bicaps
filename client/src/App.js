@@ -30,6 +30,7 @@ function App() {
     <ClerkProvider publishableKey={clerkPubKey}>
       <SignedIn>
         <div className="App">
+        
           <BrowserRouter>
             <Nav />
             <Routes>
@@ -45,6 +46,7 @@ function App() {
               <Route path="/timesheet" element={<Timesheet/>} />
             </Routes>
           </BrowserRouter>
+          
         </div>
       </SignedIn>
       <SignedOut>

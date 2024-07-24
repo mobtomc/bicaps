@@ -1,6 +1,6 @@
 const mongoose=require('mongoose')
 const Schema=mongoose.Schema;
-
+//add clients is category
 const CategorySchema=new Schema({
       groupName:[ {
       type: String,
