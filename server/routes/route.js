@@ -31,5 +31,8 @@ routes.route('/api/project')
 
 routes.route('/api/client-groups-and-categories')   
    .get(controller.getClientGroupsAndCategories)
+//for the timesheet
+routes.route('/api/submit')   
+   .post(controller.submitTimesheet)
 
 module.exports=routes;

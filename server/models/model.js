@@ -92,19 +92,45 @@ const ClientGroupSchema = new Schema({
     quarter: { type: String, default: "" }
   });
   
-
+ //timesheetschema
+ const timesheetSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  project: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Project',
+    required: true
+  },
+  startTime: {
+    type: Date,
+    required: true
+  },
+  endTime: {
+    type: Date
+  },
+  date: {
+    type: Date,
+    required: true
+  },
+ 
+});
 
 const Category=mongoose.model("Category",CategorySchema);
 const ClientGroup = mongoose.model('ClientGroup', ClientGroupSchema);
 const EntityType = mongoose.model('EntityType', EntityTypeSchema);
 const ProjectType = mongoose.model('ProjectType',ProjectTypeSchema);
 const Project= mongoose.model('Project',projectSchema)
+const Timesheet=mongoose.model('Timesheet',timesheetSchema)
 
 module.exports={
     Category,
     ClientGroup,
     EntityType,
     ProjectType,
-    Project
+    Project,
+    Timesheet
 }
 

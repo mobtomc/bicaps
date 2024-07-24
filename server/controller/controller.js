@@ -181,30 +181,28 @@ const createProject = async (req, res) => {
     res.status(500).json({ error: "Harcoded Error Occured" });
   }
 };
+//timesheet dropdown
 
+// Handler for GET request to /api/project
 const getProjects = async (req, res) => {
+  console.log('Received GET request for /api/project');
   try {
-    // Fetch all projects
-    const projects = await Project.find().select('clientGroupPerson projectType year semester month quarter');
+    const projects = await Project.find().select('clientGroupPerson projectType year semester month quarter period');
+    console.log('Fetched projects:', projects); // Log the fetched projects
 
-    // Map the projects to include 'value', 'label', and 'period' for react-select
     const projectOptions = projects.map(project => ({
-      value: project._id.toString(), // Ensure the value is a string
-      label: `${project.clientGroupPerson} - ${project.projectType} (${project.year}, ${project.semester}, ${project.month}, ${project.quarter})`,
-      period: [
-        project.year,
-        project.semester,
-        project.month,
-        project.quarter
-      ].filter(Boolean) // Remove any empty values
+      value: project._id.toString(),
+      label: `${project.clientGroupPerson} - ${project.projectType} (${project.year}, ${project.semester}, ${project.quarter}, ${project.month})`
     }));
 
+    console.log('Formatted project options:', projectOptions); // Log the formatted options
     res.status(200).json(projectOptions);
   } catch (error) {
-    console.error('Error fetching projects:', error);
+    console.error('Error fetching projects:', error.message);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 //for the project dropdowns
@@ -217,7 +215,10 @@ const getClientGroupsAndCategories = async (req, res) => {
     res.status(500).json({ error: "error.message" });
   }
 };
-
+//timesheet post 
+const submitTimesheet = async (req, res) => {
+//such that the data is submiteed for all employees in same schema but each employee have a unique id so that they can be targeted
+};
 
 
 module.exports = {
@@ -237,6 +238,6 @@ module.exports = {
   createProject,
   getProjects,
   getClientGroupsAndCategories,
-
+  submitTimesheet
 
 }
