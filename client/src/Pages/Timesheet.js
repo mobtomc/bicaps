@@ -11,17 +11,26 @@ const Timesheet = () => {
   useEffect(() => {
     axios.get('http://localhost:8080/api/project')
       .then(response => {
-        console.log('API response:', response.data); 
+        console.log('API response:', response.data);
         setProjects(response.data);
       })
       .catch(error => console.error('Error fetching projects:', error));
   }, []);
 
+  const formatTime = (date) => {
+    return date.toLocaleTimeString('en-GB', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
+
   const handleProjectChange = (index, selectedOption) => {
-    console.log('Selected Option:', selectedOption); 
+    console.log('Selected Option:', selectedOption);
     const newTimesheet = [...timesheet];
-    newTimesheet[index].project = selectedOption ? selectedOption.value : '';
-    newTimesheet[index].startTime = new Date().toLocaleString();
+    newTimesheet[index].project = selectedOption ? selectedOption.label : ''; // Store project name
+    newTimesheet[index].startTime = formatTime(new Date());
     setTimesheet(newTimesheet);
     if (index === timesheet.length - 1) {
       setTimesheet([...newTimesheet, { project: '', startTime: '', endTime: '' }]);
@@ -30,45 +39,30 @@ const Timesheet = () => {
 
   const handleEndTime = (index) => {
     const newTimesheet = [...timesheet];
-    newTimesheet[index].endTime = new Date().toLocaleString();
+    newTimesheet[index].endTime = formatTime(new Date());
     setTimesheet(newTimesheet);
   };
 
-  // const formatDate = (date) => {
-  //   const d = new Date(date);
-  //   return d.toISOString();
-  // };
+  const handleSubmit = () => {
+    const userId = user ? user.id : 'someUserId'; // Replace this with the actual user ID if needed
+    const entries = timesheet
+      .filter(entry => entry.project && entry.startTime && entry.endTime) // Ensure valid entries
+      .map(entry => ({
+        project: entry.project,
+        startTime: entry.startTime,
+        endTime: entry.endTime
+      }));
 
-  // const handleSubmit = () => {
-  //   if (!user) {
-  //     alert('User not logged in');
-  //     return;
-  //   }
-
-  //   const userId = user.id; 
-
-    
-  //   const formattedTimesheet = timesheet.map(entry => {
-  //     return {
-  //       project: entry.project,
-  //       startTime: entry.startTime ? formatDate(entry.startTime) : null,
-  //       endTime: entry.endTime ? formatDate(entry.endTime) : null,
-  //       date: new Date().toISOString(), // Or format as needed
-  //       month: new Date().toLocaleString('default', { month: 'long' }), // Format as needed
-  //       year: new Date().getFullYear()
-  //     };
-  //   });
-
-  //   axios.post('http://localhost:8080/api/submit', { userId, timesheet: formattedTimesheet })
-  //     .then(response => {
-  //       console.log('Timesheet submitted successfully:', response.data);
-  //       alert('Timesheet submitted successfully!');
-  //     })
-  //     .catch(error => {
-  //       console.error('Error submitting timesheet:', error.response ? error.response.data : error.message);
-  //       alert('Error submitting timesheet.');
-  //     });
-  // };
+    axios.post('http://localhost:8080/api/submit', { userId, entries })
+      .then(response => {
+        console.log('Timesheet submitted successfully:', response.data);
+        alert('Timesheet submitted successfully!');
+      })
+      .catch(error => {
+        console.error('Error submitting timesheet:', error);
+        alert('Error submitting timesheet.');
+      });
+  };
 
   return (
     <div className="p-4">
@@ -91,11 +85,11 @@ const Timesheet = () => {
             <tr key={index}>
               <td className="py-2 px-4 border-b">
                 <Select
-                  value={projects.find(project => project.value === entry.project)}
+                  value={projects.find(project => project.label === entry.project)}
                   onChange={(selectedOption) => handleProjectChange(index, selectedOption)}
                   options={projects}
                   getOptionLabel={(option) => option.label}
-                  getOptionValue={(option) => option.value}
+                  getOptionValue={(option) => option.label} // Changed to label
                   className="w-full"
                   placeholder="Select Project"
                 />
@@ -119,7 +113,7 @@ const Timesheet = () => {
       </table>
       <div className="mt-4">
         <button
-          // onClick={handleSubmit}
+          onClick={handleSubmit}
           className="p-2 bg-green-500 text-white rounded"
         >
           Submit Timesheet
@@ -130,6 +124,10 @@ const Timesheet = () => {
 };
 
 export default Timesheet;
+
+
+
+
 
 
 

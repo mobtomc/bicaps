@@ -95,24 +95,23 @@ const ClientGroupSchema = new Schema({
  //timesheetschema
  const timesheetSchema = new mongoose.Schema({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    type:String,
+   
     required: true
   },
   project: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Project',
+    type: String,
     required: true
   },
   startTime: {
-    type: Date,
+    type: String,
     required: true
   },
   endTime: {
-    type: Date
+    type: String
   },
   date: {
-    type: Date,
+    type: String, // dd-mm-yyyy format
     required: true
   },
  

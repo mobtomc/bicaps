@@ -1,6 +1,7 @@
 
-const model = require("../models/model")
-const { ClientGroup, EntityType, Category, ProjectType, Project } = require('../models/model');
+
+const mongoose = require('mongoose');
+const { ClientGroup, EntityType, Category, ProjectType, Project,Timesheet } = require('../models/model');
 // Fetch all categories
 const getCategories = async (req, res) => {
   try {
@@ -192,7 +193,7 @@ const getProjects = async (req, res) => {
 
     const projectOptions = projects.map(project => ({
       value: project._id.toString(),
-      label: `${project.clientGroupPerson} - ${project.projectType} (${project.year}, ${project.semester}, ${project.quarter}, ${project.month})`
+      label: `${project.clientGroupPerson} - ${project.projectType} (${project.year} ${project.semester} ${project.quarter} ${project.month})`
     }));
 
     console.log('Formatted project options:', projectOptions); // Log the formatted options
@@ -217,8 +218,31 @@ const getClientGroupsAndCategories = async (req, res) => {
 };
 //timesheet post 
 const submitTimesheet = async (req, res) => {
-//such that the data is submiteed for all employees in same schema but each employee have a unique id so that they can be targeted
+  const { userId, entries } = req.body;
+
+  if (!userId || !entries || !entries.length) {
+    return res.status(400).json({ error: 'User ID and entries are required' });
+  }
+
+  try {
+    const formattedEntries = entries.map(entry => ({
+      userId,
+      project: entry.project,
+      startTime: entry.startTime,
+      endTime: entry.endTime,
+      date: new Date().toLocaleDateString('en-GB'),
+      month: new Date().toLocaleString('en-GB', { month: 'long' }),
+      year: new Date().getFullYear()
+    }));
+
+    const savedEntries = await Timesheet.insertMany(formattedEntries);
+    res.status(201).json(savedEntries);
+  } catch (error) {
+    console.error('Error submitting timesheet:', error.message);
+    res.status(500).json({ error: error.message });
+  }
 };
+
 
 
 module.exports = {
