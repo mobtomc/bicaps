@@ -218,15 +218,16 @@ const getClientGroupsAndCategories = async (req, res) => {
 };
 //timesheet post 
 const submitTimesheet = async (req, res) => {
-  const { userId, entries } = req.body;
+  const { userId, userName, entries } = req.body; // Added userName
 
   if (!userId || !entries || !entries.length) {
-    return res.status(400).json({ error: 'User ID and entries are required' });
+    return res.status(400).json({ error: 'User ID, user name, and entries are required' });
   }
 
   try {
     const formattedEntries = entries.map(entry => ({
       userId,
+      userName, // Store the user name
       project: entry.project,
       startTime: entry.startTime,
       endTime: entry.endTime,
@@ -242,6 +243,7 @@ const submitTimesheet = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 //getTimesheet
 const getTimesheets = async (req, res) => {
   const { userId } = req.query;
@@ -258,6 +260,88 @@ const getTimesheets = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+//username
+const getUniqueStaffNames = async (req, res) => {
+  try {
+    const staffNames = await Timesheet.distinct('userName');
+    res.status(200).json(staffNames);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+//for period query
+const filterTimesheets = async (req, res) => {
+  const { staffNames, fromDate, toDate } = req.query;
+
+  try {
+    // Convert date strings to JavaScript Date objects
+    const fromISODate = new Date(fromDate);
+    const toISODate = new Date(toDate);
+
+    // Check the converted dates
+    console.log('From Date:', fromISODate);
+    console.log('To Date:', toISODate);
+
+    // Aggregate and filter timesheets
+    const timesheets = await Timesheet.aggregate([
+      {
+        $match: {
+          userName: { $in: staffNames.split(',') },
+          date: {
+            $gte: fromISODate,
+            $lte: toISODate
+          }
+        }
+      },
+      {
+        $addFields: {
+          startDateTime: {
+            $dateFromParts: {
+              year: { $year: "$date" },
+              month: { $month: "$date" },
+              day: { $dayOfMonth: "$date" },
+              hour: { $hour: "$startTime" },
+              minute: { $minute: "$startTime" },
+              second: { $second: "$startTime" }
+            }
+          },
+          endDateTime: {
+            $dateFromParts: {
+              year: { $year: "$date" },
+              month: { $month: "$date" },
+              day: { $dayOfMonth: "$date" },
+              hour: { $hour: "$endTime" },
+              minute: { $minute: "$endTime" },
+              second: { $second: "$endTime" }
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          startDateTime: 1,
+          endDateTime: 1,
+          duration: {
+            $divide: [
+              { $subtract: ["$endDateTime", "$startDateTime"] },
+              1000 * 60 // Convert milliseconds to minutes
+            ]
+          }
+        }
+      }
+    ]);
+
+    // Calculate total duration
+    const totalDuration = timesheets.reduce((acc, timesheet) => acc + timesheet.duration, 0);
+
+    res.json({ timesheets, totalDuration });
+  } catch (error) {
+    console.error('Error fetching filtered timesheets:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
 
 
 
@@ -280,6 +364,8 @@ module.exports = {
   getProjects,
   getClientGroupsAndCategories,
   submitTimesheet,
-  getTimesheets
+  getTimesheets,
+  getUniqueStaffNames,
+  filterTimesheets,
 
 }

@@ -29,9 +29,17 @@ const Timesheet = () => {
   const handleProjectChange = (index, selectedOption) => {
     console.log('Selected Option:', selectedOption);
     const newTimesheet = [...timesheet];
+
+    // Trigger the end time for the previous task if it's not already set
+    if (index > 0 && !newTimesheet[index - 1].endTime) {
+      newTimesheet[index - 1].endTime = formatTime(new Date());
+    }
+
     newTimesheet[index].project = selectedOption ? selectedOption.label : ''; // Store project name
     newTimesheet[index].startTime = formatTime(new Date());
     setTimesheet(newTimesheet);
+
+    // Add a new row if the last row is being filled
     if (index === timesheet.length - 1) {
       setTimesheet([...newTimesheet, { project: '', startTime: '', endTime: '' }]);
     }
@@ -45,15 +53,16 @@ const Timesheet = () => {
 
   const handleSubmit = () => {
     const userId = user ? user.id : 'someUserId'; 
+    const userName = user ? user.fullName : 'Unknown User'; // Get the user's full name
     const entries = timesheet
-      .filter(entry => entry.project && entry.startTime && entry.endTime) 
+      .filter(entry => entry.project && entry.startTime && entry.endTime)
       .map(entry => ({
         project: entry.project,
         startTime: entry.startTime,
         endTime: entry.endTime
       }));
 
-    axios.post('http://localhost:8080/api/submit', { userId, entries })
+    axios.post('http://localhost:8080/api/submit', { userId, userName, entries })
       .then(response => {
         console.log('Timesheet submitted successfully:', response.data);
         alert('Timesheet submitted successfully!');
@@ -124,6 +133,7 @@ const Timesheet = () => {
 };
 
 export default Timesheet;
+
 
 
 

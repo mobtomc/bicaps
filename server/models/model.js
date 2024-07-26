@@ -99,6 +99,10 @@ const ClientGroupSchema = new Schema({
    
     required: true
   },
+  userName: { // Added userName
+    type: String,
+    required: true
+  },
   project: {
     type: String,
     required: true

@@ -35,4 +35,11 @@ routes.route('/api/client-groups-and-categories')
 routes.route('/api/submit')   
    .post(controller.submitTimesheet)
    .get(controller.submitTimesheet);
+
+routes.route('/api/staff-names')
+   .get(controller.getUniqueStaffNames);
+ 
+routes.route('/api/filter-timesheets')
+   .get(controller.filterTimesheets);
+ 
 module.exports=routes;
