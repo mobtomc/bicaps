@@ -28,22 +28,34 @@ const Overview = () => {
   }, []);
 
   const handleSearch = async () => {
-  const { startDate, endDate } = dateRange;
-  try {
-    const response = await axios.get('http://localhost:8080/api/filter-timesheets', {
-      params: {
-        staffNames: selectedStaff.map(option => option.value).join(','),
-        fromDate: startDate.toISOString(),
-        toDate: endDate.toISOString()
-      }
-    });
-    console.log('API Response:', response.data); // Log response to check data
-    setTimesheets(response.data.timesheets);
-    setTotalDuration(response.data.totalDuration);
-  } catch (error) {
-    console.error('Error fetching timesheets:', error);
-  }
-};
+    const { startDate, endDate } = dateRange;
+    try {
+      const response = await axios.get('http://localhost:8080/api/filter-timesheets', {
+        params: {
+          staffNames: selectedStaff.map(option => option.value).join(','),
+          fromDate: startDate.toISOString(),
+          toDate: endDate.toISOString()
+        }
+      });
+
+      const filteredTimesheets = response.data.timesheets || [];
+      // Calculate total duration
+      const total = filteredTimesheets.reduce((acc, entry) => {
+        const start = new Date(entry.startTime);
+        const end = new Date(entry.endTime);
+        if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+          const duration = (end - start) / (1000 * 60); // duration in minutes
+          return acc + (isNaN(duration) ? 0 : duration);
+        }
+        return acc;
+      }, 0);
+
+      setTimesheets(filteredTimesheets);
+      setTotalDuration(total);
+    } catch (error) {
+      console.error('Error fetching timesheets:', error);
+    }
+  };
 
   const handleDateChange = (ranges) => {
     setDateRange(ranges.selection);
@@ -87,7 +99,7 @@ const Overview = () => {
 
       <div>
         <h2 className="text-xl font-semibold mb-2">Results</h2>
-        <p className="mb-4">Total Duration: {totalDuration} minutes</p>
+        <p className="mb-4">Total Duration: {totalDuration.toFixed(2) || '0.00'} minutes</p>
         <table className="min-w-full bg-white dark:bg-gray-800">
           <thead>
             <tr>
@@ -99,15 +111,23 @@ const Overview = () => {
             </tr>
           </thead>
           <tbody>
-            {timesheets.map((entry, index) => (
-              <tr key={index}>
-                <td className="py-2 px-4 border-b">{entry.userName}</td>
-                <td className="py-2 px-4 border-b">{entry.project}</td>
-                <td className="py-2 px-4 border-b">{entry.startTime}</td>
-                <td className="py-2 px-4 border-b">{entry.endTime}</td>
-                <td className="py-2 px-4 border-b">{entry.duration}</td>
-              </tr>
-            ))}
+            {timesheets.map((entry, index) => {
+              const start = new Date(entry.startTime);
+              const end = new Date(entry.endTime);
+              const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime())) 
+                ? ((end - start) / (1000 * 60)).toFixed(2)
+                : '0.00'; // duration in minutes
+
+              return (
+                <tr key={index}>
+                  <td className="py-2 px-4 border-b">{entry.userName}</td>
+                  <td className="py-2 px-4 border-b">{entry.project}</td>
+                  <td className="py-2 px-4 border-b">{start.toLocaleString()}</td>
+                  <td className="py-2 px-4 border-b">{end.toLocaleString()}</td>
+                  <td className="py-2 px-4 border-b">{duration}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
