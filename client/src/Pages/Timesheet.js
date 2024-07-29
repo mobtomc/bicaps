@@ -53,15 +53,16 @@ const Timesheet = () => {
 
   const handleSubmit = () => {
     const userId = user ? user.id : 'someUserId'; 
-    const userName = user ? user.fullName : 'Unknown User'; // Get the user's full name
+    const userName = user ? user.fullName : 'Unknown User';
     const entries = timesheet
       .filter(entry => entry.project && entry.startTime && entry.endTime)
       .map(entry => ({
         project: entry.project,
-        startTime: entry.startTime,
-        endTime: entry.endTime
+        startTime: new Date(`${new Date().toDateString()} ${entry.startTime}`), // Combine date and time
+        endTime: new Date(`${new Date().toDateString()} ${entry.endTime}`),     // Combine date and time
+        date: new Date() // Current date
       }));
-
+  
     axios.post('http://localhost:8080/api/submit', { userId, userName, entries })
       .then(response => {
         console.log('Timesheet submitted successfully:', response.data);
@@ -72,6 +73,7 @@ const Timesheet = () => {
         alert('Error submitting timesheet.');
       });
   };
+  
 
   return (
     <div className="p-4">
@@ -133,9 +135,6 @@ const Timesheet = () => {
 };
 
 export default Timesheet;
-
-
-
 
 
 
