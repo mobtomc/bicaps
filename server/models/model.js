@@ -94,31 +94,14 @@ const ClientGroupSchema = new Schema({
   
  //timesheetschema
  const timesheetSchema = new mongoose.Schema({
-  userId: {
-    type:String,
-   
-    required: true
-  },
-  userName: { // Added userName
-    type: String,
-    required: true
-  },
-  project: {
-    type: String,
-    required: true
-  },
-  startTime: {
-    type: String,
-    required: true
-  },
-  endTime: {
-    type: String
-  },
-  date: {
-    type: String, // dd-mm-yyyy format
-    required: true
-  },
- 
+  userId: { type: String, required: true },
+  userName: { type: String, required: true },
+  project: { type: String, required: true },
+  startTime: { type: Date, required: true },
+  endTime: { type: Date, required: true },
+  date: { type: Date, required: true },
+  month: { type: String, required: true },
+  year: { type: Number, required: true }
 });
 
 const Category=mongoose.model("Category",CategorySchema);
@@ -136,4 +119,3 @@ module.exports={
     Project,
     Timesheet
 }
-

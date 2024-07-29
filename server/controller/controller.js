@@ -1,5 +1,4 @@
 
-
 const mongoose = require('mongoose');
 const { ClientGroup, EntityType, Category, ProjectType, Project,Timesheet } = require('../models/model');
 // Fetch all categories
@@ -216,9 +215,9 @@ const getClientGroupsAndCategories = async (req, res) => {
     res.status(500).json({ error: "error.message" });
   }
 };
-//timesheet post 
+// Submit timesheet
 const submitTimesheet = async (req, res) => {
-  const { userId, userName, entries } = req.body; // Added userName
+  const { userId, userName, entries } = req.body;
 
   if (!userId || !entries || !entries.length) {
     return res.status(400).json({ error: 'User ID, user name, and entries are required' });
@@ -227,13 +226,13 @@ const submitTimesheet = async (req, res) => {
   try {
     const formattedEntries = entries.map(entry => ({
       userId,
-      userName, // Store the user name
+      userName,
       project: entry.project,
-      startTime: entry.startTime,
-      endTime: entry.endTime,
-      date: new Date().toLocaleDateString('en-GB'),
-      month: new Date().toLocaleString('en-GB', { month: 'long' }),
-      year: new Date().getFullYear()
+      startTime: new Date(entry.startTime), // Convert to Date object
+      endTime: new Date(entry.endTime),     // Convert to Date object
+      date: new Date(entry.date),           // Convert to Date object
+      month: new Date(entry.date).toLocaleString('en-GB', { month: 'long' }),
+      year: new Date(entry.date).getFullYear()
     }));
 
     const savedEntries = await Timesheet.insertMany(formattedEntries);
@@ -243,6 +242,7 @@ const submitTimesheet = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 //getTimesheet
 const getTimesheets = async (req, res) => {
@@ -269,80 +269,50 @@ const getUniqueStaffNames = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-//for period query
+const getFilteredTimesheets = async (staffNames, fromDate, toDate) => {
+  try {
+    const startDate = new Date(fromDate);
+    const endDate = new Date(toDate);
+    endDate.setHours(23, 59, 59, 999);
+
+    const timesheets = await Timesheet.find({
+      userName: { $in: staffNames },
+      date: { $gte: startDate, $lte: endDate }
+    }).exec();
+
+    const totalDuration = timesheets.reduce((acc, sheet) => acc + sheet.duration, 0);
+
+    return {
+      timesheets,
+      totalDuration
+    };
+  } catch (error) {
+    console.error("Error fetching timesheets:", error);
+    throw error;
+  }
+};
+
+// Filter timesheets
 const filterTimesheets = async (req, res) => {
   const { staffNames, fromDate, toDate } = req.query;
 
+  if (!staffNames || !fromDate || !toDate) {
+    return res.status(400).json({ error: 'staffNames, fromDate, and toDate are required' });
+  }
+
   try {
-    // Convert date strings to JavaScript Date objects
-    const fromISODate = new Date(fromDate);
-    const toISODate = new Date(toDate);
+    // Convert staffNames to an array if it's a comma-separated string
+    const staffNamesArray = staffNames.split(',');
 
-    // Check the converted dates
-    console.log('From Date:', fromISODate);
-    console.log('To Date:', toISODate);
+    // Call the getFilteredTimesheets function
+    const result = await getFilteredTimesheets(staffNamesArray, fromDate, toDate);
 
-    // Aggregate and filter timesheets
-    const timesheets = await Timesheet.aggregate([
-      {
-        $match: {
-          userName: { $in: staffNames.split(',') },
-          date: {
-            $gte: fromISODate,
-            $lte: toISODate
-          }
-        }
-      },
-      {
-        $addFields: {
-          startDateTime: {
-            $dateFromParts: {
-              year: { $year: "$date" },
-              month: { $month: "$date" },
-              day: { $dayOfMonth: "$date" },
-              hour: { $hour: "$startTime" },
-              minute: { $minute: "$startTime" },
-              second: { $second: "$startTime" }
-            }
-          },
-          endDateTime: {
-            $dateFromParts: {
-              year: { $year: "$date" },
-              month: { $month: "$date" },
-              day: { $dayOfMonth: "$date" },
-              hour: { $hour: "$endTime" },
-              minute: { $minute: "$endTime" },
-              second: { $second: "$endTime" }
-            }
-          }
-        }
-      },
-      {
-        $project: {
-          startDateTime: 1,
-          endDateTime: 1,
-          duration: {
-            $divide: [
-              { $subtract: ["$endDateTime", "$startDateTime"] },
-              1000 * 60 // Convert milliseconds to minutes
-            ]
-          }
-        }
-      }
-    ]);
-
-    // Calculate total duration
-    const totalDuration = timesheets.reduce((acc, timesheet) => acc + timesheet.duration, 0);
-
-    res.json({ timesheets, totalDuration });
+    res.status(200).json(result);
   } catch (error) {
     console.error('Error fetching filtered timesheets:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-
-
-
 
 
 

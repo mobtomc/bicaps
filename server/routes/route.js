@@ -36,10 +36,13 @@ routes.route('/api/submit')
    .post(controller.submitTimesheet)
    .get(controller.submitTimesheet);
 
-routes.route('/api/staff-names')
+routes.route('/api/unique-staff-names')
    .get(controller.getUniqueStaffNames);
  
 routes.route('/api/filter-timesheets')
    .get(controller.filterTimesheets);
+
+routes.route('/api/timesheets/filter')
+   .get(controller.filterTimesheets);   
  
 module.exports=routes;
