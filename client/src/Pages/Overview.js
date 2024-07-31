@@ -29,12 +29,9 @@ const Overview = () => {
       .catch(error => console.error('Error fetching staff names:', error));
 
     // Fetch projects
-    axios.get('http://localhost:8080/api/project')
+    axios.get('http://localhost:8080/api/projects-by-name')
       .then(response => {
-        setProjects(response.data.map(project => ({
-          value: project.value,
-          label: project.label
-        })));
+        setProjects(response.data);
       })
       .catch(error => console.error('Error fetching projects:', error));
   }, []);

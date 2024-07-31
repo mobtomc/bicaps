@@ -29,6 +29,9 @@ routes.route('/api/project')
    .get(controller.getProjects)
    .post(controller.createProject);
 
+routes.route('/api/projects-by-name')   
+   .get(controller.getProjectsByName);
+
 routes.route('/api/client-groups-and-categories')   
    .get(controller.getClientGroupsAndCategories);
 //for the timesheet

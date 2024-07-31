@@ -201,8 +201,28 @@ const getProjects = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-
+// New function to get projects by name
+const getProjectsByName = async (req, res) => {
+  console.log('Received GET request for /api/projects-by-name');
+  try {
+    const projects = await Project.find().select('clientGroupPerson projectType year semester month quarter period');
+    console.log('Fetched projects:', projects);
+    
+    const projectOptions = projects.map(project => {
+      const projectName = `${project.clientGroupPerson} - ${project.projectType} (${project.year} ${project.semester} ${project.quarter} ${project.month})`;
+      return {
+        value: projectName,
+        label: projectName
+      };
+    });
+    
+    console.log('Formatted project options:', projectOptions);
+    res.status(200).json(projectOptions);
+  } catch (error) {
+    console.error('Error fetching projects by name:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 //for the project dropdowns
 const getClientGroupsAndCategories = async (req, res) => {
@@ -346,6 +366,7 @@ module.exports = {
   getProjectTypes,
   createProject,
   getProjects,
+  getProjectsByName,
   getClientGroupsAndCategories,
   submitTimesheet,
   getTimesheets,
