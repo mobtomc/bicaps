@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 const { ClientGroup, EntityType, Category, ProjectType, Project,Timesheet } = require('../models/model');
 // Fetch all categories
@@ -269,19 +268,58 @@ const getUniqueStaffNames = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-const getFilteredTimesheets = async (staffNames, fromDate, toDate) => {
+// Filter timesheets
+const filterTimesheets = async (req, res) => {
+  const { staffNames, fromDate, toDate, project } = req.query;
+
+  if (!fromDate || !toDate) {
+    return res.status(400).json({ error: 'fromDate and toDate are required' });
+  }
+
+  try {
+    // Convert staffNames to an array if it's a comma-separated string
+    const staffNamesArray = staffNames === 'all' ? ['all'] : staffNames.split(',');
+
+    // Call the getFilteredTimesheets function
+    const result = await getFilteredTimesheets(staffNamesArray, fromDate, toDate, project);
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error fetching filtered timesheets:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Ensure getFilteredTimesheets handles the project filter if provided
+const getFilteredTimesheets = async (staffNames, fromDate, toDate, project) => {
   try {
     const startDate = new Date(fromDate);
     const endDate = new Date(toDate);
     endDate.setHours(23, 59, 59, 999);
 
-    const timesheets = await Timesheet.find({
-      userName: { $in: staffNames },
+    // Build query
+    const query = {
       date: { $gte: startDate, $lte: endDate }
-    }).exec();
+    };
 
-    const totalDuration = timesheets.reduce((acc, sheet) => acc + sheet.duration, 0);
+    if (staffNames && staffNames.length && staffNames[0] !== 'all') {
+      query.userName = { $in: staffNames };
+    }
 
+    if (project) {
+      query.project = project;
+    }
+
+    const timesheets = await Timesheet.find(query).exec();
+
+    // Assuming each timesheet has a 'duration' field; adjust if necessary
+    const totalDuration = timesheets.reduce((acc, sheet) => {
+      const start = new Date(sheet.startTime);
+      const end = new Date(sheet.endTime);
+      const duration = (end - start) / (1000 * 60); // duration in minutes
+      return acc + (isNaN(duration) ? 0 : duration);
+    }, 0);
+  
     return {
       timesheets,
       totalDuration
@@ -291,30 +329,6 @@ const getFilteredTimesheets = async (staffNames, fromDate, toDate) => {
     throw error;
   }
 };
-
-// Filter timesheets
-const filterTimesheets = async (req, res) => {
-  const { staffNames, fromDate, toDate } = req.query;
-
-  if (!staffNames || !fromDate || !toDate) {
-    return res.status(400).json({ error: 'staffNames, fromDate, and toDate are required' });
-  }
-
-  try {
-    // Convert staffNames to an array if it's a comma-separated string
-    const staffNamesArray = staffNames.split(',');
-
-    // Call the getFilteredTimesheets function
-    const result = await getFilteredTimesheets(staffNamesArray, fromDate, toDate);
-
-    res.status(200).json(result);
-  } catch (error) {
-    console.error('Error fetching filtered timesheets:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
-
 
 module.exports = {
   getCategories,

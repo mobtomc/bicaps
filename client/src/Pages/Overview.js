@@ -9,7 +9,9 @@ import { useUser } from '@clerk/clerk-react';
 const Overview = () => {
   const { user } = useUser();
   const [staffNames, setStaffNames] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState([]);
+  const [selectedProject, setSelectedProject] = useState(null);
   const [dateRange, setDateRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -19,43 +21,59 @@ const Overview = () => {
   const [totalDuration, setTotalDuration] = useState(0);
 
   useEffect(() => {
-    // Fetch staff names and dates
-    axios.get('http://localhost:8080/api/unique-staff-names')
+    // Fetch staff names
+   axios.get('http://localhost:8080/api/unique-staff-names')
       .then(response => {
         setStaffNames(response.data.map(name => ({ value: name, label: name })));
       })
       .catch(error => console.error('Error fetching staff names:', error));
+
+    // Fetch projects
+    axios.get('http://localhost:8080/api/project')
+      .then(response => {
+        setProjects(response.data.map(project => ({
+          value: project.value,
+          label: project.label
+        })));
+      })
+      .catch(error => console.error('Error fetching projects:', error));
   }, []);
 
   const handleSearch = async () => {
-    const { startDate, endDate } = dateRange;
-    try {
-      const response = await axios.get('http://localhost:8080/api/filter-timesheets', {
-        params: {
-          staffNames: selectedStaff.map(option => option.value).join(','),
-          fromDate: startDate.toISOString(),
-          toDate: endDate.toISOString()
-        }
-      });
+  const { startDate, endDate } = dateRange;
+  try {
+    const staffNamesParam = selectedStaff.some(option => option.value === 'all')
+      ? '' 
+      : selectedStaff.map(option => option.value).join(',');
 
-      const filteredTimesheets = response.data.timesheets || [];
-      // Calculate total duration
-      const total = filteredTimesheets.reduce((acc, entry) => {
-        const start = new Date(entry.startTime);
-        const end = new Date(entry.endTime);
-        if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
-          const duration = (end - start) / (1000 * 60); // duration in minutes
-          return acc + (isNaN(duration) ? 0 : duration);
-        }
-        return acc;
-      }, 0);
+    const response = await axios.get('http://localhost:8080/api/filter-timesheets', {
+      params: {
+        staffNames: staffNamesParam,
+        project: selectedProject?.value || '', 
+        fromDate: startDate.toISOString(),
+        toDate: endDate.toISOString()
+      }
+    });
 
-      setTimesheets(filteredTimesheets);
-      setTotalDuration(total);
-    } catch (error) {
-      console.error('Error fetching timesheets:', error);
-    }
-  };
+    console.log('API Response:', response.data); // Log the API response
+
+    const filteredTimesheets = response.data.timesheets || [];
+    const total = filteredTimesheets.reduce((acc, entry) => {
+      const start = new Date(entry.startTime);
+      const end = new Date(entry.endTime);
+      if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+        const duration = (end - start) / (1000 * 60); // duration in minutes
+        return acc + (isNaN(duration) ? 0 : duration);
+      }
+      return acc;
+    }, 0);
+
+    setTimesheets(filteredTimesheets);
+    setTotalDuration(total);
+  } catch (error) {
+    console.error('Error fetching timesheets:', error);
+  }
+};
 
   const handleDateChange = (ranges) => {
     setDateRange(ranges.selection);
@@ -71,31 +89,44 @@ const Overview = () => {
         </div>
       )}
 
-      <div className="mb-4">
-        <label className="block text-lg font-semibold mb-2">Staff Names</label>
-        <Select
-          isMulti
-          value={selectedStaff}
-          onChange={setSelectedStaff}
-          options={staffNames}
-          className="mb-4"
-          placeholder="Select Staff Names"
-        />
+      <div className="flex flex-col md:flex-row gap-4 mb-4">
+        <div className="flex-1">
+          <label className="block text-lg font-semibold mb-2">Staff Names</label>
+          <Select
+            isMulti
+            value={selectedStaff}
+            onChange={setSelectedStaff}
+            options={staffNames}
+            className="mb-4"
+            placeholder="Select Staff Names"
+          />
+          
+          <label className="block text-lg font-semibold mb-2">Project</label>
+          <Select
+            value={selectedProject}
+            onChange={setSelectedProject}
+            options={projects}
+            className="mb-4"
+            placeholder="Select a Project"
+          />
+        </div>
 
-        <label className="block text-lg font-semibold mb-2">Date Range</label>
-        <DateRangePicker
-          ranges={[dateRange]}
-          onChange={handleDateChange}
-          className="mb-4"
-        />
-
-        <button
-          onClick={handleSearch}
-          className="p-2 bg-green-500 text-white rounded"
-        >
-          Search
-        </button>
+        <div className="flex-1">
+          <label className="block text-lg font-semibold mb-2">Date Range</label>
+          <DateRangePicker
+            ranges={[dateRange]}
+            onChange={handleDateChange}
+            className="mb-4"
+          />
+        </div>
       </div>
+
+      <button
+        onClick={handleSearch}
+        className="p-2 bg-green-500 text-white rounded"
+      >
+        Search
+      </button>
 
       <div>
         <h2 className="text-xl font-semibold mb-2">Results</h2>
