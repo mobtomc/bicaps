@@ -106,6 +106,9 @@ const Overview = () => {
             className="mb-4"
             placeholder="Select a Project"
           />
+           <a href="/costs" className="btn bg-green-300">
+            COSTS
+          </a>
         </div>
 
         <div className="flex-1">

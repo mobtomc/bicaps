@@ -12,6 +12,7 @@ import ProjectType from './Pages/ProjectType';
 import AddProject from './Pages/AddProject';
 import Timesheet from './Pages/Timesheet';
 import Overview from './Pages/Overview';
+import  Cost from './Pages/Cost'
 import {
   ClerkProvider,
   SignedIn,
@@ -46,6 +47,7 @@ function App() {
               <Route path="/addproject" element={<AddProject />} />
               <Route path="/timesheet" element={<Timesheet/>} />
               <Route path="/overview" element={<Overview/>} />
+              <Route path="/costs" element={<Cost/>} />
             </Routes>
           </BrowserRouter>
           

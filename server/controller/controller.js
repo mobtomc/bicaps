@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { ClientGroup, EntityType, Category, ProjectType, Project,Timesheet } = require('../models/model');
+const { ClientGroup, EntityType, Category, ProjectType, Project,Timesheet,Cost } = require('../models/model');
 // Fetch all categories
 const getCategories = async (req, res) => {
   try {
@@ -349,7 +349,57 @@ const getFilteredTimesheets = async (staffNames, fromDate, toDate, project) => {
     throw error;
   }
 };
+//cost page controller 
+// Get all costs
+const getCosts = async (req, res) => {
+  try {
+    const costs = await Cost.find();
+    res.status(200).json(costs);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+//create and update
+// Create or update cost for a user
+const upsertCost = async (req, res) => {
+  const { userNames, perHourCost } = req.body;
 
+  if (!userNames || !Array.isArray(userNames) || userNames.length === 0 || perHourCost === undefined) {
+    return res.status(400).json({ message: 'userNames (array) and perHourCost are required' });
+  }
+
+  try {
+    // Iterate over each userName and create/update cost
+    const results = [];
+    for (const userName of userNames) {
+      const cost = await Cost.findOneAndUpdate(
+        { userName },
+        { perHourCost },
+        { new: true, upsert: true }
+      );
+      results.push(cost);
+    }
+    
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Delete a cost entry
+const deleteCost = async (req, res) => {
+  const { userName } = req.params;
+
+  try {
+    const cost = await Cost.findOneAndDelete({ userName });
+    if (!cost) {
+      return res.status(404).json({ message: 'Cost not found' });
+    }
+    res.status(200).json({ message: 'Cost deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 module.exports = {
   getCategories,
   createCategory,
@@ -372,5 +422,7 @@ module.exports = {
   getTimesheets,
   getUniqueStaffNames,
   filterTimesheets,
-
+  getCosts,
+  upsertCost,
+  deleteCost
 }

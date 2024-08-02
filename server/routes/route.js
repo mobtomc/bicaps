@@ -47,5 +47,10 @@ routes.route('/api/filter-timesheets')
 
 routes.route('/api/timesheets/filter')
    .get(controller.filterTimesheets);   
- 
+ //cost 
+routes.route('/api/costs')
+   .get(controller.getCosts)   
+   .post(controller.upsertCost) ; 
+routes.route('/api/costs/:userName')
+   .delete(controller.deleteCost);    
 module.exports=routes;

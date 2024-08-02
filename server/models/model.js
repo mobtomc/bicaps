@@ -104,18 +104,31 @@ const ClientGroupSchema = new Schema({
   year: { type: Number, required: true }
 });
 
+// Define schema for Cost
+const CostSchema = new Schema({
+  userName: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  perHourCost: {
+    type: Number,
+    required: true
+  }
+});
 const Category=mongoose.model("Category",CategorySchema);
 const ClientGroup = mongoose.model('ClientGroup', ClientGroupSchema);
 const EntityType = mongoose.model('EntityType', EntityTypeSchema);
 const ProjectType = mongoose.model('ProjectType',ProjectTypeSchema);
 const Project= mongoose.model('Project',projectSchema)
 const Timesheet=mongoose.model('Timesheet',timesheetSchema)
-
+const Cost = mongoose.model('Cost', CostSchema);
 module.exports={
     Category,
     ClientGroup,
     EntityType,
     ProjectType,
     Project,
-    Timesheet
+    Timesheet,
+    Cost
 }
