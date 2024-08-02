@@ -57,6 +57,19 @@ export default function CostPage() {
     }
   };
 
+  const handleDelete = async (userName) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/costs/${userName}`);
+      setMessage('Cost deleted successfully!');
+      // Refresh costs after delete
+      const response = await axios.get('http://localhost:8080/api/costs');
+      setCosts(response.data);
+    } catch (error) {
+      console.error('Error deleting cost:', error);
+      setMessage('Failed to delete cost.');
+    }
+  };
+
   return (
     <div className="p-6">
       <h1 className='text-2xl font-bold mb-6'>Manage Salaries</h1>
@@ -92,9 +105,9 @@ export default function CostPage() {
         <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
           <thead className="bg-gray-100 border-b border-gray-300">
             <tr>
-              <th className="py-3 px-4  text-gray-600 font-medium">User Name</th>
-              <th className="py-3 px-4  text-gray-600 font-medium">Per Hour Cost</th>
-              <th className="py-3 px-4  text-gray-600 font-medium">Action</th>
+              <th className="py-3 px-4 text-gray-600 font-medium">User Name</th>
+              <th className="py-3 px-4 text-gray-600 font-medium">Per Hour Cost</th>
+              <th className="py-3 px-4 text-gray-600 font-medium">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -105,9 +118,15 @@ export default function CostPage() {
                 <td className="py-3 px-4 text-center">
                   <button 
                     onClick={() => handleEdit(cost.userName, cost.perHourCost)} 
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
                   >
                     Edit
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(cost.userName)} 
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>

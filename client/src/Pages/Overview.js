@@ -133,7 +133,7 @@ const Overview = () => {
             placeholder="Select Staff Names"
           />
           
-          <label className="block text-lg font-semibold mb-2 mt-16">Project</label>
+          <label className="block text-lg font-semibold mb-2 mt-16">Specific Project</label>
           <Select
             value={selectedProject}
             onChange={setSelectedProject}
