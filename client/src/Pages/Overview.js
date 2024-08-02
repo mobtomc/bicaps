@@ -19,10 +19,12 @@ const Overview = () => {
   });
   const [timesheets, setTimesheets] = useState([]);
   const [totalDuration, setTotalDuration] = useState(0);
+  const [costs, setCosts] = useState({});
+  const [totalCost, setTotalCost] = useState(0);
 
   useEffect(() => {
     // Fetch staff names
-   axios.get('http://localhost:8080/api/unique-staff-names')
+    axios.get('http://localhost:8080/api/unique-staff-names')
       .then(response => {
         setStaffNames(response.data.map(name => ({ value: name, label: name })));
       })
@@ -34,46 +36,79 @@ const Overview = () => {
         setProjects(response.data);
       })
       .catch(error => console.error('Error fetching projects:', error));
+
+    // Fetch costs
+    axios.get('http://localhost:8080/api/costs')
+      .then(response => {
+        const costMap = response.data.reduce((map, cost) => {
+          map[cost.userName] = cost.perHourCost;
+          return map;
+        }, {});
+        setCosts(costMap);
+      })
+      .catch(error => console.error('Error fetching costs:', error));
   }, []);
 
   const handleSearch = async () => {
-  const { startDate, endDate } = dateRange;
-  try {
-    const staffNamesParam = selectedStaff.some(option => option.value === 'all')
-      ? '' 
-      : selectedStaff.map(option => option.value).join(',');
+    const { startDate, endDate } = dateRange;
+    try {
+      const staffNamesParam = selectedStaff.some(option => option.value === 'all')
+        ? '' 
+        : selectedStaff.map(option => option.value).join(',');
 
-    const response = await axios.get('http://localhost:8080/api/filter-timesheets', {
-      params: {
-        staffNames: staffNamesParam,
-        project: selectedProject?.value || '', 
-        fromDate: startDate.toISOString(),
-        toDate: endDate.toISOString()
-      }
-    });
+      const response = await axios.get('http://localhost:8080/api/filter-timesheets', {
+        params: {
+          staffNames: staffNamesParam,
+          project: selectedProject?.value || '', 
+          fromDate: startDate.toISOString(),
+          toDate: endDate.toISOString()
+        }
+      });
 
-    console.log('API Response:', response.data); // Log the API response
+      console.log('API Response:', response.data); // Log the API response
 
-    const filteredTimesheets = response.data.timesheets || [];
-    const total = filteredTimesheets.reduce((acc, entry) => {
-      const start = new Date(entry.startTime);
-      const end = new Date(entry.endTime);
-      if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
-        const duration = (end - start) / (1000 * 60); // duration in minutes
-        return acc + (isNaN(duration) ? 0 : duration);
-      }
-      return acc;
-    }, 0);
+      const filteredTimesheets = response.data.timesheets || [];
+      const total = filteredTimesheets.reduce((acc, entry) => {
+        const start = new Date(entry.startTime);
+        const end = new Date(entry.endTime);
+        if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+          const duration = (end - start) / (1000 * 60); // duration in minutes
+          return acc + (isNaN(duration) ? 0 : duration);
+        }
+        return acc;
+      }, 0);
 
-    setTimesheets(filteredTimesheets);
-    setTotalDuration(total);
-  } catch (error) {
-    console.error('Error fetching timesheets:', error);
-  }
-};
+      setTimesheets(filteredTimesheets);
+      setTotalDuration(total);
+
+      // Calculate total cost
+      const totalCost = filteredTimesheets.reduce((acc, entry) => {
+        const perHourCost = costs[entry.userName] || 0;
+        const start = new Date(entry.startTime);
+        const end = new Date(entry.endTime);
+        const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime())) 
+          ? (end - start) / (1000 * 60)
+          : 0; // duration in minutes
+        return acc + (perHourCost * (duration / 60)); // duration in hours
+      }, 0);
+
+      setTotalCost(totalCost);
+
+    } catch (error) {
+      console.error('Error fetching timesheets:', error);
+    }
+  };
 
   const handleDateChange = (ranges) => {
     setDateRange(ranges.selection);
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2
+    }).format(amount);
   };
 
   return (
@@ -98,7 +133,7 @@ const Overview = () => {
             placeholder="Select Staff Names"
           />
           
-          <label className="block text-lg font-semibold mb-2">Project</label>
+          <label className="block text-lg font-semibold mb-2 mt-16">Project</label>
           <Select
             value={selectedProject}
             onChange={setSelectedProject}
@@ -106,8 +141,8 @@ const Overview = () => {
             className="mb-4"
             placeholder="Select a Project"
           />
-           <a href="/costs" className="btn bg-green-300">
-            COSTS
+          <a href="/costs" className="btn bg-green-300 mt-16">
+            Set Salaries
           </a>
         </div>
 
@@ -123,14 +158,15 @@ const Overview = () => {
 
       <button
         onClick={handleSearch}
-        className="p-2 bg-green-500 text-white rounded"
+        className="p-2 bg-green-500 text-white rounded mb-8"
       >
         Search
       </button>
 
       <div>
         <h2 className="text-xl font-semibold mb-2">Results</h2>
-        <p className="mb-4">Total Duration: {totalDuration.toFixed(2) || '0.00'} minutes</p>
+        <p className="mb-4">Total Duration: {totalDuration.toLocaleString()} minutes ,  Total Cost: {formatCurrency(totalCost)}</p>
+       
         <table className="min-w-full bg-white dark:bg-gray-800">
           <thead>
             <tr>
@@ -167,3 +203,4 @@ const Overview = () => {
 };
 
 export default Overview;
+
