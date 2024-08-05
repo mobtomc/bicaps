@@ -290,7 +290,6 @@ const getUniqueStaffNames = async (req, res) => {
 };
 // Filter timesheets
 // Controller to filter timesheets
-// Controller to filter timesheets
 const filterTimesheets = async (req, res) => {
   const { staffNames, fromDate, toDate, projectSubstring } = req.query;
 

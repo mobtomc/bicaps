@@ -3,13 +3,16 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Select from 'react-select';
 import ExportButton from "../Components/ExportButton";
+import { useUser } from '@clerk/clerk-react'; // Import useUser
 
 const Records = () => {
+  const { user } = useUser(); // Get user data
   const [data, setData] = useState([]);
   const [groupNames, setGroupNames] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedPersonName, setSelectedPersonName] = useState(null);
   const [tabledark, setTableDark] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false); // State to track if user is admin
 
   const getData = async () => {
     try {
@@ -73,6 +76,13 @@ const Records = () => {
   useEffect(() => {
     getData();  // Fetch data when selectedGroup changes
   }, [selectedGroup]);
+
+  useEffect(() => {
+    if (user) {
+      const role = user.publicMetadata?.role;
+      setIsAdmin(role === 'Admin');
+    }
+  }, [user]);
 
   return (
     <div className="container mx-auto p-4">
@@ -159,34 +169,38 @@ const Records = () => {
                 <td>{eachData.email}</td>
                 <td>{eachData.phoneNo}</td>
                 <td>{eachData.pan}</td>
-                <td>
-                  <Link to={`/update/${eachData._id}`}>
-                    <button
-                      className="btn btn-primary mx-1"
-                      onClick={() =>
-                        setToLocalStorage(
-                          eachData._id,
-                          eachData.personName,
-                          eachData.email,
-                          eachData.pan,
-                          eachData.phoneNo,
-                          eachData.groupName,
-                          eachData.entityName
-                        )
-                      }
-                    >
-                      Edit
-                    </button>
-                  </Link>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-danger mx-1"
-                    onClick={() => handleDelete(eachData._id)}
-                  >
-                    Delete
-                  </button>
-                </td>
+                {isAdmin && (
+                  <>
+                    <td>
+                      <Link to={`/update/${eachData._id}`}>
+                        <button
+                          className="btn btn-primary mx-1"
+                          onClick={() =>
+                            setToLocalStorage(
+                              eachData._id,
+                              eachData.personName,
+                              eachData.email,
+                              eachData.pan,
+                              eachData.phoneNo,
+                              eachData.groupName,
+                              eachData.entityName
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+                      </Link>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-danger mx-1"
+                        onClick={() => handleDelete(eachData._id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
           </tbody>
@@ -197,5 +211,3 @@ const Records = () => {
 };
 
 export default Records;
-
-

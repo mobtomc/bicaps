@@ -28,16 +28,12 @@ const Overview = () => {
     if (user) {
       console.log('User Data:', user);
       console.log('Public Metadata:', user.publicMetadata);
-
-      // Adjust based on the actual structure
       const role = user.publicMetadata?.role;
       setIsAdmin(role === 'Admin');
       console.log('Role:', role);
       console.log('Is Admin:', role === 'Admin');
     }
   }, [user]);
-
-  // Log user information for debugging
   useEffect(() => {
     console.log('User Data:', user);
     console.log('Is Admin:', isAdmin);
@@ -216,7 +212,7 @@ const Overview = () => {
       </div>
 
       {isAdmin && (
-        <div>
+        <div className='mb-4'>
           <h2 className="text-xl font-semibold mb-2">Staff Summary:</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {staffData.map((data, index) => (
