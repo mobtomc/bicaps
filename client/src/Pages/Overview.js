@@ -22,6 +22,26 @@ const Overview = () => {
   const [costs, setCosts] = useState({});
   const [totalCost, setTotalCost] = useState(0);
   const [staffData, setStaffData] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      console.log('User Data:', user);
+      console.log('Public Metadata:', user.publicMetadata);
+
+      // Adjust based on the actual structure
+      const role = user.publicMetadata?.role;
+      setIsAdmin(role === 'Admin');
+      console.log('Role:', role);
+      console.log('Is Admin:', role === 'Admin');
+    }
+  }, [user]);
+
+  // Log user information for debugging
+  useEffect(() => {
+    console.log('User Data:', user);
+    console.log('Is Admin:', isAdmin);
+  }, [user, isAdmin]);
 
   useEffect(() => {
     // Fetch staff names
@@ -58,13 +78,13 @@ const Overview = () => {
     const { startDate, endDate } = dateRange;
 
     try {
-      const staffNamesParam = selectedStaff.length === 0
-        ? 'all'
-        : selectedStaff.map(option => option.value).join(',');
+      const staffNamesParam = isAdmin
+        ? (selectedStaff.length === 0 ? 'all' : selectedStaff.map(option => option.value).join(','))
+        : user.fullName;
 
       const params = {
         staffNames: staffNamesParam,
-        projectSubstring: projectSearch.trim(), // Trim spaces around search term
+        projectSubstring: projectSearch.trim(),
         fromDate: startDate ? startDate.toISOString() : undefined,
         toDate: endDate ? endDate.toISOString() : undefined
       };
@@ -89,7 +109,7 @@ const Overview = () => {
         const end = new Date(entry.endTime);
         const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime())) 
           ? (end - start) / (1000 * 60) 
-          : 0; // duration in minutes
+          : 0;
         return acc + (perHourCost * (duration / 60)); // duration in hours
       }, 0);
 
@@ -102,7 +122,7 @@ const Overview = () => {
         const end = new Date(entry.endTime);
         const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime())) 
           ? (end - start) / (1000 * 60) 
-          : 0; // duration in minutes
+          : 0;
         if (!map[entry.userName]) {
           map[entry.userName] = { totalDuration: 0, totalCost: 0 };
         }
@@ -145,32 +165,45 @@ const Overview = () => {
       )}
 
       <div className="flex flex-col md:flex-row gap-4 mb-4">
-        <div className="flex-1">
-          <label className="block text-lg font-semibold mb-2">Staff Names</label>
-          <Select
-            isMulti
-            value={selectedStaff}
-            onChange={setSelectedStaff}
-            options={staffNames}
-            className="mb-4"
-            placeholder="Select Staff Names (Optional)"
-          />
+        {isAdmin ? (
+          <div className="flex-1">
+            <label className="block text-lg font-semibold mb-2">Staff Names</label>
+            <Select
+              isMulti
+              value={selectedStaff}
+              onChange={setSelectedStaff}
+              options={staffNames}
+              className="mb-4"
+              placeholder="Select Staff Names (Optional)"
+            />
 
-          <label className="block text-lg font-semibold mb-2 mt-16">Project Search</label>
-          <input
-            type="text"
-            value={projectSearch}
-            onChange={(e) => setProjectSearch(e.target.value)}
-            placeholder="Search projects"
-            className="mb-4 p-2 border rounded mx-2"
-          />
-          <button
-            onClick={() => window.location.href = '/costs'}
-            className="p-2 bg-green-500 text-white rounded mb-2 mx-4"
-          >
-            Set Salaries
-          </button>
-        </div>
+            <label className="block text-lg font-semibold mb-2 mt-16">Project Search</label>
+            <input
+              type="text"
+              value={projectSearch}
+              onChange={(e) => setProjectSearch(e.target.value)}
+              placeholder="Search projects"
+              className="mb-4 p-2 border rounded mx-2"
+            />
+            <button
+              onClick={() => window.location.href = '/costs'}
+              className="p-2 bg-green-500 text-white rounded mb-2 mx-4"
+            >
+              Set Salaries
+            </button>
+          </div>
+        ) : (
+          <div className="flex-1">
+            <label className="block text-lg font-semibold mb-2">Project Search</label>
+            <input
+              type="text"
+              value={projectSearch}
+              onChange={(e) => setProjectSearch(e.target.value)}
+              placeholder="Search projects"
+              className="mb-4 p-2 border rounded mx-2"
+            />
+          </div>
+        )}
 
         <div className="flex-1">
           <label className="block text-lg font-semibold mb-2">Date Range</label>
@@ -182,20 +215,22 @@ const Overview = () => {
         </div>
       </div>
 
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold mb-2">Staff Summary:</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {staffData.map((data, index) => (
-            <div key={index} className="p-4 border rounded shadow-md bg-white">
-              <h3 className="text-lg font-semibold">{data.userName}</h3>
-              <p>Total Duration: {data.totalDuration.toLocaleString()} minutes</p>
-              <p>Total Cost: {formatCurrency(data.totalCost)}</p>
-            </div>
-          ))}
+      {isAdmin && (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Staff Summary:</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {staffData.map((data, index) => (
+              <div key={index} className="p-4 border rounded shadow-md bg-white">
+                <h3 className="text-lg font-semibold">{data.userName}</h3>
+                <p>Total Duration: {data.totalDuration.toLocaleString()} minutes</p>
+                <p>Total Cost: {formatCurrency(data.totalCost)}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div>
+      <div className="mb-4">
         <h2 className="text-xl font-semibold mb-2">Results</h2>
         <p className="mb-4">Total Duration: {totalDuration.toLocaleString()} minutes, Total Cost: {formatCurrency(totalCost)}</p>
 
@@ -206,24 +241,23 @@ const Overview = () => {
               <th className="py-2 px-4 border-b">Project</th>
               <th className="py-2 px-4 border-b">Start Time</th>
               <th className="py-2 px-4 border-b">End Time</th>
-              <th className="py-2 px-4 border-b">Duration (Minutes)</th>
+              <th className="py-2 px-4 border-b">Duration (min)</th>
             </tr>
           </thead>
           <tbody>
             {timesheets.map((entry, index) => {
               const start = new Date(entry.startTime);
               const end = new Date(entry.endTime);
-              const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime()))
-                ? ((end - start) / (1000 * 60)).toFixed(2)
-                : '0.00'; // duration in minutes
-
+              const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime())) 
+                ? (end - start) / (1000 * 60) 
+                : 0;
               return (
                 <tr key={index}>
                   <td className="py-2 px-4 border-b">{entry.userName}</td>
                   <td className="py-2 px-4 border-b">{entry.project}</td>
                   <td className="py-2 px-4 border-b">{start.toLocaleString()}</td>
                   <td className="py-2 px-4 border-b">{end.toLocaleString()}</td>
-                  <td className="py-2 px-4 border-b">{duration}</td>
+                  <td className="py-2 px-4 border-b">{duration.toLocaleString()}</td>
                 </tr>
               );
             })}
@@ -235,5 +269,3 @@ const Overview = () => {
 };
 
 export default Overview;
-
-
