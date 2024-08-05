@@ -11,7 +11,7 @@ const Overview = () => {
   const [staffNames, setStaffNames] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [projectSearch, setProjectSearch] = useState('');
   const [dateRange, setDateRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -21,7 +21,7 @@ const Overview = () => {
   const [totalDuration, setTotalDuration] = useState(0);
   const [costs, setCosts] = useState({});
   const [totalCost, setTotalCost] = useState(0);
-  const [projectSearch, setProjectSearch] = useState('');
+  const [staffData, setStaffData] = useState([]);
 
   useEffect(() => {
     // Fetch staff names
@@ -50,62 +50,78 @@ const Overview = () => {
       .catch(error => console.error('Error fetching costs:', error));
   }, []);
 
+  useEffect(() => {
+    handleSearch(); // Trigger search whenever parameters change
+  }, [selectedStaff, projectSearch, dateRange]);
+
   const handleSearch = async () => {
     const { startDate, endDate } = dateRange;
+
     try {
-      const staffNamesParam = selectedStaff.some(option => option.value === 'all')
-        ? ''
+      const staffNamesParam = selectedStaff.length === 0
+        ? 'all'
         : selectedStaff.map(option => option.value).join(',');
-  
+
+      const params = {
+        staffNames: staffNamesParam,
+        projectSubstring: projectSearch.trim(), // Trim spaces around search term
+        fromDate: startDate ? startDate.toISOString() : undefined,
+        toDate: endDate ? endDate.toISOString() : undefined
+      };
+
+      const filteredParams = Object.fromEntries(Object.entries(params).filter(([_, v]) => v != null));
+
       const response = await axios.get('http://localhost:8080/api/filter-timesheets', {
-        params: {
-          staffNames: staffNamesParam,
-          projectSubstring: projectSearch, // Send the substring for partial project matching
-          fromDate: startDate.toISOString(),
-          toDate: endDate.toISOString()
-        }
+        params: filteredParams
       });
-  
-      console.log('API Response:', response.data); // Log the API response
-  
-      // Filter timesheets that match the projectSubstring
-      const filteredTimesheets = response.data.timesheets.filter(entry => {
-        const projectMatch = entry.project.toLowerCase().includes(projectSearch.toLowerCase());
-        const staffMatch = selectedStaff.length === 0 || selectedStaff.some(option => option.value === entry.userName);
-        return projectMatch && staffMatch;
-      });
-  
-      const total = filteredTimesheets.reduce((acc, entry) => {
-        const start = new Date(entry.startTime);
-        const end = new Date(entry.endTime);
-        if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
-          const duration = (end - start) / (1000 * 60); // duration in minutes
-          return acc + (isNaN(duration) ? 0 : duration);
-        }
-        return acc;
-      }, 0);
-  
-      setTimesheets(filteredTimesheets);
-      setTotalDuration(total);
-  
+
+      console.log('API Response:', response.data);
+
+      const { timesheets, totalDuration } = response.data;
+
+      setTimesheets(timesheets);
+      setTotalDuration(totalDuration);
+
       // Calculate total cost
-      const totalCost = filteredTimesheets.reduce((acc, entry) => {
+      const totalCost = timesheets.reduce((acc, entry) => {
         const perHourCost = costs[entry.userName] || 0;
         const start = new Date(entry.startTime);
         const end = new Date(entry.endTime);
         const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime())) 
-          ? (end - start) / (1000 * 60)
+          ? (end - start) / (1000 * 60) 
           : 0; // duration in minutes
         return acc + (perHourCost * (duration / 60)); // duration in hours
       }, 0);
-  
+
       setTotalCost(totalCost);
-  
+
+      // Aggregate data by staff
+      const staffMap = timesheets.reduce((map, entry) => {
+        const perHourCost = costs[entry.userName] || 0;
+        const start = new Date(entry.startTime);
+        const end = new Date(entry.endTime);
+        const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime())) 
+          ? (end - start) / (1000 * 60) 
+          : 0; // duration in minutes
+        if (!map[entry.userName]) {
+          map[entry.userName] = { totalDuration: 0, totalCost: 0 };
+        }
+        map[entry.userName].totalDuration += duration;
+        map[entry.userName].totalCost += (perHourCost * (duration / 60)); // duration in hours
+        return map;
+      }, {});
+
+      setStaffData(Object.entries(staffMap).map(([userName, data]) => ({
+        userName,
+        totalDuration: data.totalDuration,
+        totalCost: data.totalCost
+      })));
+
     } catch (error) {
       console.error('Error fetching timesheets:', error);
     }
   };
-  
+
   const handleDateChange = (ranges) => {
     setDateRange(ranges.selection);
   };
@@ -137,26 +153,23 @@ const Overview = () => {
             onChange={setSelectedStaff}
             options={staffNames}
             className="mb-4"
-            placeholder="Select Staff Names"
+            placeholder="Select Staff Names (Optional)"
           />
-          
+
           <label className="block text-lg font-semibold mb-2 mt-16">Project Search</label>
           <input
             type="text"
             value={projectSearch}
             onChange={(e) => setProjectSearch(e.target.value)}
             placeholder="Search projects"
-            className="mb-4 p-2 border rounded"
+            className="mb-4 p-2 border rounded mx-2"
           />
-
-          {/* <label className="block text-lg font-semibold mb-2 mt-10">Specific Project</label>
-          <Select
-            value={selectedProject}
-            onChange={setSelectedProject}
-            options={projects}
-            className="mb-4"
-            placeholder="Select a Project"
-          /> */}
+          <button
+            onClick={() => window.location.href = '/costs'}
+            className="p-2 bg-green-500 text-white rounded mb-2 mx-4"
+          >
+            Set Salaries
+          </button>
         </div>
 
         <div className="flex-1">
@@ -169,23 +182,24 @@ const Overview = () => {
         </div>
       </div>
 
-      <div className="flex justify-center gap-4 mb-8">
-        <button
-          onClick={handleSearch}
-          className="p-2 bg-green-500 text-white rounded mb-2"
-        >
-          Search
-        </button>
-        <a href="/costs" className="p-2 bg-green-500 text-white rounded mb-2">
-          Set Salaries
-        </a>
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold mb-2">Staff Summary:</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {staffData.map((data, index) => (
+            <div key={index} className="p-4 border rounded shadow-md bg-white">
+              <h3 className="text-lg font-semibold">{data.userName}</h3>
+              <p>Total Duration: {data.totalDuration.toLocaleString()} minutes</p>
+              <p>Total Cost: {formatCurrency(data.totalCost)}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div>
         <h2 className="text-xl font-semibold mb-2">Results</h2>
         <p className="mb-4">Total Duration: {totalDuration.toLocaleString()} minutes, Total Cost: {formatCurrency(totalCost)}</p>
-       
-        <table className="min-w-full bg-white dark:bg-gray-800">
+
+        <table className="min-w-full bg-white dark:bg-gray-800 mb-4">
           <thead>
             <tr>
               <th className="py-2 px-4 border-b">User Name</th>
@@ -199,7 +213,7 @@ const Overview = () => {
             {timesheets.map((entry, index) => {
               const start = new Date(entry.startTime);
               const end = new Date(entry.endTime);
-              const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime())) 
+              const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime()))
                 ? ((end - start) / (1000 * 60)).toFixed(2)
                 : '0.00'; // duration in minutes
 

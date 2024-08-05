@@ -289,16 +289,16 @@ const getUniqueStaffNames = async (req, res) => {
   }
 };
 // Filter timesheets
+// Controller to filter timesheets
+// Controller to filter timesheets
 const filterTimesheets = async (req, res) => {
   const { staffNames, fromDate, toDate, projectSubstring } = req.query;
 
-  if (!fromDate || !toDate) {
-    return res.status(400).json({ error: 'fromDate and toDate are required' });
-  }
-
   try {
     // Convert staffNames to an array if it's a comma-separated string
-    const staffNamesArray = staffNames === 'all' ? ['all'] : staffNames.split(',');
+    const staffNamesArray = staffNames === 'all' || !staffNames
+      ? []
+      : staffNames.split(',');
 
     // Call the getFilteredTimesheets function
     const result = await getFilteredTimesheets(staffNamesArray, fromDate, toDate, projectSubstring);
@@ -313,23 +313,28 @@ const filterTimesheets = async (req, res) => {
 // Ensure getFilteredTimesheets handles the project filter if provided
 const getFilteredTimesheets = async (staffNames, fromDate, toDate, projectSubstring) => {
   try {
-    const startDate = new Date(fromDate);
-    const endDate = new Date(toDate);
-    endDate.setHours(23, 59, 59, 999);
+    const startDate = fromDate ? new Date(fromDate) : null;
+    const endDate = toDate ? new Date(toDate) : null;
 
     // Build query
-    const query = {
-      startTime: { $gte: startDate, $lte: endDate }
-    };
+    const query = {};
 
-    // Apply username filter if provided
-    if (staffNames && staffNames.length && staffNames[0] !== 'all') {
+    if (startDate && endDate) {
+      endDate.setHours(23, 59, 59, 999);
+      query.startTime = { $gte: startDate, $lte: endDate };
+    }
+
+    if (staffNames.length > 0 && staffNames[0] !== 'all') {
       query.userName = { $in: staffNames };
     }
 
-    // Apply project substring filter if provided
     if (projectSubstring) {
-      query.project = { $regex: projectSubstring, $options: 'i' }; // Case-insensitive partial match
+      // Split the search term into substrings
+      const substrings = projectSubstring.split(' ').map(term => term.trim()).filter(term => term);
+
+      // Create a regex pattern to match all substrings
+      const regexPattern = substrings.map(term => `(?=.*${term})`).join('');
+      query.project = { $regex: new RegExp(regexPattern, 'i') }; // Case-insensitive match
     }
 
     // Fetch timesheets
@@ -352,6 +357,11 @@ const getFilteredTimesheets = async (staffNames, fromDate, toDate, projectSubstr
     throw error;
   }
 };
+
+
+
+
+
 
 
 //cost page controller 
