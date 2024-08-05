@@ -290,7 +290,7 @@ const getUniqueStaffNames = async (req, res) => {
 };
 // Filter timesheets
 const filterTimesheets = async (req, res) => {
-  const { staffNames, fromDate, toDate, project } = req.query;
+  const { staffNames, fromDate, toDate, projectSubstring } = req.query;
 
   if (!fromDate || !toDate) {
     return res.status(400).json({ error: 'fromDate and toDate are required' });
@@ -301,7 +301,7 @@ const filterTimesheets = async (req, res) => {
     const staffNamesArray = staffNames === 'all' ? ['all'] : staffNames.split(',');
 
     // Call the getFilteredTimesheets function
-    const result = await getFilteredTimesheets(staffNamesArray, fromDate, toDate, project);
+    const result = await getFilteredTimesheets(staffNamesArray, fromDate, toDate, projectSubstring);
 
     res.status(200).json(result);
   } catch (error) {
@@ -311,7 +311,7 @@ const filterTimesheets = async (req, res) => {
 };
 
 // Ensure getFilteredTimesheets handles the project filter if provided
-const getFilteredTimesheets = async (staffNames, fromDate, toDate, project) => {
+const getFilteredTimesheets = async (staffNames, fromDate, toDate, projectSubstring) => {
   try {
     const startDate = new Date(fromDate);
     const endDate = new Date(toDate);
@@ -319,27 +319,30 @@ const getFilteredTimesheets = async (staffNames, fromDate, toDate, project) => {
 
     // Build query
     const query = {
-      date: { $gte: startDate, $lte: endDate }
+      startTime: { $gte: startDate, $lte: endDate }
     };
 
+    // Apply username filter if provided
     if (staffNames && staffNames.length && staffNames[0] !== 'all') {
       query.userName = { $in: staffNames };
     }
 
-    if (project) {
-      query.project = project;
+    // Apply project substring filter if provided
+    if (projectSubstring) {
+      query.project = { $regex: projectSubstring, $options: 'i' }; // Case-insensitive partial match
     }
 
+    // Fetch timesheets
     const timesheets = await Timesheet.find(query).exec();
 
-    // Assuming each timesheet has a 'duration' field; adjust if necessary
+    // Calculate total duration
     const totalDuration = timesheets.reduce((acc, sheet) => {
       const start = new Date(sheet.startTime);
       const end = new Date(sheet.endTime);
       const duration = (end - start) / (1000 * 60); // duration in minutes
       return acc + (isNaN(duration) ? 0 : duration);
     }, 0);
-  
+
     return {
       timesheets,
       totalDuration
@@ -349,6 +352,8 @@ const getFilteredTimesheets = async (staffNames, fromDate, toDate, project) => {
     throw error;
   }
 };
+
+
 //cost page controller 
 // Get all costs
 const getCosts = async (req, res) => {

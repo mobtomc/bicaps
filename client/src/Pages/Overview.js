@@ -21,6 +21,7 @@ const Overview = () => {
   const [totalDuration, setTotalDuration] = useState(0);
   const [costs, setCosts] = useState({});
   const [totalCost, setTotalCost] = useState(0);
+  const [projectSearch, setProjectSearch] = useState('');
 
   useEffect(() => {
     // Fetch staff names
@@ -53,21 +54,27 @@ const Overview = () => {
     const { startDate, endDate } = dateRange;
     try {
       const staffNamesParam = selectedStaff.some(option => option.value === 'all')
-        ? '' 
+        ? ''
         : selectedStaff.map(option => option.value).join(',');
-
+  
       const response = await axios.get('http://localhost:8080/api/filter-timesheets', {
         params: {
           staffNames: staffNamesParam,
-          project: selectedProject?.value || '', 
+          projectSubstring: projectSearch, // Send the substring for partial project matching
           fromDate: startDate.toISOString(),
           toDate: endDate.toISOString()
         }
       });
-
+  
       console.log('API Response:', response.data); // Log the API response
-
-      const filteredTimesheets = response.data.timesheets || [];
+  
+      // Filter timesheets that match the projectSubstring
+      const filteredTimesheets = response.data.timesheets.filter(entry => {
+        const projectMatch = entry.project.toLowerCase().includes(projectSearch.toLowerCase());
+        const staffMatch = selectedStaff.length === 0 || selectedStaff.some(option => option.value === entry.userName);
+        return projectMatch && staffMatch;
+      });
+  
       const total = filteredTimesheets.reduce((acc, entry) => {
         const start = new Date(entry.startTime);
         const end = new Date(entry.endTime);
@@ -77,10 +84,10 @@ const Overview = () => {
         }
         return acc;
       }, 0);
-
+  
       setTimesheets(filteredTimesheets);
       setTotalDuration(total);
-
+  
       // Calculate total cost
       const totalCost = filteredTimesheets.reduce((acc, entry) => {
         const perHourCost = costs[entry.userName] || 0;
@@ -91,14 +98,14 @@ const Overview = () => {
           : 0; // duration in minutes
         return acc + (perHourCost * (duration / 60)); // duration in hours
       }, 0);
-
+  
       setTotalCost(totalCost);
-
+  
     } catch (error) {
       console.error('Error fetching timesheets:', error);
     }
   };
-
+  
   const handleDateChange = (ranges) => {
     setDateRange(ranges.selection);
   };
@@ -133,17 +140,23 @@ const Overview = () => {
             placeholder="Select Staff Names"
           />
           
-          <label className="block text-lg font-semibold mb-2 mt-16">Specific Project</label>
+          <label className="block text-lg font-semibold mb-2 mt-16">Project Search</label>
+          <input
+            type="text"
+            value={projectSearch}
+            onChange={(e) => setProjectSearch(e.target.value)}
+            placeholder="Search projects"
+            className="mb-4 p-2 border rounded"
+          />
+
+          {/* <label className="block text-lg font-semibold mb-2 mt-10">Specific Project</label>
           <Select
             value={selectedProject}
             onChange={setSelectedProject}
             options={projects}
             className="mb-4"
             placeholder="Select a Project"
-          />
-          <a href="/costs" className="btn bg-green-300 mt-16">
-            Set Salaries
-          </a>
+          /> */}
         </div>
 
         <div className="flex-1">
@@ -156,16 +169,21 @@ const Overview = () => {
         </div>
       </div>
 
-      <button
-        onClick={handleSearch}
-        className="p-2 bg-green-500 text-white rounded mb-8"
-      >
-        Search
-      </button>
+      <div className="flex justify-center gap-4 mb-8">
+        <button
+          onClick={handleSearch}
+          className="p-2 bg-green-500 text-white rounded mb-2"
+        >
+          Search
+        </button>
+        <a href="/costs" className="p-2 bg-green-500 text-white rounded mb-2">
+          Set Salaries
+        </a>
+      </div>
 
       <div>
         <h2 className="text-xl font-semibold mb-2">Results</h2>
-        <p className="mb-4">Total Duration: {totalDuration.toLocaleString()} minutes ,  Total Cost: {formatCurrency(totalCost)}</p>
+        <p className="mb-4">Total Duration: {totalDuration.toLocaleString()} minutes, Total Cost: {formatCurrency(totalCost)}</p>
        
         <table className="min-w-full bg-white dark:bg-gray-800">
           <thead>
@@ -203,4 +221,5 @@ const Overview = () => {
 };
 
 export default Overview;
+
 
