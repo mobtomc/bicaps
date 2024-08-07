@@ -1,23 +1,20 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const SHEETDB_API_URL = "https://sheetdb.io/api/v1/x6tvzw3maxfva";
+const SHEETDB_API_URL = "https://sheetdb.io/api/v1/vo7sr2n69e1ys";
 
-const ExportButton = ({ displayedData }) => {
+const StaffSummaryExportButton = ({ staffData = [] }) => {
   const [showModal, setShowModal] = useState(false);
   const [timestamp, setTimestamp] = useState("");
   const [copyButtonText, setCopyButtonText] = useState("Copy Timestamp");
 
   const handleExport = async () => {
+
     const newTimestamp = new Date().toISOString();
-    const rows = displayedData.map((record) => ({
-      id: record._id,
-      groupName: record.groupName.join(", "),
-      entityName: record.entityName,
-      personName: record.personName,
-      email: record.email,
-      phoneNo: record.phoneNo,
-      pan: record.pan,
+    const rows = staffData.map((data) => ({
+      name: data.userName, // Assuming userName maps to name
+      duration: data.totalDuration,
+      cost: data.totalCost,
       timestamp: newTimestamp,
     }));
 
@@ -47,7 +44,7 @@ const ExportButton = ({ displayedData }) => {
   return (
     <>
       <button className="btn btn-primary" onClick={handleExport}>
-        Export
+        Export Staff Summary
       </button>
 
       {showModal && (
@@ -76,6 +73,4 @@ const ExportButton = ({ displayedData }) => {
   );
 };
 
-export default ExportButton;
-
-
+export default StaffSummaryExportButton;

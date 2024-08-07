@@ -3,10 +3,10 @@ import bicapslogo from "../Components/bicapslogo.png";
 import { useUser } from '@clerk/clerk-react';
 
 export default function Home() {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isSignedIn, user } = useUser();
   const allow = true; 
 
-  if (!isLoaded || !isSignedIn) {
+  if (!isSignedIn) {
     return null;
   }
 

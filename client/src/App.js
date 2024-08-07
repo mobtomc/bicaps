@@ -31,7 +31,7 @@ function App() {
   return (
     <ClerkProvider publishableKey={clerkPubKey}>
       <SignedIn>
-      <div className=" App">
+      <div className=" App ">
        
           <BrowserRouter>
             <Nav />

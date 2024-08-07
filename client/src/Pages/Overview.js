@@ -5,6 +5,7 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import axios from 'axios';
 import { useUser } from '@clerk/clerk-react';
+import StaffSummaryExportButton from '../Components/StaffSummaryExportButton'; // Import the ExportButton component
 
 const Overview = () => {
   const { user } = useUser();
@@ -34,10 +35,6 @@ const Overview = () => {
       console.log('Is Admin:', role === 'Admin');
     }
   }, [user]);
-  useEffect(() => {
-    console.log('User Data:', user);
-    console.log('Is Admin:', isAdmin);
-  }, [user, isAdmin]);
 
   useEffect(() => {
     // Fetch staff names
@@ -210,52 +207,39 @@ const Overview = () => {
           />
         </div>
       </div>
-      {/* cards */}
-      {/* {isAdmin && (
-        <div className='mb-4'>
-          <h2 className="text-xl font-semibold mb-2">Staff Summary:</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {staffData.map((data, index) => (
-              <div key={index} className="p-4 border rounded shadow-md bg-white">
-                <h3 className="text-lg font-semibold">{data.userName}</h3>
-                <p>Total Duration: {data.totalDuration.toLocaleString()} minutes</p>
-                <p>Total Cost: {formatCurrency(data.totalCost)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )} */}
-      {/* table */}
+
       {isAdmin && (
         <div className="mb-4">
-          <h2 className="text-xl font-semibold mb-2">Staff Summary:</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white">
-              <thead>
-                <tr>
-                  <th className="py-2 px-4 border-b">User Name</th>
-                  <th className="py-2 px-4 border-b">Total Duration (min)</th>
-                  <th className="py-2 px-4 border-b">Total Cost</th>
+          <h2 className="text-xl font-semibold flex items-center justify-center mb-4">
+            Staff Summary: 
+            <div className='mx-2'><StaffSummaryExportButton staffData={staffData} /> </div>
+          </h2>
+          <table className="min-w-full bg-white dark:bg-gray-800 mb-4 border border-gray-300">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 border-b">User Name</th>
+                <th className="py-2 px-4 border-b">Total Duration (min)</th>
+                <th className="py-2 px-4 border-b">Total Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              {staffData.map((data, index) => (
+                <tr key={index}>
+                  <td className="py-2 px-4 border-b">{data.userName}</td>
+                  <td className="py-2 px-4 border-b">{data.totalDuration.toLocaleString()}</td>
+                  <td className="py-2 px-4 border-b">{formatCurrency(data.totalCost)}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {staffData.map((data, index) => (
-                  <tr key={index}>
-                    <td className="py-2 px-4 border-b">{data.userName}</td>
-                    <td className="py-2 px-4 border-b">{data.totalDuration.toLocaleString()}</td>
-                    <td className="py-2 px-4 border-b">{formatCurrency(data.totalCost)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
+
       <div className="mb-4">
         <h2 className="text-xl font-semibold mb-2">Results</h2>
         <p className="mb-4">Total Duration: {totalDuration.toLocaleString()} minutes, Total Cost: {formatCurrency(totalCost)}</p>
 
-        <table className="min-w-full bg-white dark:bg-gray-800 mb-4">
+        <table className="min-w-full bg-white dark:bg-gray-800 mb-4 border border-gray-300">
           <thead>
             <tr>
               <th className="py-2 px-4 border-b">User Name</th>
