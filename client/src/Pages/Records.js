@@ -115,7 +115,7 @@ const Records = () => {
               placeholder="Search by Group Name"
               className="w-full md:w-64"
             />
-            <button className="btn btn-primary" onClick={handleSearchByGroup}>
+            <button className="btn btn-primary " onClick={handleSearchByGroup}>
               Search Group Name
             </button>
           </div>
