@@ -41,7 +41,7 @@ const Nav = () => {
             </svg>
           </button>
           <div className={`fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden ${isMenuOpen ? 'block' : 'hidden'}`}>
-            <div className={`fixed top-0 right-0 h-full w-4/5 bg-white dark:bg-gray-800 shadow-lg transition-transform transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} duration-300 ease-in-out`}>
+            <div className={`fixed top-0 right-0 h-full w-4/5 bg-white dark:bg-gray-1000 shadow-lg transition-transform transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} duration-1000 ease-in-out`}>
               <div className="p-4 flex flex-col h-full">
                 <button
                   onClick={() => setIsMenuOpen(false)}
