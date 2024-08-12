@@ -77,5 +77,3 @@ const ExportButton = ({ displayedData }) => {
 };
 
 export default ExportButton;
-
-
