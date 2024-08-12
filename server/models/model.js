@@ -115,6 +115,15 @@ const CostSchema = new Schema({
     type: Number,
     required: true
   }
+  
+  
+});
+const LiveDataSchema = new mongoose.Schema({
+  userId:String,
+  staffName: String,
+  project: String,
+  workDescription: String,
+  startTime: Date,
 });
 const Category=mongoose.model("Category",CategorySchema);
 const ClientGroup = mongoose.model('ClientGroup', ClientGroupSchema);
@@ -123,6 +132,7 @@ const ProjectType = mongoose.model('ProjectType',ProjectTypeSchema);
 const Project= mongoose.model('Project',projectSchema)
 const Timesheet=mongoose.model('Timesheet',timesheetSchema)
 const Cost = mongoose.model('Cost', CostSchema);
+const LiveData = mongoose.model('LiveData', LiveDataSchema);
 module.exports={
     Category,
     ClientGroup,
@@ -130,5 +140,6 @@ module.exports={
     ProjectType,
     Project,
     Timesheet,
-    Cost
+    Cost,
+    LiveData
 }

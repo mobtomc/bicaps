@@ -13,6 +13,7 @@ import AddProject from './Pages/AddProject';
 import Timesheet from './Pages/Timesheet';
 import Overview from './Pages/Overview';
 import  Cost from './Pages/Cost'
+import Live from './Pages/Live'
 import {
   ClerkProvider,
   SignedIn,
@@ -48,6 +49,7 @@ function App() {
               <Route path="/timesheet" element={<Timesheet/>} />
               <Route path="/overview" element={<Overview/>} />
               <Route path="/costs" element={<Cost/>} />
+              <Route path="/live" element={<Live/>} />
             </Routes>
           </BrowserRouter>
           

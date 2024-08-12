@@ -53,4 +53,8 @@ routes.route('/api/costs')
    .post(controller.upsertCost) ; 
 routes.route('/api/costs/:userName')
    .delete(controller.deleteCost);    
+
+//live
+routes.route('/api/live-data')
+   .get(controller.getLiveData);  
 module.exports=routes;

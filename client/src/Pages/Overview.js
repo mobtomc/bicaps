@@ -35,6 +35,7 @@ const Overview = () => {
   const [timesheets, setTimesheets] = useState([]);
   const [totalDuration, setTotalDuration] = useState(0);
   const [billableDuration, setBillableDuration] = useState(0);
+  const [billableFilter, setBillableFilter] = useState('All');
   const [costs, setCosts] = useState({});
   const [totalCost, setTotalCost] = useState(0);
   const [staffData, setStaffData] = useState([]);
@@ -97,7 +98,7 @@ const Overview = () => {
       });
   
       const { timesheets, totalDuration } = response.data;
-  
+
       setTimesheets(timesheets);
       setTotalDuration(totalDuration);
   
@@ -156,7 +157,8 @@ const Overview = () => {
   const handleDateChange = (ranges) => {
     setDateRange(ranges.selection);
   };
-
+  
+ 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -166,7 +168,7 @@ const Overview = () => {
   };
 
   const isBillable = (project) => {
-    return !NON_BILLABLE_PROJECTS.includes(project) ? 'Yes' : 'No';
+    return !NON_BILLABLE_PROJECTS.includes(project) ? 'Yes' : <span className="text-red-600 font-bold">No</span>;
   };
   const formattedStaffData = staffData.map(data => ({
     userName: data.userName,
@@ -230,6 +232,7 @@ const Overview = () => {
 
       {isAdmin ? (
         <div className="flex-1">
+          {/* serach by username */}
           <label className="block text-lg font-semibold mb-2">Staff Names</label>
           <Select
             isMulti
@@ -239,7 +242,7 @@ const Overview = () => {
             className="mb-4"
             placeholder="Select Staff Names (Optional)"
           />
-
+          {/* by project */}
           <label className="block text-lg font-semibold mb-2 mt-16">Project Search</label>
           <input
             type="text"
@@ -248,6 +251,8 @@ const Overview = () => {
             placeholder="Search projects"
             className="mb-4 p-2 border rounded mx-2"
           />
+           
+   
           <button
             onClick={() => window.location.href = '/costs'}
             className="p-2 bg-green-500 text-white rounded mb-2 mx-4"
@@ -284,7 +289,7 @@ const Overview = () => {
               <th className="py-2 px-4 border-b">Start Time</th>
               <th className="py-2 px-4 border-b">End Time</th>
               <th className="py-2 px-4 border-b">Duration (min)</th>
-              <th className="py-2 px-4 border-b">Billable</th> {/* New column header */}
+              <th className="py-2 px-4 border-b">Billable</th> 
             </tr>
           </thead>
           <tbody>

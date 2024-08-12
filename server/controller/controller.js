@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { ClientGroup, EntityType, Category, ProjectType, Project,Timesheet,Cost } = require('../models/model');
+const { ClientGroup, EntityType, Category, ProjectType, Project,Timesheet,Cost,LiveData } = require('../models/model');
 // Fetch all categories
 const getCategories = async (req, res) => {
   try {
@@ -414,6 +414,26 @@ const deleteCost = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+//live
+const getLiveData = async (req, res) => {
+  try {
+    const liveData = await LiveData.find();
+    
+    // Format the data if necessary
+    const formattedData = liveData.map(data => ({
+      staffName: data.staffName,
+      project: data.project,
+      workDescription: data.workDescription,
+      startTime: data.startTime
+    }));
+
+    res.status(200).json(formattedData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getCategories,
   createCategory,
@@ -438,5 +458,6 @@ module.exports = {
   filterTimesheets,
   getCosts,
   upsertCost,
-  deleteCost
+  deleteCost,
+  getLiveData
 }
