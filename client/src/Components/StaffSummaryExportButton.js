@@ -9,15 +9,31 @@ const StaffSummaryExportButton = ({ staffData = [] }) => {
   const [copyButtonText, setCopyButtonText] = useState("Copy Timestamp");
 
   const handleExport = async () => {
-
     const newTimestamp = new Date().toISOString();
-    const rows = staffData.map((data) => ({
-      name: data.userName, // Assuming userName maps to name
-      duration: data.totalDuration,
-      cost: data.totalCost,
-      timestamp: newTimestamp,
-    }));
-
+  
+    // Convert data to match the sheet format
+    const rows = staffData.map((data) => {
+      const billableTime = data.totalBillableDuration
+        ? (data.totalBillableDuration / 1440).toFixed(8) // Convert minutes to decimal days
+        : ''; // Empty if no billable time
+  
+      const nonBillableTime = data.totalNonBillableDuration
+        ? (data.totalNonBillableDuration / 1440).toFixed(8) // Convert minutes to decimal days
+        : ''; // Empty if no non-billable time
+  
+      const cost = typeof data.totalCost === 'string'
+        ? parseFloat(data.totalCost.replace('₹', '').replace(',', '')) // Remove '₹' and convert to number
+        : 0; // Default to 0 if not a string
+  
+      return {
+        name: data.userName,
+        billable_time: billableTime,
+        non_billable_time: nonBillableTime,
+        cost: (cost / 100).toFixed(2), // Assuming cost is in cents
+        timestamp: newTimestamp,
+      };
+    });
+  
     try {
       await axios.post(SHEETDB_API_URL, { data: rows });
       setTimestamp(newTimestamp);
@@ -27,6 +43,7 @@ const StaffSummaryExportButton = ({ staffData = [] }) => {
       alert("Failed to export data");
     }
   };
+  
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(timestamp).then(() => {

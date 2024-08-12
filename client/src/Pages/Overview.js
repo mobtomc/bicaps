@@ -34,6 +34,7 @@ const Overview = () => {
   });
   const [timesheets, setTimesheets] = useState([]);
   const [totalDuration, setTotalDuration] = useState(0);
+  const [billableDuration, setBillableDuration] = useState(0);
   const [costs, setCosts] = useState({});
   const [totalCost, setTotalCost] = useState(0);
   const [staffData, setStaffData] = useState([]);
@@ -41,31 +42,24 @@ const Overview = () => {
 
   useEffect(() => {
     if (user) {
-      console.log('User Data:', user);
-      console.log('Public Metadata:', user.publicMetadata);
       const role = user.publicMetadata?.role;
       setIsAdmin(role === 'Admin');
-      console.log('Role:', role);
-      console.log('Is Admin:', role === 'Admin');
     }
   }, [user]);
 
   useEffect(() => {
-    // Fetch staff names
     axios.get('http://localhost:8080/api/unique-staff-names')
       .then(response => {
         setStaffNames(response.data.map(name => ({ value: name, label: name })));
       })
       .catch(error => console.error('Error fetching staff names:', error));
 
-    // Fetch projects
     axios.get('http://localhost:8080/api/projects-by-name')
       .then(response => {
         setProjects(response.data.map(project => ({ value: project, label: project })));
       })
       .catch(error => console.error('Error fetching projects:', error));
 
-    // Fetch costs
     axios.get('http://localhost:8080/api/costs')
       .then(response => {
         const costMap = response.data.reduce((map, cost) => {
@@ -102,14 +96,12 @@ const Overview = () => {
         params: filteredParams
       });
   
-      console.log('API Response:', response.data);
-  
       const { timesheets, totalDuration } = response.data;
   
       setTimesheets(timesheets);
       setTotalDuration(totalDuration);
   
-      // Calculate total cost
+      let totalBillableDuration = 0;
       const totalCost = timesheets.reduce((acc, entry) => {
         const isNonBillable = NON_BILLABLE_PROJECTS.includes(entry.project);
         const perHourCost = isNonBillable ? 0 : (costs[entry.userName] || 0);
@@ -118,12 +110,15 @@ const Overview = () => {
         const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime())) 
           ? (end - start) / (1000 * 60) 
           : 0;
+        if (!isNonBillable) {
+          totalBillableDuration += duration; // Accumulate billable duration
+        }
         return acc + (perHourCost * (duration / 60)); // duration in hours
       }, 0);
   
+      setBillableDuration(totalBillableDuration); // Set billable duration
       setTotalCost(totalCost);
   
-      // Aggregate data by staff
       const staffMap = timesheets.reduce((map, entry) => {
         const isNonBillable = NON_BILLABLE_PROJECTS.includes(entry.project);
         const perHourCost = isNonBillable ? 0 : (costs[entry.userName] || 0);
@@ -133,17 +128,24 @@ const Overview = () => {
           ? (end - start) / (1000 * 60) 
           : 0;
         if (!map[entry.userName]) {
-          map[entry.userName] = { totalDuration: 0, totalCost: 0 };
+          map[entry.userName] = { totalDuration: 0, totalCost: 0, totalBillableDuration: 0, totalNonBillableDuration: 0 };
         }
         map[entry.userName].totalDuration += duration;
         map[entry.userName].totalCost += (perHourCost * (duration / 60)); // duration in hours
+        if (!isNonBillable) {
+          map[entry.userName].totalBillableDuration += duration; // Accumulate billable duration
+        } else {
+          map[entry.userName].totalNonBillableDuration += duration; // Accumulate non-billable duration
+        }
         return map;
       }, {});
   
       setStaffData(Object.entries(staffMap).map(([userName, data]) => ({
         userName,
         totalDuration: data.totalDuration,
-        totalCost: data.totalCost
+        totalCost: data.totalCost,
+        totalBillableDuration: data.totalBillableDuration,
+        totalNonBillableDuration: data.totalNonBillableDuration
       })));
   
     } catch (error) {
@@ -163,6 +165,17 @@ const Overview = () => {
     }).format(amount);
   };
 
+  const isBillable = (project) => {
+    return !NON_BILLABLE_PROJECTS.includes(project) ? 'Yes' : 'No';
+  };
+  const formattedStaffData = staffData.map(data => ({
+    userName: data.userName,
+    totalBillableDuration: data.totalBillableDuration.toFixed(2),
+    totalNonBillableDuration: data.totalNonBillableDuration.toFixed(2),
+    totalCost: formatCurrency(data.totalCost)
+  }));
+  
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-semibold mb-4">Timesheet Overview</h1>
@@ -173,35 +186,39 @@ const Overview = () => {
         </div>
       )}
 
-      <div className="flex flex-col ml-48 md:flex-row gap-4 mb-4">
-      {isAdmin && (
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold flex items-center justify-center mb-4">
-            Staff Summary: 
-            <div className='mx-2'><StaffSummaryExportButton staffData={staffData} /> </div>
-          </h2>
-          <table className="min-w-full bg-white dark:bg-gray-800 mb-4 border border-gray-300">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border-b">User Name</th>
-                <th className="py-2 px-4 border-b">Total Duration (min)</th>
-                <th className="py-2 px-4 border-b">Total Cost</th>
-              </tr>
-            </thead>
-            <tbody>
-              {staffData.map((data, index) => (
-                <tr key={index}>
-                  <td className="py-2 px-4 border-b">{data.userName}</td>
-                  <td className="py-2 px-4 border-b">{data.totalDuration.toLocaleString()}</td>
-                  <td className="py-2 px-4 border-b">{formatCurrency(data.totalCost)}</td>
+      <div className="flex flex-col ml-8 md:flex-row gap-4 mb-4">
+        {isAdmin && (
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold flex items-center justify-center mb-4">
+              Staff Summary: 
+              <div className='mx-2'> <StaffSummaryExportButton staffData={formattedStaffData} /> </div>
+            </h2>
+            <table className="min-w-full bg-white dark:bg-gray-800 mb-4 border border-gray-300">
+              <thead>
+                <tr>
+                  <th className="py-2 px-4 border-b">Staff Name</th>
+          
+                  <th className="py-2 px-4 border-b">Total Billable Duration (min)</th>
+                  <th className="py-2 px-4 border-b">Total Non-Billable Duration (min)</th>
+                  <th className="py-2 px-4 border-b">Total cost</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {staffData.map((data, index) => (
+                  <tr key={index}>
+                    <td className="py-2 px-4 border-b">{data.userName}</td>
+                 
+                    <td className="py-2 px-4 border-b">{data.totalBillableDuration.toLocaleString()}</td>
+                    <td className="py-2 px-4 border-b">{data.totalNonBillableDuration.toLocaleString()}</td>
+                    <td className="py-2 px-4 border-b">{formatCurrency(data.totalCost)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
         
-        <div className="flex-1 ">
+        <div className="flex-1">
           <label className="items-end text-lg font-semibold mb-2"></label>
           <DateRangePicker
             ranges={[dateRange]}
@@ -212,49 +229,52 @@ const Overview = () => {
       </div>
 
       {isAdmin ? (
-          <div className="flex-1">
-            <label className="block text-lg font-semibold mb-2">Staff Names</label>
-            <Select
-              isMulti
-              value={selectedStaff}
-              onChange={setSelectedStaff}
-              options={staffNames}
-              className="mb-4"
-              placeholder="Select Staff Names (Optional)"
-            />
+        <div className="flex-1">
+          <label className="block text-lg font-semibold mb-2">Staff Names</label>
+          <Select
+            isMulti
+            value={selectedStaff}
+            onChange={setSelectedStaff}
+            options={staffNames}
+            className="mb-4"
+            placeholder="Select Staff Names (Optional)"
+          />
 
-            <label className="block text-lg font-semibold mb-2 mt-16">Project Search</label>
-            <input
-              type="text"
-              value={projectSearch}
-              onChange={(e) => setProjectSearch(e.target.value)}
-              placeholder="Search projects"
-              className="mb-4 p-2 border rounded mx-2"
-            />
-            <button
-              onClick={() => window.location.href = '/costs'}
-              className="p-2 bg-green-500 text-white rounded mb-2 mx-4"
-            >
-              Set Salaries
-            </button>
-          </div>
-        ) : (
-          <div className="flex-1">
-            <label className="block text-lg font-semibold mb-2">Project Search</label>
-            <input
-              type="text"
-              value={projectSearch}
-              onChange={(e) => setProjectSearch(e.target.value)}
-              placeholder="Search projects"
-              className="mb-4 p-2 border rounded mx-2"
-            />
-          </div>
-        )}
-
+          <label className="block text-lg font-semibold mb-2 mt-16">Project Search</label>
+          <input
+            type="text"
+            value={projectSearch}
+            onChange={(e) => setProjectSearch(e.target.value)}
+            placeholder="Search projects"
+            className="mb-4 p-2 border rounded mx-2"
+          />
+          <button
+            onClick={() => window.location.href = '/costs'}
+            className="p-2 bg-green-500 text-white rounded mb-2 mx-4"
+          >
+            Set Salaries
+          </button>
+        </div>
+      ) : (
+        <div className="flex-1">
+          <label className="block text-lg font-semibold mb-2">Project Search</label>
+          <input
+            type="text"
+            value={projectSearch}
+            onChange={(e) => setProjectSearch(e.target.value)}
+            placeholder="Search projects"
+            className="mb-4 p-2 border rounded mx-2"
+          />
+        </div>
+      )}
 
       <div className="mb-4">
         <h2 className="text-xl font-semibold mb-2">Results</h2>
-        <p className="mb-4">Total Duration: {totalDuration.toLocaleString()} minutes, Total Cost: {formatCurrency(totalCost)}</p>
+        <p className="mb-4">
+          Total Duration: {totalDuration.toLocaleString()} minutes,
+          Billable Duration: {billableDuration.toLocaleString()} minutes, 
+          Total Cost: {formatCurrency(totalCost)}
+        </p>
 
         <table className="min-w-full bg-white dark:bg-gray-800 mb-4 border border-gray-300">
           <thead>
@@ -264,6 +284,7 @@ const Overview = () => {
               <th className="py-2 px-4 border-b">Start Time</th>
               <th className="py-2 px-4 border-b">End Time</th>
               <th className="py-2 px-4 border-b">Duration (min)</th>
+              <th className="py-2 px-4 border-b">Billable</th> {/* New column header */}
             </tr>
           </thead>
           <tbody>
@@ -280,6 +301,7 @@ const Overview = () => {
                   <td className="py-2 px-4 border-b">{start.toLocaleString()}</td>
                   <td className="py-2 px-4 border-b">{end.toLocaleString()}</td>
                   <td className="py-2 px-4 border-b">{duration.toLocaleString()}</td>
+                  <td className="py-2 px-4 border-b">{isBillable(entry.project)}</td> 
                 </tr>
               );
             })}

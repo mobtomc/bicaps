@@ -5,8 +5,18 @@ import { useUser } from '@clerk/clerk-react';
 
 const Timesheet = () => {
   const { user } = useUser();
+  
+  // Initialize state with data from localStorage if available
+  const [timesheet, setTimesheet] = useState(() => {
+    const storedTimesheet = localStorage.getItem('timesheet');
+    return storedTimesheet ? JSON.parse(storedTimesheet) : [{ project: '', startTime: '', endTime: '', description: '' }];
+  });
+
   const [projects, setProjects] = useState([]);
-  const [timesheet, setTimesheet] = useState([{ project: '', startTime: '', endTime: '' }]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentEntryIndex, setCurrentEntryIndex] = useState(null);
+  const [description, setDescription] = useState('');
+  const [expandedIndex, setExpandedIndex] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,26 +24,24 @@ const Timesheet = () => {
         const projectsResponse = await axios.get('http://localhost:8080/api/projects-by-name');
         const fetchedProjects = projectsResponse.data;
 
-        const hardcodedProjects = [
+        const nonbillableProjects = [
           'Bio Break', 'Planning Work', 'Office Work', 'Client Consulting', 'Business Development',
           'Office Training', 'Office Down Time', 'Office Celebration', 'Office Meeting', 'Idle Time',
           'Outside Training', 'Bio Break'
         ];
 
-        // Format hardcoded projects for the dropdown
-        const hardcodedOptions = hardcodedProjects.map(project => ({
+        const nonbillableOptions = nonbillableProjects.map(project => ({
           value: project,
           label: project
         }));
 
-        // Format fetched projects for the dropdown
         const billableOptions = fetchedProjects.map(project => ({
           value: project.value,
           label: project.label
         }));
 
         setProjects([
-          { label: 'Non-Billable', options: hardcodedOptions },
+          { label: 'Non-Billable', options: nonbillableOptions },
           { label: 'Billable', options: billableOptions }
         ]);
       } catch (error) {
@@ -43,6 +51,10 @@ const Timesheet = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('timesheet', JSON.stringify(timesheet));
+  }, [timesheet]);
 
   const formatTime = (date) => {
     return date.toLocaleTimeString('en-GB', {
@@ -59,7 +71,10 @@ const Timesheet = () => {
     const end = new Date(`${new Date().toDateString()} ${endTime}`);
     return Math.round((end - start) / (1000 * 60)); // Duration in minutes
   };
-
+  
+  const handleDescriptionClick = (index) => {
+    setExpandedIndex(expandedIndex === index ? null : index); // Toggle expand/collapse
+  };
   const handleProjectChange = (index, selectedOption) => {
     const newTimesheet = [...timesheet];
     if (index > 0 && !newTimesheet[index - 1].endTime) {
@@ -68,9 +83,12 @@ const Timesheet = () => {
     newTimesheet[index].project = selectedOption ? selectedOption.label : '';
     newTimesheet[index].startTime = formatTime(new Date());
     setTimesheet(newTimesheet);
+    setCurrentEntryIndex(index);
+    setDescription(newTimesheet[index].description || '');
+    setIsModalOpen(true); // Open the modal to enter description
 
     if (index === timesheet.length - 1) {
-      setTimesheet([...newTimesheet, { project: '', startTime: '', endTime: '' }]);
+      setTimesheet([...newTimesheet, { project: '', startTime: '', endTime: '', description: '' }]);
     }
   };
 
@@ -78,6 +96,13 @@ const Timesheet = () => {
     const newTimesheet = [...timesheet];
     newTimesheet[index].endTime = formatTime(new Date());
     setTimesheet(newTimesheet);
+  };
+
+  const handleDescriptionSave = () => {
+    const newTimesheet = [...timesheet];
+    newTimesheet[currentEntryIndex].description = description;
+    setTimesheet(newTimesheet);
+    setIsModalOpen(false); // Close the modal after saving
   };
 
   const handleSubmit = () => {
@@ -89,13 +114,16 @@ const Timesheet = () => {
         project: entry.project,
         startTime: new Date(`${new Date().toDateString()} ${entry.startTime}`),
         endTime: new Date(`${new Date().toDateString()} ${entry.endTime}`),
-        date: new Date()
+        date: new Date(),
+        description: entry.description // Include description in submission
       }));
 
     axios.post('http://localhost:8080/api/submit', { userId, userName, entries })
       .then(response => {
         console.log('Timesheet submitted successfully:', response.data);
         alert('Timesheet submitted successfully!');
+        setTimesheet([{ project: '', startTime: '', endTime: '', description: '' }]);
+        localStorage.removeItem('timesheet');
       })
       .catch(error => {
         console.error('Error submitting timesheet:', error);
@@ -130,9 +158,10 @@ const Timesheet = () => {
         <thead>
           <tr>
             <th className="py-2 px-4 border-b">Project</th>
-            <th className="py-2 px-4 border-b">Start Time</th>
+            <th className="py-2 px-4 border-b">Work</th> 
             <th className="py-2 px-4 border-b">End Time</th>
             <th className="py-2 px-4 border-b">Duration (min)</th>
+           
           </tr>
         </thead>
         <tbody>
@@ -152,6 +181,12 @@ const Timesheet = () => {
                   )}
                 />
               </td>
+              <td
+                className={`py-2 px-4 border-b cursor-pointer ${expandedIndex === index ? 'max-w-full' : 'max-w-xs'} overflow-hidden text-ellipsis whitespace-nowrap`}
+                onClick={() => handleDescriptionClick(index)}
+              >
+                {entry.description}
+              </td>
               <td className="py-2 px-4 border-b">{entry.startTime}</td>
               <td className="py-2 px-4 border-b">
                 {entry.endTime ? entry.endTime : (
@@ -168,6 +203,8 @@ const Timesheet = () => {
               <td className="py-2 px-4 border-b">
                 {calculateDuration(entry.startTime, entry.endTime)}
               </td>
+             
+
             </tr>
           ))}
         </tbody>
@@ -180,12 +217,37 @@ const Timesheet = () => {
           Submit Timesheet
         </button>
       </div>
+
+      {/* Modal for entering description */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white p-4 rounded shadow-lg w-full max-w-md">
+            <h2 className="text-lg font-bold">Enter Description</h2>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows="4"
+              className="w-full border border-gray-300 rounded p-2 mt-2"
+            />
+            <div className="mt-4">
+              <button
+                onClick={handleDescriptionSave}
+                className="p-2 bg-blue-500 text-white rounded mr-2"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 bg-red-500 text-white rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default Timesheet;
-
-
-
-
