@@ -53,36 +53,6 @@ const Timesheet = () => {
   }, []);
 
   useEffect(() => {
-    // Send live data to API every 10 seconds
-    const sendLiveData = () => {
-      const userId = user ? user.id : 'someUserId';
-      const userName = user ? user.fullName : 'Unknown User';
-      const entries = timesheet
-        .filter(entry => entry.project && entry.startTime && entry.endTime)
-        .map(entry => ({
-          project: entry.project,
-          startTime: new Date(`${new Date().toDateString()} ${entry.startTime}`),
-          date: new Date(),
-          description: entry.description
-        }));
-
-      if (entries.length > 0) {
-        axios.post('http://localhost:8080/api/live-data', { userId, userName, entries })
-          .then(response => {
-            console.log('Live data sent:', response.data);
-          })
-          .catch(error => {
-            console.error('Error sending live data:', error);
-          });
-      }
-    };
-
-    const intervalId = setInterval(sendLiveData, 10000);
-    return () => clearInterval(intervalId);
-  }, [timesheet, user]);
-
-  useEffect(() => {
-    // Update local storage whenever timesheet changes
     localStorage.setItem('timesheet', JSON.stringify(timesheet));
   }, [timesheet]);
 
@@ -101,11 +71,10 @@ const Timesheet = () => {
     const end = new Date(`${new Date().toDateString()} ${endTime}`);
     return Math.round((end - start) / (1000 * 60)); // Duration in minutes
   };
-
+  
   const handleDescriptionClick = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index); // Toggle expand/collapse
   };
-
   const handleProjectChange = (index, selectedOption) => {
     const newTimesheet = [...timesheet];
     if (index > 0 && !newTimesheet[index - 1].endTime) {
@@ -146,24 +115,15 @@ const Timesheet = () => {
         startTime: new Date(`${new Date().toDateString()} ${entry.startTime}`),
         endTime: new Date(`${new Date().toDateString()} ${entry.endTime}`),
         date: new Date(),
+        description: entry.description // Include description in submission
       }));
 
     axios.post('http://localhost:8080/api/submit', { userId, userName, entries })
       .then(response => {
         console.log('Timesheet submitted successfully:', response.data);
         alert('Timesheet submitted successfully!');
-        // Clear live data after successful submission
-        axios.delete('http://localhost:8080/api/live-data', {
-          data: { userId }
-        })
-        .then(() => {
-          console.log('Live data cleared successfully.');
-          setTimesheet([{ project: '', startTime: '', endTime: '', description: '' }]);
-          localStorage.removeItem('timesheet');
-        })
-        .catch(error => {
-          console.error('Error clearing live data:', error);
-        });
+        setTimesheet([{ project: '', startTime: '', endTime: '', description: '' }]);
+        localStorage.removeItem('timesheet');
       })
       .catch(error => {
         console.error('Error submitting timesheet:', error);
@@ -198,10 +158,12 @@ const Timesheet = () => {
         <thead>
           <tr>
             <th className="py-2 px-4 border-b">Project</th>
-            <th className="py-2 px-4 border-b">Work</th>
+            <th className="py-2 px-4 border-b">Work</th> 
             <th className="py-2 px-4 border-b">Start Time</th>
             <th className="py-2 px-4 border-b">End Time</th>
+
             <th className="py-2 px-4 border-b">Duration (min)</th>
+           
           </tr>
         </thead>
         <tbody>
@@ -209,7 +171,7 @@ const Timesheet = () => {
             <tr key={index}>
               <td className="py-2 px-4 border-b">
                 <Select
-                  value={projects.flatMap(group => group.options).find(option => option.label === entry.project)}
+                  value={projects.flatMap(group => group.options).find(option => option.label === entry.project) || null}
                   onChange={(selectedOption) => handleProjectChange(index, selectedOption)}
                   options={projects}
                   getOptionLabel={(option) => option.label}
@@ -243,6 +205,8 @@ const Timesheet = () => {
               <td className="py-2 px-4 border-b">
                 {calculateDuration(entry.startTime, entry.endTime)}
               </td>
+             
+
             </tr>
           ))}
         </tbody>
