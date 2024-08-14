@@ -115,7 +115,7 @@ const Records = () => {
               placeholder="Search by Group Name"
               className="w-full md:w-64"
             />
-            <button className="btn btn-primary " onClick={handleSearchByGroup}>
+            <button   className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 scale-75 md:scale-100 md:px-4 md:py-2 md:text-base" onClick={handleSearchByGroup}>
               Search Group Name
             </button>
           </div>
@@ -127,7 +127,7 @@ const Records = () => {
               placeholder="Search by Person Name"
               className="w-full md:w-64"
             />
-            <button className="btn btn-primary" onClick={handleSearchByPersonName}>
+            <button   className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 scale-75 md:scale-100 md:px-4 md:py-2 md:text-base" onClick={handleSearchByPersonName}>
               Search Person Name
             </button>
           </div>

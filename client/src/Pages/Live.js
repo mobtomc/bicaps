@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useUser } from '@clerk/clerk-react';
+import { Navigate } from 'react-router-dom';
 
 const Live = () => {
   const [staffData, setStaffData] = useState([]);
+  const { isLoaded, isSignedIn, user } = useUser();
 
   useEffect(() => {
     const fetchLiveData = async () => {
@@ -34,6 +37,12 @@ const Live = () => {
     });
   };
 
+  if (!isLoaded) return null;
+
+  if (!isSignedIn || user?.publicMetadata?.role !== 'Admin') {
+    return <Navigate to="/unauthorized" />;
+  }
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-semibold mb-4">Live Project Updates</h1>
@@ -47,14 +56,22 @@ const Live = () => {
           </tr>
         </thead>
         <tbody>
-          {staffData.map((entry, index) => (
-            <tr key={index}>
-              <td className="py-2 px-4 border-b">{entry.staffName}</td>
-              <td className="py-2 px-4 border-b">{entry.project}</td>
-              <td className="py-2 px-4 border-b">{entry.workDescription}</td>
-              <td className="py-2 px-4 border-b">{formatTime(entry.startTime)}</td>
+          {staffData.length === 0 ? (
+            <tr>
+              <td colSpan="4" className="py-4 px-4 border-b text-center text-gray-500">
+                No ongoing project updates available.
+              </td>
             </tr>
-          ))}
+          ) : (
+            staffData.map((entry, index) => (
+              <tr key={index}>
+                <td className="py-2 px-4 border-b">{entry.staffName}</td>
+                <td className="py-2 px-4 border-b">{entry.project}</td>
+                <td className="py-2 px-4 border-b">{entry.workDescription}</td>
+                <td className="py-2 px-4 border-b">{formatTime(entry.startTime)}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
@@ -62,5 +79,4 @@ const Live = () => {
 };
 
 export default Live;
-
 

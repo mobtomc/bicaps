@@ -94,11 +94,18 @@ const Timesheet = () => {
 
   const handleEndTime = async (index) => {
     const newTimesheet = [...timesheet];
+    const entry = newTimesheet[index];
+  
+    // Check if the project field is empty
+    if (!entry.project) {
+      alert('Please select a project before ending the task.');
+      return;
+    }
+  
     const endTime = formatTime(new Date());
     newTimesheet[index].endTime = endTime;
     setTimesheet(newTimesheet);
   
-    const entry = newTimesheet[index];
     if (entry.endTime) {
       try {
         // Ensure the startTime is in ISO format
@@ -267,7 +274,7 @@ const Timesheet = () => {
                 ) : (
                   <button
                     onClick={() => handleSendToLiveData(index)}
-                    className="p-2 bg-yellow-500 text-white rounded-full"
+                    className="p-2 bg-yellow-200 text-white rounded-full animate-bounce"
                     title="Send to LiveData"
                   >
                     🔔

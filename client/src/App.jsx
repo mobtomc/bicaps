@@ -14,6 +14,7 @@ import Timesheet from './Pages/Timesheet';
 import Overview from './Pages/Overview';
 import  Cost from './Pages/Cost'
 import Live from './Pages/Live'
+import Unauthorized from './Pages/Unauthorized';
 import {
   ClerkProvider,
   SignedIn,
@@ -50,6 +51,7 @@ function App() {
               <Route path="/overview" element={<Overview/>} />
               <Route path="/costs" element={<Cost/>} />
               <Route path="/live" element={<Live/>} />
+              <Route path="/unauthorized" element={<Unauthorized/>} />
             </Routes>
           </BrowserRouter>
           

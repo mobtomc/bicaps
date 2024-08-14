@@ -64,6 +64,7 @@ const Nav = () => {
                     />
                   </svg>
                 </button>
+                {/* mobile nav */}
                 <div className="flex-1 flex flex-col items-center justify-center">
                   <ul className="flex flex-col w-full text-center">
                     <li className="text-lg my-2">
