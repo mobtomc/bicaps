@@ -457,23 +457,26 @@ const postLiveData = async (req, res) => {
   }
 };
 //deleting ended task
+// Sample controller for DELETE request
 const deleteLiveData = async (req, res) => {
   try {
-    const { userId, project } = req.body;
+    const { project, startTime } = req.body;
+    
+    // Convert startTime to Date object to match schema format if necessary
+    const startTimeDate = new Date(startTime);
 
-    // Find and delete the entry from the LiveData schema
-    const deletedEntry = await LiveData.findOneAndDelete({ userId, project });
+    const result = await LiveData.deleteOne({ project, startTime: startTimeDate });
 
-    if (!deletedEntry) {
-      return res.status(404).json({ error: 'Live data not found' });
+    if (result.deletedCount > 0) {
+      res.status(200).json({ message: 'Data deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Live data not found' });
     }
-
-    res.status(200).json({ message: 'Live data deleted successfully' });
   } catch (error) {
-    console.error('Error deleting live data:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 module.exports = {
   getCategories,
   createCategory,

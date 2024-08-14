@@ -24,6 +24,16 @@ const Live = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  const formatTime = (isoDate) => {
+    const date = new Date(isoDate);
+    return date.toLocaleTimeString('en-GB', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-semibold mb-4">Live Project Updates</h1>
@@ -42,7 +52,7 @@ const Live = () => {
               <td className="py-2 px-4 border-b">{entry.staffName}</td>
               <td className="py-2 px-4 border-b">{entry.project}</td>
               <td className="py-2 px-4 border-b">{entry.workDescription}</td>
-              <td className="py-2 px-4 border-b">{entry.startTime}</td>
+              <td className="py-2 px-4 border-b">{formatTime(entry.startTime)}</td>
             </tr>
           ))}
         </tbody>

@@ -92,12 +92,33 @@ const Timesheet = () => {
     }
   };
 
-  const handleEndTime = (index) => {
+  const handleEndTime = async (index) => {
     const newTimesheet = [...timesheet];
-    newTimesheet[index].endTime = formatTime(new Date());
+    const endTime = formatTime(new Date());
+    newTimesheet[index].endTime = endTime;
     setTimesheet(newTimesheet);
+  
+    const entry = newTimesheet[index];
+    if (entry.endTime) {
+      try {
+        // Ensure the startTime is in ISO format
+        const formattedStartTime = new Date(`${new Date().toDateString()} ${entry.startTime}`).toISOString();
+  
+        await axios.delete('http://localhost:8080/api/live', {
+          data: {
+            project: entry.project,
+            startTime: formattedStartTime
+          }
+        });
+        console.log('Data deleted from LiveData');
+      } catch (error) {
+        console.error('Error deleting data from LiveData:', error);
+      }
+    }
   };
-
+  
+  
+  
   const handleDescriptionSave = () => {
     const newTimesheet = [...timesheet];
     newTimesheet[currentEntryIndex].description = description;
@@ -178,37 +199,47 @@ const Timesheet = () => {
       <table className="min-w-full bg-white dark:bg-gray-800">
         <thead>
           <tr>
-            <th className="py-2 px-4 border-b">Ongoing</th> {/* Add column for ring button */}
+           
             <th className="py-2 px-4 border-b">Project</th>
             <th className="py-2 px-4 border-b">Work</th>
             <th className="py-2 px-4 border-b">Start Time</th>
             <th className="py-2 px-4 border-b">End Time</th>
             <th className="py-2 px-4 border-b">Duration (min)</th>
+            <th className="py-2 px-4 border-b">Ongoing</th> 
           </tr>
         </thead>
         <tbody>
           {timesheet.map((entry, index) => (
             <tr key={index}>
-              <td className="py-2 px-4 border-b">
-                {!entry.endTime && (
-                  <button
-                    onClick={() => handleSendToLiveData(index)}
-                    className="p-2 bg-yellow-500 text-white rounded-full"
-                    title="Send to LiveData"
-                  >
-                    🔔
-                  </button>
-                )}
-              </td>
-              <td className="py-2 px-4 border-b">
-                <Select
-                  value={projects.flatMap(group => group.options).find(option => option.label === entry.project) || null}
-                  onChange={(selectedOption) => handleProjectChange(index, selectedOption)}
-                  options={projects}
-                  placeholder="Select Project"
-                  isClearable
-                  styles={{ container: (provided) => ({ ...provided, width: '200px' }) }}
-                />
+              
+              <td className="py-2 px-4 border-b ">
+              <Select
+              value={projects.flatMap(group => group.options).find(option => option.label === entry.project) || null}
+              onChange={(selectedOption) => handleProjectChange(index, selectedOption)}
+              options={projects}
+              isDisabled={!!entry.endTime} // Disable dropdown if endTime is set
+              className="min-w-[300px] w-full"
+              styles={{
+                control: (provided) => ({
+                  ...provided,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }),
+                menu: (provided) => ({
+                  ...provided,
+                  width: 'calc(100% + 16px)', 
+                  marginTop: 0,
+                }),
+                groupHeading: (provided) => ({
+                  ...provided,
+                  color: '#EF4444', 
+                  fontWeight: 'bold',
+                }),
+              }}
+            />
+
+
               </td>
               <td className="py-2 px-4 border-b">
                 <span
@@ -230,6 +261,19 @@ const Timesheet = () => {
                 )}
               </td>
               <td className="py-2 px-4 border-b">{calculateDuration(entry.startTime, entry.endTime)}</td>
+              <td className="py-2 px-4 border-b">
+                {entry.endTime ? (
+                  <span className="text-green-500 font-semibold">Done</span>
+                ) : (
+                  <button
+                    onClick={() => handleSendToLiveData(index)}
+                    className="p-2 bg-yellow-500 text-white rounded-full"
+                    title="Send to LiveData"
+                  >
+                    🔔
+                  </button>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
