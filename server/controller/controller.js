@@ -433,7 +433,47 @@ const getLiveData = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+//post
+const postLiveData = async (req, res) => {
+  try {
+    const { userId, staffName, project, workDescription, startTime } = req.body;
 
+    // Create a new LiveData entry
+    const newLiveData = new LiveData({
+      userId,
+      staffName,
+      project,
+      workDescription,
+      startTime
+    });
+
+    // Save the entry to the database
+    await newLiveData.save();
+
+    res.status(201).json({ message: 'Live data saved successfully', data: newLiveData });
+  } catch (error) {
+    console.error('Error saving live data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+//deleting ended task
+const deleteLiveData = async (req, res) => {
+  try {
+    const { userId, project } = req.body;
+
+    // Find and delete the entry from the LiveData schema
+    const deletedEntry = await LiveData.findOneAndDelete({ userId, project });
+
+    if (!deletedEntry) {
+      return res.status(404).json({ error: 'Live data not found' });
+    }
+
+    res.status(200).json({ message: 'Live data deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting live data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 module.exports = {
   getCategories,
   createCategory,
@@ -459,5 +499,7 @@ module.exports = {
   getCosts,
   upsertCost,
   deleteCost,
-  getLiveData
+  getLiveData,
+  postLiveData,
+  deleteLiveData
 }

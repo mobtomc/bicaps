@@ -56,5 +56,11 @@ routes.route('/api/costs/:userName')
 
 //live
 routes.route('/api/live-data')
-   .get(controller.getLiveData);  
+
+   .get(controller.getLiveData);
+//posting that live data   
+routes.route('/api/live')
+   .post(controller.postLiveData)
+   .delete(controller.deleteLiveData);
+
 module.exports=routes;

@@ -119,11 +119,26 @@ const CostSchema = new Schema({
   
 });
 const LiveDataSchema = new mongoose.Schema({
-  userId:String,
-  staffName: String,
-  project: String,
-  workDescription: String,
-  startTime: Date,
+  userId: {
+    type: String,
+    required: true
+  },
+  staffName: {
+    type: String,
+    required: true
+  },
+  project: {
+    type: String,
+    required: true
+  },
+  workDescription: {
+    type: String,
+    required: true
+  },
+  startTime: {
+    type: Date,
+    required: true
+  }
 });
 const Category=mongoose.model("Category",CategorySchema);
 const ClientGroup = mongoose.model('ClientGroup', ClientGroupSchema);

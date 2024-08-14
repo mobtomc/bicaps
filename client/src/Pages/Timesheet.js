@@ -5,8 +5,7 @@ import { useUser } from '@clerk/clerk-react';
 
 const Timesheet = () => {
   const { user } = useUser();
-  
-  // Initialize state with data from localStorage if available
+
   const [timesheet, setTimesheet] = useState(() => {
     const storedTimesheet = localStorage.getItem('timesheet');
     return storedTimesheet ? JSON.parse(storedTimesheet) : [{ project: '', startTime: '', endTime: '', description: '' }];
@@ -71,10 +70,11 @@ const Timesheet = () => {
     const end = new Date(`${new Date().toDateString()} ${endTime}`);
     return Math.round((end - start) / (1000 * 60)); // Duration in minutes
   };
-  
+
   const handleDescriptionClick = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index); // Toggle expand/collapse
   };
+
   const handleProjectChange = (index, selectedOption) => {
     const newTimesheet = [...timesheet];
     if (index > 0 && !newTimesheet[index - 1].endTime) {
@@ -106,7 +106,7 @@ const Timesheet = () => {
   };
 
   const handleSubmit = () => {
-    const userId = user ? user.id : 'someUserId'; 
+    const userId = user ? user.id : 'someUserId';
     const userName = user ? user.fullName : 'Unknown User';
     const entries = timesheet
       .filter(entry => entry.project && entry.startTime && entry.endTime)
@@ -140,6 +140,27 @@ const Timesheet = () => {
     return totalDuration;
   };
 
+  const handleSendToLiveData = (index) => {
+    const entry = timesheet[index];
+    const liveData = {
+      userId: user ? user.id : 'someUserId',
+      staffName: user ? user.fullName : 'Unknown User',
+      project: entry.project,
+      workDescription: entry.description,
+      startTime: new Date(`${new Date().toDateString()} ${entry.startTime}`)
+    };
+
+    axios.post('http://localhost:8080/api/live', liveData)
+      .then(response => {
+        console.log('Data sent to LiveData:', response.data);
+        alert('Data sent to LiveData successfully!');
+      })
+      .catch(error => {
+        console.error('Error sending data to LiveData:', error);
+        alert('Error sending data to LiveData.');
+      });
+  };
+
   const currentDate = new Date().toLocaleDateString('en-GB');
 
   return (
@@ -157,90 +178,89 @@ const Timesheet = () => {
       <table className="min-w-full bg-white dark:bg-gray-800">
         <thead>
           <tr>
+            <th className="py-2 px-4 border-b">Ongoing</th> {/* Add column for ring button */}
             <th className="py-2 px-4 border-b">Project</th>
-            <th className="py-2 px-4 border-b">Work</th> 
+            <th className="py-2 px-4 border-b">Work</th>
             <th className="py-2 px-4 border-b">Start Time</th>
             <th className="py-2 px-4 border-b">End Time</th>
-
             <th className="py-2 px-4 border-b">Duration (min)</th>
-           
           </tr>
         </thead>
         <tbody>
           {timesheet.map((entry, index) => (
             <tr key={index}>
               <td className="py-2 px-4 border-b">
+                {!entry.endTime && (
+                  <button
+                    onClick={() => handleSendToLiveData(index)}
+                    className="p-2 bg-yellow-500 text-white rounded-full"
+                    title="Send to LiveData"
+                  >
+                    🔔
+                  </button>
+                )}
+              </td>
+              <td className="py-2 px-4 border-b">
                 <Select
                   value={projects.flatMap(group => group.options).find(option => option.label === entry.project) || null}
                   onChange={(selectedOption) => handleProjectChange(index, selectedOption)}
                   options={projects}
-                  getOptionLabel={(option) => option.label}
-                  getOptionValue={(option) => option.value}
-                  className="w-full"
                   placeholder="Select Project"
-                  formatGroupLabel={group => (
-                    <div className="text-lg font-bold text-red-600">{group.label}</div>
-                  )}
+                  isClearable
+                  styles={{ container: (provided) => ({ ...provided, width: '200px' }) }}
                 />
               </td>
-              <td
-                className={`py-2 px-4 border-b cursor-pointer ${expandedIndex === index ? 'max-w-full' : 'max-w-xs'} overflow-hidden text-ellipsis whitespace-nowrap`}
-                onClick={() => handleDescriptionClick(index)}
-              >
-                {entry.description}
+              <td className="py-2 px-4 border-b">
+                <span
+                  className="cursor-pointer"
+                  onClick={() => handleDescriptionClick(index)}
+                >
+                  {expandedIndex === index ? entry.description : entry.description.substring(0, 20) + (entry.description.length > 20 ? '...' : '')}
+                </span>
               </td>
               <td className="py-2 px-4 border-b">{entry.startTime}</td>
               <td className="py-2 px-4 border-b">
-                {entry.endTime ? entry.endTime : (
-                  index === timesheet.length - 1 ? '' : (
-                    <button
-                      onClick={() => handleEndTime(index)}
-                      className="p-2 bg-blue-500 text-white rounded"
-                    >
-                      End Task
-                    </button>
-                  )
+                {entry.endTime || (
+                  <button
+                    onClick={() => handleEndTime(index)}
+                    className="px-4 py-2 bg-green-500 text-white rounded"
+                  >
+                    End Time
+                  </button>
                 )}
               </td>
-              <td className="py-2 px-4 border-b">
-                {calculateDuration(entry.startTime, entry.endTime)}
-              </td>
-             
-
+              <td className="py-2 px-4 border-b">{calculateDuration(entry.startTime, entry.endTime)}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="mt-4">
-        <button
-          onClick={handleSubmit}
-          className="p-2 bg-green-500 text-white rounded"
-        >
-          Submit Timesheet
-        </button>
-      </div>
-
+      <button
+        onClick={handleSubmit}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Submit Timesheet
+      </button>
       {/* Modal for entering description */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-4 rounded shadow-lg w-full max-w-md">
-            <h2 className="text-lg font-bold">Enter Description</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-4 rounded shadow-lg">
+            <h2 className="text-lg font-semibold mb-2">Enter Description</h2>
             <textarea
+              className="w-full p-2 border rounded"
+              rows="4"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              rows="4"
-              className="w-full border border-gray-300 rounded p-2 mt-2"
             />
-            <div className="mt-4">
+            <div className="mt-4 flex justify-end">
               <button
                 onClick={handleDescriptionSave}
-                className="p-2 bg-blue-500 text-white rounded mr-2"
+                className="px-4 py-2 bg-green-500 text-white rounded mr-2"
               >
                 Save
               </button>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 bg-red-500 text-white rounded"
+                className="px-4 py-2 bg-red-500 text-white rounded"
               >
                 Cancel
               </button>
