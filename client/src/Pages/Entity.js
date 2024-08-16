@@ -17,7 +17,7 @@ const Entity = () => {
         description: description,
       })
       .then(() => {
-        navigate("/read");
+        navigate("/");
       })
       .catch((error) => {
         console.error("Error creating entity:", error);

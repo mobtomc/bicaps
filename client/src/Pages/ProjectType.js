@@ -75,5 +75,4 @@ const AddProjectType = () => {
     </div>
   );
 };
-
 export default AddProjectType;

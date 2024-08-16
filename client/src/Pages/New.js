@@ -25,7 +25,7 @@ const New = () => {
         }
       })
       .then(() => {
-        navigate("/read");
+        navigate("/");
       })
       .catch((error) => {
         console.error("Error creating client group:", error);

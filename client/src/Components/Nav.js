@@ -89,7 +89,7 @@ const Nav = () => {
                       </a>
                       <ul className="absolute left-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg hidden group-hover:block z-60">
                         <li className="text-lg my-2">
-                          <a href="/newclients" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>New Clients</a>
+                          <a href="/new" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>New Clients</a>
                         </li>
                         <li className="text-lg my-2">
                           <a href="/entity" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>New Entity</a>
@@ -146,7 +146,7 @@ const Nav = () => {
                 </a>
                 <ul className="absolute left-0 top-full mt-1 w-48 bg-gradient-to-r from-green-200 via-green-400 to-green-600 dark:bg-gray-800 shadow-lg rounded-lg hidden group-hover:block z-60">
                   <li>
-                    <a href="/newclients" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Clients</a>
+                    <a href="/new" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Clients</a>
                   </li>
                   <li>
                     <a href="/entity" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Entity</a>

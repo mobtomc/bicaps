@@ -6,6 +6,7 @@ import { Navigate } from 'react-router-dom';
 const Live = () => {
   const [staffData, setStaffData] = useState([]);
   const { isLoaded, isSignedIn, user } = useUser();
+  const [expandedIndex, setExpandedIndex] = useState(null);
 
   useEffect(() => {
     const fetchLiveData = async () => {
@@ -17,13 +18,8 @@ const Live = () => {
       }
     };
 
-    // Fetch data initially
     fetchLiveData();
-
-    // Set up a timer to fetch data every 10 seconds
     const intervalId = setInterval(fetchLiveData, 10000);
-
-    // Clear interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
 
@@ -43,10 +39,14 @@ const Live = () => {
     return <Navigate to="/unauthorized" />;
   }
 
+  const handleDescriptionClick = (index) => {
+    setExpandedIndex(expandedIndex === index ? null : index); // Toggle expand/collapse
+  };
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-semibold mb-4">Live Project Updates</h1>
-      <table className="min-w-full bg-white dark:bg-gray-800">
+      <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-300">
         <thead>
           <tr>
             <th className="py-2 px-4 border-b">Staff Name</th>
@@ -63,14 +63,29 @@ const Live = () => {
               </td>
             </tr>
           ) : (
-            staffData.map((entry, index) => (
-              <tr key={index}>
-                <td className="py-2 px-4 border-b">{entry.staffName}</td>
-                <td className="py-2 px-4 border-b">{entry.project}</td>
-                <td className="py-2 px-4 border-b">{entry.workDescription}</td>
-                <td className="py-2 px-4 border-b">{formatTime(entry.startTime)}</td>
-              </tr>
-            ))
+            staffData.map((entry, index) => {
+              const description = entry.workDescription || ''; // Default to an empty string if workDescription is undefined
+
+              return (
+                <tr key={index}>
+                  <td className="py-2 px-4 border-b">{entry.staffName}</td>
+                  <td className="py-2 px-4 border-b">{entry.project}</td>
+                  <td className="py-2 px-4 border-b">
+                    <span
+                      className="cursor-pointer"
+                      onClick={() => handleDescriptionClick(index)}
+                    >
+                      {expandedIndex === index
+                        ? description
+                        : description.length > 20
+                          ? `${description.substring(0, 20)}...`
+                          : description}
+                    </span>
+                  </td>
+                  <td className="py-2 px-4 border-b">{formatTime(entry.startTime)}</td>
+                </tr>
+              );
+            })
           )}
         </tbody>
       </table>
@@ -79,4 +94,5 @@ const Live = () => {
 };
 
 export default Live;
+
 

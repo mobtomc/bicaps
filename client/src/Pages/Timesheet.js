@@ -172,6 +172,9 @@ const Timesheet = () => {
     newTimesheet[currentEntryIndex].description = description;
     setTimesheet(newTimesheet);
     setIsModalOpen(false); // Close the modal after saving
+
+    // Automatically send to LiveData after saving description
+    handleSendToLiveData(currentEntryIndex);
   };
 
   const handleSubmit = () => {
