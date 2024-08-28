@@ -317,12 +317,16 @@ const Timesheet = () => {
                   <span className="text-green-500 font-semibold">Done</span>
                 ) : (
                   <button
-                    // onClick={() => handleSendToLiveData(index)}
-                    className="p-2 bg-yellow-200 text-white rounded-full animate-bounce"
-                    title="this task is visible to sir"
-                  >
-                    🔔
-                  </button>
+                  className="p-2 bg-yellow-200 text-white rounded-full relative"
+                  title="this task is visible to sir"
+                >
+                  <span className="absolute top-0 right-0 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#facc15]"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#facc15]"></span>
+                  </span>
+                  🔔
+                </button>
+                
                 )}
               </td>
             </tr>
