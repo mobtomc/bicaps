@@ -17,7 +17,7 @@ const AddProjectType = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:8080/api/projecttypes", {
+      const response = await axios.post("https://bicaps.onrender.com/api/projecttypes", {
         projectType,
         timePeriods: timePeriods.map(option => option.value)  // Convert selected options to their values
       });

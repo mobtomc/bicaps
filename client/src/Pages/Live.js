@@ -11,7 +11,7 @@ const Live = () => {
   useEffect(() => {
     const fetchLiveData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/live-data');
+        const response = await axios.get('https://bicaps.onrender.com/api/live-data');
         setStaffData(response.data);
       } catch (error) {
         console.error('Error fetching live data:', error);

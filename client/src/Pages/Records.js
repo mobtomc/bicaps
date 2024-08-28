@@ -16,7 +16,7 @@ const Records = () => {
 
   const getData = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/categories");
+      const res = await axios.get("https://bicaps.onrender.com/api/categories");
       setData(res.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -25,7 +25,7 @@ const Records = () => {
 
   const getGroupNames = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/clientgroups");
+      const res = await axios.get("https://bicaps.onrender.com/api/clientgroups");
       setGroupNames(res.data.map(group => ({ value: group.groupName, label: group.groupName })));
     } catch (error) {
       console.error("Error fetching group names:", error);
@@ -34,7 +34,7 @@ const Records = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/api/categories/${id}`);
+      await axios.delete(`https://bicaps.onrender.com/api/categories/${id}`);
       getData();
     } catch (error) {
       console.error("Error deleting data:", error);
@@ -51,7 +51,7 @@ const Records = () => {
 
   const handleSearchByPersonName = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/categories/search/${selectedPersonName.value}`);
+      const response = await axios.get(`https://bicaps.onrender.com/api/categories/search/${selectedPersonName.value}`);
       setData(response.data);
     } catch (error) {
       console.error("Error searching by person name:", error);

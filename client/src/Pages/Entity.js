@@ -12,7 +12,7 @@ const Entity = () => {
     e.preventDefault();
     console.log("clicked");
     axios
-      .post("http://localhost:8080/api/entitytypes", {
+      .post("https://bicaps.onrender.com/api/entitytypes", {
         entityName: name,
         description: description,
       })

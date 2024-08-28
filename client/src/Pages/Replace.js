@@ -13,7 +13,7 @@ const UpdateGroupName = () => {
   useEffect(() => {
     const fetchClientOptions = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/clientgroups');
+        const response = await axios.get('https://bicaps.onrender.com/api/clientgroups');
         setClientOptions(response.data.map(client => ({ value: client.groupName, label: client.groupName })));
       } catch (error) {
         console.error('Error fetching client data:', error);
@@ -32,7 +32,7 @@ const UpdateGroupName = () => {
     }
 
     try {
-      const response = await axios.patch('http://localhost:8080/api/clientgroups/update-group-name', {
+      const response = await axios.patch('https://bicaps.onrender.com/api/clientgroups/update-group-name', {
         oldGroupName: selectedOldGroupName.value,
         newGroupName
       });

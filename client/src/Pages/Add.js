@@ -28,7 +28,7 @@ const Add = () => {
     });
 
     try {
-      await axios.post("http://localhost:8080/api/categories", {
+      await axios.post("https://bicaps.onrender.com/api/categories", {
         personName,
         email,
         phoneNo,
@@ -46,7 +46,7 @@ const Add = () => {
     // Fetch client options
     const fetchClientOptions = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/clientgroups');
+        const response = await axios.get('https://bicaps.onrender.com/api/clientgroups');
         setClientOptions(response.data.map(client => ({ value: client.groupName, label: client.groupName })));
       } catch (error) {
         console.error('Error fetching client data:', error);
@@ -56,7 +56,7 @@ const Add = () => {
     // Fetch entity options
     const fetchEntityOptions = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/entitytypes');
+        const response = await axios.get('https://bicaps.onrender.com/api/entitytypes');
         setEntityOptions(response.data.map(entity => ({ value: entity.entityName, label: entity.entityName })));
       } catch (error) {
         console.error('Error fetching entity data:', error);

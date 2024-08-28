@@ -14,7 +14,7 @@ const New = () => {
     e.preventDefault();
     console.log("clicked");
     axios
-      .post("http://localhost:8080/api/clientgroups", {
+      .post("https://bicaps.onrender.com/api/clientgroups", {
         groupName: name,
         email: email,
         phoneNo: phone,

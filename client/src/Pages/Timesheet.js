@@ -20,7 +20,7 @@ const Timesheet = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const projectsResponse = await axios.get('http://localhost:8080/api/projects-by-name');
+        const projectsResponse = await axios.get('https://bicaps.onrender.com/api/projects-by-name');
         const fetchedProjects = projectsResponse.data;
 
         const nonbillableProjects = [
@@ -104,7 +104,7 @@ const Timesheet = () => {
       if (previousEntry.project && previousEntry.startTime) {
         const formattedStartTime = new Date(`${new Date().toDateString()} ${previousEntry.startTime}`).toISOString();
   
-        axios.delete('http://localhost:8080/api/live', {
+        axios.delete('https://bicaps.onrender.com/api/live', {
           data: {
             project: previousEntry.project,
             startTime: formattedStartTime
@@ -152,7 +152,7 @@ const Timesheet = () => {
         // Ensure the startTime is in ISO format
         const formattedStartTime = new Date(`${new Date().toDateString()} ${entry.startTime}`).toISOString();
   
-        await axios.delete('http://localhost:8080/api/live', {
+        await axios.delete('https://bicaps.onrender.com/api/live', {
           data: {
             project: entry.project,
             startTime: formattedStartTime
@@ -190,7 +190,7 @@ const Timesheet = () => {
         description: entry.description // Include description in submission
       }));
 
-    axios.post('http://localhost:8080/api/submit', { userId, userName, entries })
+    axios.post('https://bicaps.onrender.com/api/submit', { userId, userName, entries })
       .then(response => {
         console.log('Timesheet submitted successfully:', response.data);
         alert('Timesheet submitted successfully!');
@@ -222,7 +222,7 @@ const Timesheet = () => {
       startTime: new Date(`${new Date().toDateString()} ${entry.startTime}`)
     };
 
-    axios.post('http://localhost:8080/api/live', liveData)
+    axios.post('https://bicaps.onrender.com/api/live', liveData)
       .then(response => {
         console.log('Data sent to LiveData:', response.data);
         alert('Data sent to LiveData successfully!');

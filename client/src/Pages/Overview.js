@@ -49,19 +49,19 @@ const Overview = () => {
   }, [user]);
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/unique-staff-names')
+    axios.get('https://bicaps.onrender.com/api/unique-staff-names')
       .then(response => {
         setStaffNames(response.data.map(name => ({ value: name, label: name })));
       })
       .catch(error => console.error('Error fetching staff names:', error));
 
-    axios.get('http://localhost:8080/api/projects-by-name')
+    axios.get('https://bicaps.onrender.com/api/projects-by-name')
       .then(response => {
         setProjects(response.data.map(project => ({ value: project, label: project })));
       })
       .catch(error => console.error('Error fetching projects:', error));
 
-    axios.get('http://localhost:8080/api/costs')
+    axios.get('https://bicaps.onrender.com/api/costs')
       .then(response => {
         const costMap = response.data.reduce((map, cost) => {
           map[cost.userName] = cost.perHourCost;
