@@ -43,8 +43,10 @@ function MainApp() {
 
   const logAttendance = async (user) => {
     try {
+      const userName = user.firstName + ' ' + user.lastName; 
       await axios.post('https://bicaps.onrender.com/api/attendance-log', {
         userId: user.id,
+        userName: user.fullName,
         email: user.emailAddresses[0].emailAddress,
       });
     } catch (error) {

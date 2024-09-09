@@ -477,28 +477,31 @@ const deleteLiveData = async (req, res) => {
   }
 };
 
-// Controller function to log attendance
 const logAttendance = async (req, res) => {
   try {
-    const { userId, email } = req.body;
+    console.log(req.body);  // Log the request body to see what's being received
+    
+    const { userId, email, userName } = req.body;
+    console.log('Logging Attendance:', { userId, email, userName });
     const today = new Date().setHours(0, 0, 0, 0);
 
-    // Check if there's already an attendance record for today
     const existingAttendance = await Attendance.findOne({ userId, date: today });
 
     if (!existingAttendance) {
-      // Create a new attendance record
-      const attendance = new Attendance({ userId, email, date: today });
+      const attendance = new Attendance({ userId, email, userName, date: today });
       await attendance.save();
+      console.log('Logging Attendance:', { userId, email, userName });
       return res.status(200).send('Attendance logged successfully.');
     }
 
     res.status(200).send('Attendance already logged for today.');
+    console.log('Logging Attendance:', { userId, email, userName });
   } catch (error) {
     console.error('Error logging attendance:', error);
     res.status(500).send('Failed to log attendance.');
   }
 };
+
 const getAttendanceLog = (req, res) => {
   res.status(200).send('Attendance log API is reachable.');
 };
