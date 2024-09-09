@@ -56,14 +56,16 @@ routes.route('/api/costs/:userName')
 
 //live
 routes.route('/api/live-data')
-
    .get(controller.getLiveData);
 //posting that live data   
 routes.route('/api/live')
    .post(controller.postLiveData)
    .delete(controller.deleteLiveData);
 
-routes.route('api/attendance-log')
-   .get(controller.getAttendanceLog)
+routes.route('/api/attendance-log')
+   .get((req, res) => {
+      console.log('GET /attendance-log hit');
+      controller.getAttendanceLog(req, res);
+    })
    .post(controller.logAttendance);
 module.exports=routes;
