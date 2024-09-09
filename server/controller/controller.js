@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { ClientGroup, EntityType, Category, ProjectType, Project,Timesheet,Cost,LiveData } = require('../models/model');
+const { ClientGroup, EntityType, Category, ProjectType, Project,Timesheet,Cost,LiveData,Attendance } = require('../models/model');
 // Fetch all categories
 const getCategories = async (req, res) => {
   try {
@@ -477,6 +477,31 @@ const deleteLiveData = async (req, res) => {
   }
 };
 
+// Controller function to log attendance
+const logAttendance = async (req, res) => {
+  try {
+    const { userId, email } = req.body;
+    const today = new Date().setHours(0, 0, 0, 0);
+
+    // Check if there's already an attendance record for today
+    const existingAttendance = await Attendance.findOne({ userId, date: today });
+
+    if (!existingAttendance) {
+      // Create a new attendance record
+      const attendance = new Attendance({ userId, email, date: today });
+      await attendance.save();
+      return res.status(200).send('Attendance logged successfully.');
+    }
+
+    res.status(200).send('Attendance already logged for today.');
+  } catch (error) {
+    console.error('Error logging attendance:', error);
+    res.status(500).send('Failed to log attendance.');
+  }
+};
+const getAttendanceLog = (req, res) => {
+  res.status(200).send('Attendance log API is reachable.');
+};
 module.exports = {
   getCategories,
   createCategory,
@@ -504,5 +529,7 @@ module.exports = {
   deleteCost,
   getLiveData,
   postLiveData,
-  deleteLiveData
+  deleteLiveData,
+  logAttendance,
+  getAttendanceLog
 }

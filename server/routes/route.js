@@ -63,4 +63,7 @@ routes.route('/api/live')
    .post(controller.postLiveData)
    .delete(controller.deleteLiveData);
 
+routes.route('api/attendance-log')
+   .get(controller.getAttendanceLog)
+   .post(controller.logAttendance);
 module.exports=routes;

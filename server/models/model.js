@@ -140,6 +140,29 @@ const LiveDataSchema = new mongoose.Schema({
     required: true
   }
 });
+const AttendanceSchema = new Schema({
+  userId: {
+    type: String,
+    required: true,
+    ref: 'User', 
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+  status: {
+    type: String,
+    enum: ['Present', 'Absent'],
+    default: 'Present',
+  }
+});
+
+const Attendance = mongoose.model('Attendance', AttendanceSchema);
 const Category=mongoose.model("Category",CategorySchema);
 const ClientGroup = mongoose.model('ClientGroup', ClientGroupSchema);
 const EntityType = mongoose.model('EntityType', EntityTypeSchema);
@@ -156,5 +179,6 @@ module.exports={
     Project,
     Timesheet,
     Cost,
-    LiveData
+    LiveData,
+    Attendance
 }
