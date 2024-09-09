@@ -502,8 +502,15 @@ const logAttendance = async (req, res) => {
   }
 };
 
-const getAttendanceLog = (req, res) => {
-  res.status(200).send('Attendance log API is reachable.');
+const getAttendanceLog = async (req, res) => {
+  try {
+    // Fetch all attendance records
+    const attendanceLogs = await Attendance.find({});
+    res.status(200).json(attendanceLogs);
+  } catch (error) {
+    console.error('Error fetching attendance logs:', error);
+    res.status(500).json({ message: 'Failed to fetch attendance logs.' });
+  }
 };
 module.exports = {
   getCategories,
