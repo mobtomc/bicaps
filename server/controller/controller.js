@@ -517,77 +517,110 @@ const getAttendanceLog = async (req, res) => {
     res.status(500).json({ message: 'Error fetching attendance data', error });
   }
 };
-
 const filterAttendance = async (req, res) => {
   try {
-      const { userNames, fromDate, toDate } = req.query;
+    const { userNames, fromDate, toDate } = req.query;
 
-      // Ensure the required parameters are provided
-      if (!userNames || !fromDate || !toDate) {
-          return res.status(400).json({ error: 'Missing required query parameters' });
-      }
+    // Ensure the required parameters are provided
+    if (!fromDate || !toDate) {
+      return res.status(400).json({ error: 'Missing required query parameters' });
+    }
 
-      const from = new Date(fromDate);
-      const to = new Date(toDate);
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
 
-      // Check if dates are valid
-      if (isNaN(from.getTime()) || isNaN(to.getTime())) {
-          return res.status(400).json({ error: 'Invalid date range' });
-      }
+    // Check if dates are valid
+    if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+      return res.status(400).json({ error: 'Invalid date range' });
+    }
 
-      // Convert userNames string to array
+    // Handle case where userNames is 'all' or empty
+    let query = {
+      date: { $gte: from, $lte: to }
+    };
+
+    if (userNames && userNames !== 'all') {
+      // Convert userNames string to array and create the query
       const userNamesArray = userNames.split(',');
-
       console.log('Searching for attendance logs for users:', userNamesArray);
-      console.log('Date range:', fromDate, 'to', toDate);
+      query.userName = { $in: userNamesArray };
+    } else {
+      console.log('Searching for attendance logs for all users');
+    }
 
-      // Fetch attendance logs for the given users within the date range
-      const attendanceLogs = await Attendance.find({
-          userName: { $in: userNamesArray },
-          date: { $gte: from, $lte: to }
-      });
+    // Fetch attendance logs based on the query
+    const attendanceLogs = await Attendance.find(query);
 
-      console.log('Attendance logs found:', attendanceLogs.length);
+    console.log('Attendance logs found:', attendanceLogs.length);
 
-      // Create a map of attendance by user and date (normalized to just YYYY-MM-DD)
-      const attendanceMap = new Map();
-      attendanceLogs.forEach(log => {
-          const dateKey = log.date.toISOString().split('T')[0]; // Normalize date to YYYY-MM-DD
-          const key = `${log.userName}-${dateKey}`;
-          attendanceMap.set(key, log);
-      });
+    // Create a map of attendance by user and date (normalized to just YYYY-MM-DD)
+    const attendanceMap = new Map();
+    attendanceLogs.forEach(log => {
+      const dateKey = log.date.toISOString().split('T')[0]; // Normalize date to YYYY-MM-DD
+      const key = `${log.userName}-${dateKey}`;
+      attendanceMap.set(key, log);
+    });
 
-      // Create a result for each user for each date in the range
-      const results = [];
-      userNamesArray.forEach(userName => {
-          let currentDate = new Date(from);
+    // Create a result for each user for each date in the range
+    const results = [];
+    const userNamesSet = new Set(attendanceLogs.map(log => log.userName));
 
-          while (currentDate <= to) {
-              const dateKey = currentDate.toISOString().split('T')[0];
-              const logKey = `${userName}-${dateKey}`;
+    // Include all users if 'all' is requested
+    if (userNames === 'all') {
+      userNamesSet.forEach(userName => {
+        let currentDate = new Date(from);
 
-              // If there's no log for that date, mark as "Absent"
-              if (!attendanceMap.has(logKey)) {
-                  results.push({
-                      userName,
-                      date: new Date(currentDate),
-                      status: 'Absent'
-                  });
-              } else {
-                  results.push(attendanceMap.get(logKey));
-              }
+        while (currentDate <= to) {
+          const dateKey = currentDate.toISOString().split('T')[0];
+          const logKey = `${userName}-${dateKey}`;
 
-              // Increment date by 1 day
-              currentDate.setDate(currentDate.getDate() + 1);
+          // If there's no log for that date, mark as "Absent"
+          if (!attendanceMap.has(logKey)) {
+            results.push({
+              userName,
+              date: new Date(currentDate),
+              status: 'Absent'
+            });
+          } else {
+            results.push(attendanceMap.get(logKey));
           }
-      });
 
-      res.json(results);
+          // Increment date by 1 day
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      });
+    } else {
+      userNames.split(',').forEach(userName => {
+        let currentDate = new Date(from);
+
+        while (currentDate <= to) {
+          const dateKey = currentDate.toISOString().split('T')[0];
+          const logKey = `${userName}-${dateKey}`;
+
+          // If there's no log for that date, mark as "Absent"
+          if (!attendanceMap.has(logKey)) {
+            results.push({
+              userName,
+              date: new Date(currentDate),
+              status: 'Absent'
+            });
+          } else {
+            results.push(attendanceMap.get(logKey));
+          }
+
+          // Increment date by 1 day
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      });
+    }
+
+    res.json(results);
   } catch (error) {
-      console.error('Error fetching filtered attendance logs:', error.message);
-      res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error fetching filtered attendance logs:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 module.exports = {
   getCategories,
   createCategory,
