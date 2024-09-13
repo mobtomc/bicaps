@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 
-
 const New = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -35,8 +34,11 @@ const New = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">Create Clients</h2>
-      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light shadow-sm">
+      <h1 className="text-2xl mb-4 text-center font-bold">Create Clients</h1>
+      <form 
+        onSubmit={handleSubmit} 
+        className="border p-4 rounded bg-light shadow-[0_0_100px_50px_rgba(0,0,0,0.2)] max-w-md mx-auto"
+      >
         <div className="form-group mb-3">
           <label className="form-label">Group Name</label>
           <input

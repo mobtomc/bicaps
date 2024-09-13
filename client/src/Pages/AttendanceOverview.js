@@ -44,71 +44,71 @@ const AttendanceOverview = () => {
   }, [selectedStaff, dateRange]);
 
   const handleSearch = async () => {
-    const { startDate, endDate } = dateRange;
-  
-    try {
-      // Determine userNamesParam based on user role and selected staff
-      const userNamesParam = isAdmin
-        ? (selectedStaff.length === 0 ? 'all' : selectedStaff.map(option => option.value).join(','))
-        : user.fullName;
-  
-      // Build request parameters
-      const params = {
-        userNames: userNamesParam,
-        fromDate: startDate ? startDate.toISOString().split('T')[0] : undefined,
-        toDate: endDate ? endDate.toISOString().split('T')[0] : undefined
-      };
-  
-      // Fetch attendance data
-      const response = await axios.get(`${apiUrl}/api/filter-attendance`, { params });
-  
-      // Debugging: Log the response to check its structure
-      console.log('API Response:', response.data);
-  
-      const logs = response.data;
-      setAttendanceLogs(logs);
-  
-      // Calculate all dates in the range
-      const allDates = [];
-      let currentDate = new Date(startDate);
-      while (currentDate <= endDate) {
-        allDates.push(new Date(currentDate));
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-  
-      // Generate attendance records
-      const records = [];
-      const userNamesSet = new Set(logs.map(log => log.userName)); // Changed to userName
-  
-      userNamesSet.forEach(userName => {
-        allDates.forEach(date => {
-          const dateStr = date.toISOString().split('T')[0];
-          const logForDate = logs.find(log => log.userName === userName && log.date.startsWith(dateStr)); // Changed to userName
-          if (logForDate) {
-            records.push(logForDate);
-          } else {
-            records.push({ userName, date: dateStr, status: 'Absent' }); // Changed to userName
-          }
-        });
-      });
-  
-      setAttendanceRecords(records);
-  
-      // Debugging: Log the generated records
-      console.log('Generated Records:', records);
-  
-      // Calculate totals
-      const presentCount = records.filter(record => record.status === 'Present').length;
-      const absentCount = records.filter(record => record.status === 'Absent').length;
-  
-      setTotalPresent(presentCount);
-      setTotalAbsent(absentCount);
-  
-    } catch (error) {
-      console.error('Error fetching attendance logs:', error);
+  const { startDate, endDate } = dateRange;
+
+  try {
+    // Determine userNamesParam based on user role and selected staff
+    const userNamesParam = isAdmin
+      ? (selectedStaff.length === 0 ? 'all' : selectedStaff.map(option => option.value).join(','))
+      : user.fullName;
+
+    // Build request parameters
+    const params = {
+      userNames: userNamesParam,
+      fromDate: startDate ? startDate.toISOString().split('T')[0] : undefined,
+      toDate: endDate ? endDate.toISOString().split('T')[0] : undefined
+    };
+
+    // Fetch attendance data
+    const response = await axios.get(`${apiUrl}/api/filter-attendance`, { params });
+
+    // Debugging: Log the response to check its structure
+    console.log('API Response:', response.data);
+
+    const logs = response.data;
+    setAttendanceLogs(logs);
+
+    // Calculate all dates in the range
+    const allDates = [];
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      allDates.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
     }
-  };
-  
+
+    // Generate attendance records
+    const records = [];
+    const userNamesSet = new Set(logs.map(log => log.userName)); // Changed to userName
+
+    userNamesSet.forEach(userName => {
+      allDates.forEach(date => {
+        const dateStr = date.toISOString().split('T')[0];
+        const logForDate = logs.find(log => log.userName === userName && log.date.startsWith(dateStr)); // Changed to userName
+        if (logForDate) {
+          records.push(logForDate);
+        } else {
+          records.push({ userName, date: dateStr, status: 'Absent' }); // Changed to userName
+        }
+      });
+    });
+
+    setAttendanceRecords(records);
+
+    // Debugging: Log the generated records
+    console.log('Generated Records:', records);
+
+    // Calculate totals
+    const presentCount = records.filter(record => record.status === 'Present').length;
+    const absentCount = records.filter(record => record.status === 'Absent').length;
+
+    setTotalPresent(presentCount);
+    setTotalAbsent(absentCount);
+
+  } catch (error) {
+    console.error('Error fetching attendance logs:', error);
+  }
+};
+
   const handleDateChange = (ranges) => {
     setDateRange(ranges.selection);
   };
@@ -126,19 +126,22 @@ const AttendanceOverview = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-semibold mb-4">Attendance Overview</h1>
       {isAdmin && (
-        <div className="mb-4">
-          <label className="block text-lg font-semibold mb-2">Staff Names</label>
-          <Select
+         
+         <div className="flex justify-center mb-4">
+         <div className="w-1/2">
+            <label className="block text-lg font-semibold mb-2 text-center">Staff Names</label>
+            <Select
             isMulti
             value={selectedStaff}
             onChange={setSelectedStaff}
             options={staffNames}
-            className="mb-4"
+            className="w-full"
             placeholder="Select Staff Names (Optional)"
-          />
+            />
         </div>
+        </div>
+
       )}
 
       <div className="mb-4">

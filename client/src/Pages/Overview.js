@@ -248,34 +248,43 @@ const Overview = () => {
           </div>
 
           {isAdmin ? (
-            <div className="flex-1">
+              <div className="flex items-center space-x-2">
               {/* Search by username */}
-              <label className="block text-lg font-semibold mb-2">Staff Names</label>
-              <Select
-                isMulti
-                value={selectedStaff}
-                onChange={setSelectedStaff}
-                options={staffNames}
-                className="mb-4"
-                placeholder="Select Staff Names (Optional)"
-              />
+              <div className="flex-1">
+                <label className="block text-lg font-semibold mb-2">Staff Names</label>
+                <Select
+                  isMulti
+                  value={selectedStaff}
+                  onChange={setSelectedStaff}
+                  options={staffNames}
+                  className="mb-4 "
+                  placeholder="Select Staff Names (Optional)"
+                />
+              </div>
+            
               {/* By project */}
-              <label className="block text-lg font-semibold mb-2 mt-16">Project Search</label>
-              <input
-                type="text"
-                value={projectSearch}
-                onChange={(e) => setProjectSearch(e.target.value)}
-                placeholder="Search projects"
-                className="mb-4 p-2 border rounded mx-2"
-              />
-
-              <button
-                onClick={() => window.location.href = '/costs'}
-                className="p-2 bg-green-500 text-white rounded mb-2 mx-4"
-              >
-                Set Salaries
-              </button>
+              <div className="flex-1">
+                <label className="block text-lg font-semibold mb-2">Project Search</label>
+                <input
+                  type="text"
+                  value={projectSearch}
+                  onChange={(e) => setProjectSearch(e.target.value)}
+                  placeholder="Search projects"
+                  className="p-2 border rounded mb-4 w-2/3"
+                />
+              </div>
+            
+              {/* Set Salaries Button */}
+              <div className="flex-none w-1/3">
+                <button
+                  onClick={() => window.location.href = '/costs'}
+                  className="p-2 bg-green-500 text-white rounded mt-2 w-full"
+                >
+                  Set Salaries
+                </button>
+              </div>
             </div>
+            
           ) : (
             <div className="flex-1">
               <label className="block text-lg font-semibold mb-2">Project Search</label>

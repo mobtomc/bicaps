@@ -155,11 +155,11 @@ const AddProject = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light shadow-sm">
-        <h3 className="mb-4">Add Project</h3>
-        <div className="form-group mb-3">
-          <label>Client Group/Person:</label>
+    <div className="container mx-auto mt-5">
+      <form onSubmit={handleSubmit} className="border p-6 rounded bg-light shadow-[0_0_100px_50px_rgba(0,0,0,0.2)] max-w-md mx-auto">
+        <h3 className="text-2xl font-bold mb-6">Add Project</h3>
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Client Group/Person:</label>
           <Select
             options={clientGroupOptions}
             name="clientGroupPerson"
@@ -168,8 +168,8 @@ const AddProject = () => {
             classNamePrefix="select"
           />
         </div>
-        <div className="form-group mb-3">
-          <label>Select Project Type:</label>
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Select Project Type:</label>
           <Select
             options={projectTypeOptions}
             name="projectType"
@@ -178,8 +178,8 @@ const AddProject = () => {
             classNamePrefix="select"
           />
         </div>
-        <div className="form-group mb-3">
-          <label>Period:</label>
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Period:</label>
           <Select
             options={periodOptions}
             name="period"
@@ -190,8 +190,8 @@ const AddProject = () => {
           />
         </div>
         {formData.period === 'Quarterly' && (
-          <div className="form-group mb-3">
-            <label>Year:</label>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2">Year:</label>
             <Select
               options={years}
               name="year"
@@ -199,7 +199,7 @@ const AddProject = () => {
               className="basic-single"
               classNamePrefix="select"
             />
-            <label>Quarter:</label>
+            <label className="block text-gray-700 text-sm font-bold mt-4 mb-2">Quarter:</label>
             <Select
               options={quarters}
               name="quarter"
@@ -210,8 +210,8 @@ const AddProject = () => {
           </div>
         )}
         {formData.period === 'Monthly' && (
-          <div className="form-group mb-3">
-            <label>Year:</label>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2">Year:</label>
             <Select
               options={years}
               name="year"
@@ -219,7 +219,7 @@ const AddProject = () => {
               className="basic-single"
               classNamePrefix="select"
             />
-            <label>Month:</label>
+            <label className="block text-gray-700 text-sm font-bold mt-4 mb-2">Month:</label>
             <Select
               options={months}
               name="month"
@@ -230,8 +230,8 @@ const AddProject = () => {
           </div>
         )}
         {formData.period === 'Annual' && (
-          <div className="form-group mb-3">
-            <label>Year:</label>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2">Year:</label>
             <Select
               options={years}
               name="year"
@@ -241,10 +241,13 @@ const AddProject = () => {
             />
           </div>
         )}
-        <button type="submit" className="btn btn-primary">Add Project</button>
+        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white  py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
+          Add Project
+        </button>
       </form>
     </div>
   );
 };
 
 export default AddProject;
+

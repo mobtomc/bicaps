@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate } from "react-router";
 import Select from 'react-select';
 
-
 const Add = () => {
   const [personName, setPersonName] = useState("");
   const [email, setEmail] = useState("");
@@ -69,72 +68,82 @@ const Add = () => {
   }, []);
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4">Add Clients</h2>
-      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light shadow-sm">
-        <div className="form-group mb-3">
-          <label htmlFor="groupName" className="form-label">Client Group:</label>
-          <Select
-            isMulti
-            options={clientOptions}
-            value={selectedValues}
-            onChange={setSelectedValues}
-            className="basic-multi-select"
-            classNamePrefix="select"
-          />
-        </div>
-        <div className="form-group mb-3">
-          <label htmlFor="entityType" className="form-label">Entity Type:</label>
-          <Select
-            options={entityOptions}
-            value={selectedOption}
-            onChange={setSelectedOption}
-            className="basic-single-select"
-            classNamePrefix="select"
-            placeholder="Choose Entity Type"
-          />
-        </div>
-        <div className="form-group mb-3">
-          <label className="form-label">Name</label>
-          <input
-            type="text"
-            className="form-control"
-            onChange={(e) => setPersonName(e.target.value)}
-            value={personName}
-          />
-        </div>
-        <div className="form-group mb-3">
-          <label className="form-label">Phone</label>
-          <input
-            type="text"
-            className="form-control"
-            onChange={(e) => setPhoneNo(e.target.value)}
-            value={phoneNo}
-          />
-        </div>
-        <div className="form-group mb-3">
-          <label className="form-label">Pan-no.</label>
-          <input
-            type="text"
-            className="form-control"
-            onChange={(e) => setPan(e.target.value)}
-            value={pan}
-          />
-        </div>
-        <div className="form-group mb-3">
-          <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
-          <input
-            type="email"
-            className="form-control"
-            aria-describedby="emailHelp"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">Submit</button>
-      </form>
+    <div className="container mt-5 d-flex justify-content-center">
+      <div className="w-75">
+        <h3 className="mb-4 text-center font-bold text-2xl">Add Clients</h3>
+        <form
+          onSubmit={handleSubmit}
+          className="border p-4 rounded bg-light"
+          style={{
+            boxShadow: "0 0 100px rgba(0, 0, 0, 0.2)" // Adjust shadow size here
+          }}
+        >
+          <div className="form-group mb-3">
+            <label htmlFor="groupName" className="form-label">Client Group:</label>
+            <Select
+              isMulti
+              options={clientOptions}
+              value={selectedValues}
+              onChange={setSelectedValues}
+              className="basic-multi-select"
+              classNamePrefix="select"
+            />
+          </div>
+          <div className="form-group mb-3">
+            <label htmlFor="entityType" className="form-label">Entity Type:</label>
+            <Select
+              options={entityOptions}
+              value={selectedOption}
+              onChange={setSelectedOption}
+              className="basic-single-select"
+              classNamePrefix="select"
+              placeholder="Choose Entity Type"
+            />
+          </div>
+          <div className="form-group mb-3">
+            <label className="form-label">Name</label>
+            <input
+              type="text"
+              className="form-control"
+              onChange={(e) => setPersonName(e.target.value)}
+              value={personName}
+            />
+          </div>
+          <div className="form-group mb-3">
+            <label className="form-label">Phone</label>
+            <input
+              type="text"
+              className="form-control"
+              onChange={(e) => setPhoneNo(e.target.value)}
+              value={phoneNo}
+            />
+          </div>
+          <div className="form-group mb-3">
+            <label className="form-label">Pan-no.</label>
+            <input
+              type="text"
+              className="form-control"
+              onChange={(e) => setPan(e.target.value)}
+              value={pan}
+            />
+          </div>
+          <div className="form-group mb-3">
+            <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
+            <input
+              type="email"
+              className="form-control"
+              aria-describedby="emailHelp"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">Submit</button>
+        </form>
+      </div>
     </div>
   );
 };
 
 export default Add;
+
+

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Select from "react-select";
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const timePeriodOptions = [
   { value: "Monthly", label: "Monthly" },
   { value: "Quarterly", label: "Quarterly" },
-
   { value: "Annual", label: "Annual" }
 ];
 
@@ -38,9 +38,12 @@ const AddProjectType = () => {
 
   return (
     <div className="container mx-auto my-4">
-      <h2 className="text-2xl font-bold mb-4">Add Project Type</h2>
-      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light shadow-sm">
-        <div className="mb-4">
+      <h2 className="text-2xl font-bold mb-6 text-center">Add Project Type</h2>
+      <form 
+        onSubmit={handleSubmit} 
+        className="border p-6 rounded bg-light shadow-[0_0_100px_50px_rgba(0,0,0,0.2)] max-w-md mx-auto"
+      >
+        <div className="mb-6">
           <label className="block text-gray-700 text-sm font-bold mb-2">
             Project Type
           </label>
@@ -48,12 +51,12 @@ const AddProjectType = () => {
             type="text"
             value={projectType}
             onChange={(e) => setProjectType(e.target.value)}
-            className="form-control"
+            className="form-control p-2 border rounded w-full"
             required
           />
         </div>
-        <div className="mb-4">
-          <label htmlFor="projecttype" className="form-label">
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
             Time Period
           </label>
           <Select
@@ -61,14 +64,14 @@ const AddProjectType = () => {
             options={timePeriodOptions}
             value={timePeriods}
             onChange={setTimePeriods}
-            className="basic-multi-select"
+            className="basic-multi-select w-full"
             placeholder="Select Time Period"
             required
           />
         </div>
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-blue-500 hover:bg-blue-700 text-white  py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
         >
           Add Project Type
         </button>
@@ -76,4 +79,5 @@ const AddProjectType = () => {
     </div>
   );
 };
+
 export default AddProjectType;
