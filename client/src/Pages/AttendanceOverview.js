@@ -38,7 +38,7 @@ const AttendanceOverview = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedStaff.length > 0 || dateRange) {
+    if (dateRange) {
       handleSearch(); // Trigger search whenever parameters change
     }
   }, [selectedStaff, dateRange]);
@@ -135,13 +135,16 @@ const AttendanceOverview = () => {
             className="mb-4"
             placeholder="Select Staff Names (Optional)"
           />
-          <DateRangePicker
-            ranges={[dateRange]}
-            onChange={handleDateChange}
-            className="mb-4"
-          />
         </div>
       )}
+
+      <div className="mb-4">
+        <DateRangePicker
+          ranges={[dateRange]}
+          onChange={handleDateChange}
+          className="mb-4"
+        />
+      </div>
 
       <div className="mb-4">
         <p className="text-lg font-semibold mb-2">
