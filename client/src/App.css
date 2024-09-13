@@ -31,7 +31,7 @@
 .link-hover {
   position: relative;
   display: inline-block;
-  color: #000; /* Change color to match your design */
+  color: #000;
 }
 
 .link-hover::after {

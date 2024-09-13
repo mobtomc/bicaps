@@ -6,7 +6,7 @@ import 'react-date-range/dist/theme/default.css';
 import axios from 'axios';
 import { useUser } from '@clerk/clerk-react';
 import StaffSummaryExportButton from '../Components/StaffSummaryExportButton';
-
+import AttendanceOverview from './AttendanceOverview';
 const NON_BILLABLE_PROJECTS = [
   'Bio Break',
   'Planning Work',
@@ -20,7 +20,7 @@ const NON_BILLABLE_PROJECTS = [
   'Idle Time',
   'Outside Training'
 ];
-const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const Overview = () => {
   const { user } = useUser();
@@ -41,7 +41,8 @@ const Overview = () => {
   const [totalCost, setTotalCost] = useState(0);
   const [staffData, setStaffData] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
-
+  const [view, setView] = useState('timesheet');
+  const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
     if (user) {
       const role = user.publicMetadata?.role;
@@ -181,7 +182,20 @@ const Overview = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-semibold mb-4">Timesheet Overview</h1>
+      <div className="mb-4">
+        <button
+          onClick={() => setView('timesheet')}
+          className={`p-2 ${view === 'timesheet' ? 'bg-blue-500 text-white' : 'bg-gray-200'} rounded mr-2`}
+        >
+          Timesheet Overview
+        </button>
+        <button
+          onClick={() => setView('attendance')}
+          className={`p-2 ${view === 'attendance' ? 'bg-blue-500 text-white' : 'bg-gray-200'} rounded`}
+        >
+          Attendance Overview
+        </button>
+      </div>
 
       {user && (
         <div className="mb-4">
@@ -189,131 +203,136 @@ const Overview = () => {
         </div>
       )}
 
-      <div className="flex flex-col ml-8 md:flex-row gap-4 mb-4">
-        {isAdmin && (
+      {view === 'timesheet' ? (
+        <>
+          <div className="flex flex-col ml-8 md:flex-row gap-4 mb-4">
+            {isAdmin && (
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold flex items-center justify-center mb-4">
+                  Staff Summary: 
+                  <div className='mx-2'> 
+                    <StaffSummaryExportButton staffData={formattedStaffData} /> 
+                  </div>
+                </h2>
+                <table className="min-w-full bg-white dark:bg-gray-800 mb-4 border border-gray-300">
+                  <thead>
+                    <tr>
+                      <th className="py-2 px-4 border-b">Staff Name</th>
+                      <th className="py-2 px-4 border-b">Total Billable Duration (min)</th>
+                      <th className="py-2 px-4 border-b">Total Non-Billable Duration (min)</th>
+                      <th className="py-2 px-4 border-b">Total cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {staffData.map((data, index) => (
+                      <tr key={index}>
+                        <td className="py-2 px-4 border-b">{data.userName}</td>
+                        <td className="py-2 px-4 border-b">{data.totalBillableDuration.toLocaleString()}</td>
+                        <td className="py-2 px-4 border-b">{data.totalNonBillableDuration.toLocaleString()}</td>
+                        <td className="py-2 px-4 border-b">{formatCurrency(data.totalCost)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <div className="flex-1">
+              <label className="items-end text-lg font-semibold mb-2"></label>
+              <DateRangePicker
+                ranges={[dateRange]}
+                onChange={handleDateChange}
+                className="mb-4"
+              />
+            </div>
+          </div>
+
+          {isAdmin ? (
+            <div className="flex-1">
+              {/* Search by username */}
+              <label className="block text-lg font-semibold mb-2">Staff Names</label>
+              <Select
+                isMulti
+                value={selectedStaff}
+                onChange={setSelectedStaff}
+                options={staffNames}
+                className="mb-4"
+                placeholder="Select Staff Names (Optional)"
+              />
+              {/* By project */}
+              <label className="block text-lg font-semibold mb-2 mt-16">Project Search</label>
+              <input
+                type="text"
+                value={projectSearch}
+                onChange={(e) => setProjectSearch(e.target.value)}
+                placeholder="Search projects"
+                className="mb-4 p-2 border rounded mx-2"
+              />
+
+              <button
+                onClick={() => window.location.href = '/costs'}
+                className="p-2 bg-green-500 text-white rounded mb-2 mx-4"
+              >
+                Set Salaries
+              </button>
+            </div>
+          ) : (
+            <div className="flex-1">
+              <label className="block text-lg font-semibold mb-2">Project Search</label>
+              <input
+                type="text"
+                value={projectSearch}
+                onChange={(e) => setProjectSearch(e.target.value)}
+                placeholder="Search projects"
+                className="mb-4 p-2 border rounded mx-2"
+              />
+            </div>
+          )}
+
           <div className="mb-4">
-            <h2 className="text-xl font-semibold flex items-center justify-center mb-4">
-              Staff Summary: 
-              <div className='mx-2'> <StaffSummaryExportButton staffData={formattedStaffData} /> </div>
-            </h2>
+            <h2 className="text-xl font-semibold mb-2">Results</h2>
+            <p className="mb-4">
+              Total Duration: {totalDuration.toLocaleString()} minutes,
+              Billable Duration: {billableDuration.toLocaleString()} minutes, 
+              Total Cost: {formatCurrency(totalCost)}
+            </p>
+
             <table className="min-w-full bg-white dark:bg-gray-800 mb-4 border border-gray-300">
               <thead>
                 <tr>
-                  <th className="py-2 px-4 border-b">Staff Name</th>
-          
-                  <th className="py-2 px-4 border-b">Total Billable Duration (min)</th>
-                  <th className="py-2 px-4 border-b">Total Non-Billable Duration (min)</th>
-                  <th className="py-2 px-4 border-b">Total cost</th>
+                  <th className="py-2 px-4 border-b">User Name</th>
+                  <th className="py-2 px-4 border-b">Project</th>
+                  <th className="py-2 px-4 border-b">Start Time</th>
+                  <th className="py-2 px-4 border-b">End Time</th>
+                  <th className="py-2 px-4 border-b">Duration (min)</th>
+                  <th className="py-2 px-4 border-b">Billable</th>
                 </tr>
               </thead>
               <tbody>
-                {staffData.map((data, index) => (
-                  <tr key={index}>
-                    <td className="py-2 px-4 border-b">{data.userName}</td>
-                 
-                    <td className="py-2 px-4 border-b">{data.totalBillableDuration.toLocaleString()}</td>
-                    <td className="py-2 px-4 border-b">{data.totalNonBillableDuration.toLocaleString()}</td>
-                    <td className="py-2 px-4 border-b">{formatCurrency(data.totalCost)}</td>
-                  </tr>
-                ))}
+                {timesheets.map((entry, index) => {
+                  const start = new Date(entry.startTime);
+                  const end = new Date(entry.endTime);
+                  const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime())) 
+                    ? (end - start) / (1000 * 60) 
+                    : 0;
+                  return (
+                    <tr key={index}>
+                      <td className="py-2 px-4 border-b">{entry.userName}</td>
+                      <td className="py-2 px-4 border-b">{entry.project}</td>
+                      <td className="py-2 px-4 border-b">{start.toLocaleString()}</td>
+                      <td className="py-2 px-4 border-b">{end.toLocaleString()}</td>
+                      <td className="py-2 px-4 border-b">{duration.toLocaleString()}</td>
+                      <td className="py-2 px-4 border-b">{isBillable(entry.project)}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-        )}
-        
-        <div className="flex-1">
-          <label className="items-end text-lg font-semibold mb-2"></label>
-          <DateRangePicker
-            ranges={[dateRange]}
-            onChange={handleDateChange}
-            className="mb-4"
-          />
-        </div>
-      </div>
-
-      {isAdmin ? (
-        <div className="flex-1">
-          {/* serach by username */}
-          <label className="block text-lg font-semibold mb-2">Staff Names</label>
-          <Select
-            isMulti
-            value={selectedStaff}
-            onChange={setSelectedStaff}
-            options={staffNames}
-            className="mb-4"
-            placeholder="Select Staff Names (Optional)"
-          />
-          {/* by project */}
-          <label className="block text-lg font-semibold mb-2 mt-16">Project Search</label>
-          <input
-            type="text"
-            value={projectSearch}
-            onChange={(e) => setProjectSearch(e.target.value)}
-            placeholder="Search projects"
-            className="mb-4 p-2 border rounded mx-2"
-          />
-           
-   
-          <button
-            onClick={() => window.location.href = '/costs'}
-            className="p-2 bg-green-500 text-white rounded mb-2 mx-4"
-          >
-            Set Salaries
-          </button>
-        </div>
+        </>
       ) : (
-        <div className="flex-1">
-          <label className="block text-lg font-semibold mb-2">Project Search</label>
-          <input
-            type="text"
-            value={projectSearch}
-            onChange={(e) => setProjectSearch(e.target.value)}
-            placeholder="Search projects"
-            className="mb-4 p-2 border rounded mx-2"
-          />
-        </div>
+        <AttendanceOverview />
       )}
-
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold mb-2">Results</h2>
-        <p className="mb-4">
-          Total Duration: {totalDuration.toLocaleString()} minutes,
-          Billable Duration: {billableDuration.toLocaleString()} minutes, 
-          Total Cost: {formatCurrency(totalCost)}
-        </p>
-
-        <table className="min-w-full bg-white dark:bg-gray-800 mb-4 border border-gray-300">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border-b">User Name</th>
-              <th className="py-2 px-4 border-b">Project</th>
-              <th className="py-2 px-4 border-b">Start Time</th>
-              <th className="py-2 px-4 border-b">End Time</th>
-              <th className="py-2 px-4 border-b">Duration (min)</th>
-              <th className="py-2 px-4 border-b">Billable</th> 
-            </tr>
-          </thead>
-          <tbody>
-            {timesheets.map((entry, index) => {
-              const start = new Date(entry.startTime);
-              const end = new Date(entry.endTime);
-              const duration = (!isNaN(start.getTime()) && !isNaN(end.getTime())) 
-                ? (end - start) / (1000 * 60) 
-                : 0;
-              return (
-                <tr key={index}>
-                  <td className="py-2 px-4 border-b">{entry.userName}</td>
-                  <td className="py-2 px-4 border-b">{entry.project}</td>
-                  <td className="py-2 px-4 border-b">{start.toLocaleString()}</td>
-                  <td className="py-2 px-4 border-b">{end.toLocaleString()}</td>
-                  <td className="py-2 px-4 border-b">{duration.toLocaleString()}</td>
-                  <td className="py-2 px-4 border-b">{isBillable(entry.project)}</td> 
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 };
