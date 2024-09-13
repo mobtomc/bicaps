@@ -4,7 +4,7 @@ import { FaChevronDown } from 'react-icons/fa';
 
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isLoaded, isSignedIn } = useUser(); 
+  const { isLoaded, isSignedIn } = useUser();
 
   if (!isLoaded) return null;
 
@@ -68,48 +68,48 @@ const Nav = () => {
                 <div className="flex-1 flex flex-col items-center justify-center">
                   <ul className="flex flex-col w-full text-center">
                     <li className="text-lg my-2">
-                      <a href="/" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>Home</a>
+                      <a href="/" className="block py-2 px-4 text-gray-900 rounded link-hover" onClick={() => setIsMenuOpen(false)}>Home</a>
                     </li>
                     <li className="text-lg my-2 relative group">
-                      <a href="#" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                      <a href="#" className="block py-2 px-4 text-gray-900 rounded link-hover">
                         Add <FaChevronDown className="inline ml-1"/>
                       </a>
                       <ul className="absolute left-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg hidden group-hover:block z-60">
                         <li className="text-lg my-2">
-                          <a href="/addproject" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>Add Projects</a>
+                          <a href="/addproject" className="block py-2 px-4 text-gray-900 rounded link-hover" onClick={() => setIsMenuOpen(false)}>Add Projects</a>
                         </li>
                         <li className="text-lg my-2">
-                          <a href="/add" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>Add Clients</a>
+                          <a href="/add" className="block py-2 px-4 text-gray-900 rounded link-hover" onClick={() => setIsMenuOpen(false)}>Add Clients</a>
                         </li>
                       </ul>
                     </li>
                     <li className="text-lg my-2 relative group">
-                      <a href="#" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                      <a href="#" className="block py-2 px-4 text-gray-900 rounded link-hover">
                         New <FaChevronDown className="inline ml-1"/>
                       </a>
                       <ul className="absolute left-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg hidden group-hover:block z-60">
                         <li className="text-lg my-2">
-                          <a href="/new" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>New Clients</a>
+                          <a href="/new" className="block py-2 px-4 text-gray-900 rounded link-hover" onClick={() => setIsMenuOpen(false)}>New Clients</a>
                         </li>
                         <li className="text-lg my-2">
-                          <a href="/entity" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>New Entity</a>
+                          <a href="/entity" className="block py-2 px-4 text-gray-900 rounded link-hover" onClick={() => setIsMenuOpen(false)}>New Entity</a>
                         </li>
                         <li className="text-lg my-2">
-                          <a href="/projecttype" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>Projects Type</a>
+                          <a href="/projecttype" className="block py-2 px-4 text-gray-900 rounded link-hover" onClick={() => setIsMenuOpen(false)}>Projects Type</a>
                         </li>
                       </ul>
                     </li>
                     <li className="text-lg my-2">
-                      <a href="/records" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>Records</a>
+                      <a href="/records" className="block py-2 px-4 text-gray-900 rounded link-hover" onClick={() => setIsMenuOpen(false)}>Records</a>
                     </li>
                     <li className="text-lg my-2">
-                      <a href="/timesheet" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>Timesheet</a>
+                      <a href="/timesheet" className="block py-2 px-4 text-gray-900 rounded link-hover" onClick={() => setIsMenuOpen(false)}>Timesheet</a>
                     </li>
                     <li className="text-lg my-2">
-                      <a href="/overview" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>Overview</a>
+                      <a href="/overview" className="block py-2 px-4 text-gray-900 rounded link-hover" onClick={() => setIsMenuOpen(false)}>Overview</a>
                     </li>
                     <li className="text-lg my-2">
-                      <a href="/live" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" onClick={() => setIsMenuOpen(false)}>Live</a>
+                      <a href="/live" className="block py-2 px-4 text-gray-900 rounded link-hover" onClick={() => setIsMenuOpen(false)}>Live</a>
                     </li>
                     {isSignedIn && (
                       <li className="text-lg my-2">
@@ -125,51 +125,52 @@ const Nav = () => {
           <div className="hidden w-full md:block md:w-auto">
             <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gradient-to-r from-green-200 via-green-400 to-green-600 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700 items-center">
               <li>
-                <a href="/" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent" aria-current="page">Home</a>
+                <a href="/" className="block py-2 px-3 text-gray-900 rounded link-hover md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent" aria-current="page">Home</a>
               </li>
               <li className="relative group">
-                <a href="#" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                <a href="#" className="block py-2 px-3 text-gray-900 rounded link-hover">
                   Add <FaChevronDown className="inline ml-1"/>
                 </a>
-                <ul className="absolute left-0 top-full mt-1 w-48 bg-gradient-to-r from-green-200 via-green-400 to-green-600 dark:bg-gray-800 shadow-lg rounded-lg hidden group-hover:block z-60">
+                <ul className="absolute left-1/2 transform -translate-x-1/2 mt-1 w-48 bg-gradient-to-r from-green-200 via-green-400 to-green-600 dark:bg-gray-800 shadow-lg rounded-lg hidden group-hover:block z-60">
                   <li>
-                    <a href="/addproject" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Projects</a>
+                    <a href="/addproject" className="block py-2 px-4 text-gray-900 rounded link-hover">Add Projects</a>
                   </li>
                   <li>
-                    <a href="/add" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Clients</a>
+                    <a href="/add" className="block py-2 px-4 text-gray-900 rounded link-hover">Add Clients</a>
                   </li>
                 </ul>
               </li>
               <li className="relative group">
-                <a href="#" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                <a href="#" className="block py-2 px-3 text-gray-900 rounded link-hover md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                   New <FaChevronDown className="inline ml-1"/>
                 </a>
-                <ul className="absolute left-0 top-full mt-1 w-48 bg-gradient-to-r from-green-200 via-green-400 to-green-600 dark:bg-gray-800 shadow-lg rounded-lg hidden group-hover:block z-60">
+                <ul className="absolute left-1/2 transform -translate-x-1/2 top-full mt-1 w-48 bg-gradient-to-r from-green-200 via-green-400 to-green-600 dark:bg-gray-800 shadow-lg rounded-lg hidden group-hover:block z-60">
                   <li>
-                    <a href="/new" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Clients</a>
+                    <a href="/new" className="block py-2 px-4 text-gray-900 rounded link-hover">New Clients</a>
                   </li>
                   <li>
-                    <a href="/entity" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Entity</a>
+                    <a href="/entity" className="block py-2 px-4 text-gray-900 rounded link-hover">New Entity</a>
                   </li>
                   <li>
-                    <a href="/projecttype" className="block py-2 px-4 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Projects Type</a>
+                    <a href="/projecttype" className="block py-2 px-4 text-gray-900 rounded link-hover">Projects Type</a>
                   </li>
                 </ul>
               </li>
+
               <li>
-                <a href="/records" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Records</a>
+                <a href="/records" className="block py-2 px-3 text-gray-900 rounded link-hover md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Records</a>
               </li>
               <li>
-                <a href="/timesheet" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Timesheet</a>
+                <a href="/timesheet" className="block py-2 px-3 text-gray-900 rounded link-hover md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Timesheet</a>
               </li>
               <li>
-                <a href="/overview" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Overview</a>
+                <a href="/overview" className="block py-2 px-3 text-gray-900 rounded link-hover md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Overview</a>
               </li>
               <li>
-                <a href="/live" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Live</a>
+                <a href="/live" className="block py-2 px-3 text-gray-900 rounded link-hover md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Live</a>
               </li>
               {isSignedIn && (
-                <li className='scale-150'>
+                <li>
                   <UserButton className="text-lg underline rounded-lg" />
                 </li>
               )}
