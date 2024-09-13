@@ -502,14 +502,19 @@ const logAttendance = async (req, res) => {
   }
 };
 
+// 
 const getAttendanceLog = async (req, res) => {
+  const { date } = req.query; // Get the date from query parameters
+  
   try {
-    // Fetch all attendance records
-    const attendanceLogs = await Attendance.find({});
-    res.status(200).json(attendanceLogs);
+    // Filter attendance records by date
+    const attendanceRecords = await Attendance.find({ 
+      date: { $gte: new Date(date), $lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1)) }
+    });
+    
+    res.status(200).json(attendanceRecords);
   } catch (error) {
-    console.error('Error fetching attendance logs:', error);
-    res.status(500).json({ message: 'Failed to fetch attendance logs.' });
+    res.status(500).json({ message: 'Error fetching attendance data', error });
   }
 };
 module.exports = {
