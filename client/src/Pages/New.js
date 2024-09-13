@@ -9,12 +9,13 @@ const New = () => {
   const [phone, setPhone] = useState("");
   const [person, setPerson] = useState("");
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("clicked");
     axios
-      .post("https://bicaps.onrender.com/api/clientgroups", {
+      .post(`${apiUrl}/api/clientgroups`, {
         groupName: name,
         email: email,
         phoneNo: phone,

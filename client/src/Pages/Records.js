@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Select from 'react-select';
 import ExportButton from "../Components/ExportButton";
 import { useUser } from '@clerk/clerk-react'; // Import useUser
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Records = () => {
   const { user } = useUser(); // Get user data
@@ -16,7 +17,7 @@ const Records = () => {
 
   const getData = async () => {
     try {
-      const res = await axios.get("https://bicaps.onrender.com/api/categories");
+      const res = await axios.get(`${apiUrl}/api/categories`);
       setData(res.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -25,7 +26,7 @@ const Records = () => {
 
   const getGroupNames = async () => {
     try {
-      const res = await axios.get("https://bicaps.onrender.com/api/clientgroups");
+      const res = await axios.get(`${apiUrl}/api/clientgroups`);
       setGroupNames(res.data.map(group => ({ value: group.groupName, label: group.groupName })));
     } catch (error) {
       console.error("Error fetching group names:", error);
@@ -34,7 +35,7 @@ const Records = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://bicaps.onrender.com/api/categories/${id}`);
+      await axios.delete(`${apiUrl}/api/categories/${id}`);
       getData();
     } catch (error) {
       console.error("Error deleting data:", error);
@@ -51,7 +52,7 @@ const Records = () => {
 
   const handleSearchByPersonName = async () => {
     try {
-      const response = await axios.get(`https://bicaps.onrender.com/api/categories/search/${selectedPersonName.value}`);
+      const response = await axios.get(`${apiUrl}/api/categories/search/${selectedPersonName.value}`);
       setData(response.data);
     } catch (error) {
       console.error("Error searching by person name:", error);

@@ -7,11 +7,12 @@ const Live = () => {
   const [staffData, setStaffData] = useState([]);
   const { isLoaded, isSignedIn, user } = useUser();
   const [expandedIndex, setExpandedIndex] = useState(null);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchLiveData = async () => {
       try {
-        const response = await axios.get('https://bicaps.onrender.com/api/live-data');
+        const response = await axios.get(`${apiUrl}/api/live-data`);
         setStaffData(response.data);
       } catch (error) {
         console.error('Error fetching live data:', error);

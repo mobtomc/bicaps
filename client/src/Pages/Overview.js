@@ -20,6 +20,7 @@ const NON_BILLABLE_PROJECTS = [
   'Idle Time',
   'Outside Training'
 ];
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Overview = () => {
   const { user } = useUser();
@@ -49,19 +50,19 @@ const Overview = () => {
   }, [user]);
 
   useEffect(() => {
-    axios.get('https://bicaps.onrender.com/api/unique-staff-names')
+    axios.get(`${apiUrl}/api/unique-staff-names`)
       .then(response => {
         setStaffNames(response.data.map(name => ({ value: name, label: name })));
       })
       .catch(error => console.error('Error fetching staff names:', error));
 
-    axios.get('https://bicaps.onrender.com/api/projects-by-name')
+    axios.get(`${apiUrl}/api/projects-by-name`)
       .then(response => {
         setProjects(response.data.map(project => ({ value: project, label: project })));
       })
       .catch(error => console.error('Error fetching projects:', error));
 
-    axios.get('https://bicaps.onrender.com/api/costs')
+    axios.get(`${apiUrl}/api/costs`)
       .then(response => {
         const costMap = response.data.reduce((map, cost) => {
           map[cost.userName] = cost.perHourCost;
@@ -93,7 +94,7 @@ const Overview = () => {
   
       const filteredParams = Object.fromEntries(Object.entries(params).filter(([_, v]) => v != null));
   
-      const response = await axios.get('https://bicaps.onrender.com/api/filter-timesheets', {
+      const response = await axios.get(`${apiUrl}/api/filter-timesheets`, {
         params: filteredParams
       });
   

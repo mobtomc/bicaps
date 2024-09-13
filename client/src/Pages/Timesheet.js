@@ -5,6 +5,7 @@ import { useUser } from '@clerk/clerk-react';
 
 const Timesheet = () => {
   const { user } = useUser();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const [timesheet, setTimesheet] = useState(() => {
     const storedTimesheet = localStorage.getItem('timesheet');
@@ -20,7 +21,7 @@ const Timesheet = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const projectsResponse = await axios.get('https://bicaps.onrender.com/api/projects-by-name');
+        const projectsResponse = await axios.get(`${apiUrl}/api/projects-by-name`);
         const fetchedProjects = projectsResponse.data;
 
         const nonbillableProjects = [
@@ -104,7 +105,7 @@ const Timesheet = () => {
       if (previousEntry.project && previousEntry.startTime) {
         const formattedStartTime = new Date(`${new Date().toDateString()} ${previousEntry.startTime}`).toISOString();
   
-        axios.delete('https://bicaps.onrender.com/api/live', {
+        axios.delete(`${apiUrl}/api/live`, {
           data: {
             project: previousEntry.project,
             startTime: formattedStartTime
@@ -152,7 +153,7 @@ const Timesheet = () => {
         // Ensure the startTime is in ISO format
         const formattedStartTime = new Date(`${new Date().toDateString()} ${entry.startTime}`).toISOString();
   
-        await axios.delete('https://bicaps.onrender.com/api/live', {
+        await axios.delete(`${apiUrl}/api/live`, {
           data: {
             project: entry.project,
             startTime: formattedStartTime
@@ -190,7 +191,7 @@ const Timesheet = () => {
         description: entry.description // Include description in submission
       }));
 
-    axios.post('https://bicaps.onrender.com/api/submit', { userId, userName, entries })
+    axios.post(`${apiUrl}/api/submit`, { userId, userName, entries })
       .then(response => {
         console.log('Timesheet submitted successfully:', response.data);
         alert('Timesheet submitted successfully!');
@@ -222,7 +223,7 @@ const Timesheet = () => {
       startTime: new Date(`${new Date().toDateString()} ${entry.startTime}`)
     };
 
-    axios.post('https://bicaps.onrender.com/api/live', liveData)
+    axios.post(`${apiUrl}/api/live`, liveData)
       .then(response => {
         console.log('Data sent to LiveData:', response.data);
         alert('Data sent to LiveData successfully!');

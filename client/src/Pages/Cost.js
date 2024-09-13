@@ -8,12 +8,13 @@ export default function CostPage() {
   const [staffNames, setStaffNames] = useState([]);
   const [costs, setCosts] = useState([]);
   const [message, setMessage] = useState('');
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     // Fetch staff names for dropdown
     async function fetchStaffNames() {
       try {
-        const response = await axios.get('https://bicaps.onrender.com/api/unique-staff-names');
+        const response = await axios.get(`${apiUrl}/api/unique-staff-names`);
         setStaffNames(response.data.map(name => ({ value: name, label: name })));
       } catch (error) {
         console.error('Error fetching staff names:', error);
@@ -23,7 +24,7 @@ export default function CostPage() {
     // Fetch costs for table
     async function fetchCosts() {
       try {
-        const response = await axios.get('https://bicaps.onrender.com/api/costs');
+        const response = await axios.get(`${apiUrl}/api/costs`);
         setCosts(response.data);
       } catch (error) {
         console.error('Error fetching costs:', error);
@@ -44,12 +45,12 @@ export default function CostPage() {
 
     try {
       const staffNames = selectedStaff.map(staff => staff.value);
-      await axios.post('https://bicaps.onrender.com/api/costs', { userNames: staffNames, perHourCost });
+      await axios.post(`${apiUrl}/api/costs`, { userNames: staffNames, perHourCost });
       setMessage('Cost updated successfully!');
       setSelectedStaff([]);
       setPerHourCost('');
       // Refresh costs after update
-      const response = await axios.get('https://bicaps.onrender.com/api/costs');
+      const response = await axios.get(`${apiUrl}/api/costs`);
       setCosts(response.data);
     } catch (error) {
       console.error('Error setting cost:', error);
@@ -59,10 +60,10 @@ export default function CostPage() {
 
   const handleDelete = async (userName) => {
     try {
-      await axios.delete(`https://bicaps.onrender.com/api/costs/${userName}`);
+      await axios.delete(`${apiUrl}/api/costs/${userName}`);
       setMessage('Cost deleted successfully!');
       // Refresh costs after delete
-      const response = await axios.get('https://bicaps.onrender.com/api/costs');
+      const response = await axios.get(`${apiUrl}/api/costs`);
       setCosts(response.data);
     } catch (error) {
       console.error('Error deleting cost:', error);

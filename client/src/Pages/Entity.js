@@ -7,12 +7,13 @@ const Entity = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("clicked");
     axios
-      .post("https://bicaps.onrender.com/api/entitytypes", {
+      .post(`${apiUrl}/api/entitytypes`, {
         entityName: name,
         description: description,
       })

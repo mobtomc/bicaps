@@ -31,6 +31,7 @@ if (!process.env.REACT_APP_CLERK_PUBLISHABLE_KEY) {
 }
 
 const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
+const apiUrl = process.env.REACT_APP_API_URL;
 
 function MainApp() {
   const { user } = useUser();
@@ -44,7 +45,7 @@ function MainApp() {
   const logAttendance = async (user) => {
     try {
       const userName = user.firstName + ' ' + user.lastName; 
-      await axios.post('https://bicaps.onrender.com/api/attendance-log', {
+      await axios.post(`${apiUrl}/api/attendance-log`, {
         userId: user.id,
         userName: userName,
         email: user.emailAddresses[0].emailAddress,

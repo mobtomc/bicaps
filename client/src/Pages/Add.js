@@ -14,6 +14,7 @@ const Add = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedValues, setSelectedValues] = useState([]);
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +29,7 @@ const Add = () => {
     });
 
     try {
-      await axios.post("https://bicaps.onrender.com/api/categories", {
+      await axios.post(`${apiUrl}/api/categories`, {
         personName,
         email,
         phoneNo,
@@ -46,7 +47,7 @@ const Add = () => {
     // Fetch client options
     const fetchClientOptions = async () => {
       try {
-        const response = await axios.get('https://bicaps.onrender.com/api/clientgroups');
+        const response = await axios.get(`${apiUrl}/api/clientgroups`);
         setClientOptions(response.data.map(client => ({ value: client.groupName, label: client.groupName })));
       } catch (error) {
         console.error('Error fetching client data:', error);
@@ -56,7 +57,7 @@ const Add = () => {
     // Fetch entity options
     const fetchEntityOptions = async () => {
       try {
-        const response = await axios.get('https://bicaps.onrender.com/api/entitytypes');
+        const response = await axios.get(`${apiUrl}/api/entitytypes`);
         setEntityOptions(response.data.map(entity => ({ value: entity.entityName, label: entity.entityName })));
       } catch (error) {
         console.error('Error fetching entity data:', error);

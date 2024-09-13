@@ -19,12 +19,13 @@ const AddProject = () => {
     month: '',
     quarter: ''
   });
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const clientGroupsAndCategoriesResponse = await axios.get('https://bicaps.onrender.com/api/client-groups-and-categories');
-        const projectTypesResponse = await axios.get('https://bicaps.onrender.com/api/projecttypes');
+        const clientGroupsAndCategoriesResponse = await axios.get(`${apiUrl}/api/client-groups-and-categories`);
+        const projectTypesResponse = await axios.get(`${apiUrl}/api/projecttypes`);
 
         const groupedClientGroupOptions = [
           {
@@ -145,7 +146,7 @@ const AddProject = () => {
     event.preventDefault();
 
     try {
-      await axios.post('https://bicaps.onrender.com/api/project', formData);
+      await axios.post(`${apiUrl}/api/project`, formData);
       alert('Project added successfully!');
     } catch (error) {
       console.error('Error adding project:', error);

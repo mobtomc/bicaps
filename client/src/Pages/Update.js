@@ -15,11 +15,12 @@ const Update = () => {
   const [selectedEntityType, setSelectedEntityType] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://bicaps.onrender.com/api/categories/${id}`);
+        const response = await axios.get(`${apiUrl}/api/categories/${id}`);
         const { personName, email, pan, phoneNo, groupName, entityName } = response.data;
         setPersonName(personName);
         setEmail(email);
@@ -34,7 +35,7 @@ const Update = () => {
 
     const fetchClientOptions = async () => {
       try {
-        const response = await axios.get('https://bicaps.onrender.com/api/clientgroups');
+        const response = await axios.get(`${apiUrl}/api/clientgroups`);
         setClientOptions(response.data.map(client => ({ value: client.groupName, label: client.groupName })));
       } catch (error) {
         console.error('Error fetching client data:', error);
@@ -43,7 +44,7 @@ const Update = () => {
 
     const fetchEntityOptions = async () => {
       try {
-        const response = await axios.get('https://bicaps.onrender.com/api/entitytypes');
+        const response = await axios.get(`${apiUrl}/api/entitytypes`);
         setEntityOptions(response.data.map(entity => ({ value: entity.entityName, label: entity.entityName })));
       } catch (error) {
         console.error('Error fetching entity data:', error);
@@ -71,7 +72,7 @@ const Update = () => {
         groupName: selectedClientGroups.map(option => option.value),
         entityName: selectedEntityType.value
       };
-      await axios.put(`https://bicaps.onrender.com/api/categories/${id}`, updatedData);
+      await axios.put(`${apiUrl}/api/categories/${id}`, updatedData);
       navigate("/records");
     } catch (error) {
       console.error("Error updating data:", error);

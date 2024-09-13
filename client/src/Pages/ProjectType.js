@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Select from "react-select";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const timePeriodOptions = [
   { value: "Monthly", label: "Monthly" },
@@ -17,7 +18,7 @@ const AddProjectType = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("https://bicaps.onrender.com/api/projecttypes", {
+      const response = await axios.post(`${apiUrl}/api/projecttypes`, {
         projectType,
         timePeriods: timePeriods.map(option => option.value)  // Convert selected options to their values
       });
