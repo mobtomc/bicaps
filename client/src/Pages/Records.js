@@ -3,17 +3,33 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Select from 'react-select';
 import ExportButton from "../Components/ExportButton";
-import { useUser } from '@clerk/clerk-react'; // Import useUser
+import { useUser } from '@clerk/clerk-react';
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const Records = () => {
-  const { user } = useUser(); // Get user data
+  const { user } = useUser();
   const [data, setData] = useState([]);
   const [groupNames, setGroupNames] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedPersonName, setSelectedPersonName] = useState(null);
-  const [tabledark, setTableDark] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false); // State to track if user is admin
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    getData();
+    getGroupNames();
+  }, []);
+
+  useEffect(() => {
+    getData();
+  }, [selectedGroup]);
+
+  useEffect(() => {
+    if (user) {
+      const role = user.publicMetadata?.role;
+      setIsAdmin(role === 'Admin');
+    }
+  }, [user]);
 
   const getData = async () => {
     try {
@@ -65,147 +81,105 @@ const Records = () => {
     localStorage.setItem("email", email);
     localStorage.setItem("pan", pan);
     localStorage.setItem("phoneNo", phoneNo);
-    localStorage.setItem("clientgroup", JSON.stringify(groupName)); // convert to string for storage
+    localStorage.setItem("clientgroup", JSON.stringify(groupName));
     localStorage.setItem("entitytype", entityName);
   };
 
-  useEffect(() => {
-    getData();
-    getGroupNames();
-  }, []);
-
-  useEffect(() => {
-    getData();  // Fetch data when selectedGroup changes
-  }, [selectedGroup]);
-
-  useEffect(() => {
-    if (user) {
-      const role = user.publicMetadata?.role;
-      setIsAdmin(role === 'Admin');
-    }
-  }, [user]);
-
   return (
-    <div className="container mx-auto p-4">
-      {/* Controls */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-        {/* left */}
-        <div className="flex items-center space-x-4 mb-4 md:mb-0">
-          <div className="flex items-center space-x-2">
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={tabledark === "table-dark"}
-                onChange={() => setTableDark(tabledark === "table-dark" ? "" : "table-dark")}
-                className="sr-only"
-              />
-              <div className="w-11 h-6 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-              <div className={`absolute left-1 top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${tabledark === "table-dark" ? "translate-x-5 bg-blue-600" : ""}`}></div>
-            </label>
-            <label htmlFor="darkModeToggle" className="text-lg"></label>
+    <div className="min-h-screen bg-[#bce0da]">
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8 text-center sm:text-left text-gray-900">Records</h1>
+        
+        {/* Controls */}
+        <div className="flex flex-col lg:flex-row justify-center space-y-4 lg:space-y-0 lg:space-x-4">
+        <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
+          {/* Left */}
+          <div className="flex items-center justify-start w-full sm:w-auto">
+            <ExportButton displayedData={data} />
           </div>
-          <ExportButton displayedData={data} />
-        </div>
-        {/* center */}
-        <div className="flex flex-col md:flex-row md:space-x-4 mb-4 md:mb-0">
-          <div className="flex items-center space-x-2">
-            <Select
-              options={groupNames}
-              value={selectedGroup}
-              onChange={setSelectedGroup}
-              placeholder="Search by Group Name"
-              className="w-full md:w-64"
-            />
-            <button   className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 scale-75 md:scale-100 md:px-4 md:py-2 md:text-base" onClick={handleSearchByGroup}>
-              Search Group Name
-            </button>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Select
-              options={data.map(item => ({ value: item.personName, label: item.personName }))}
-              value={selectedPersonName}
-              onChange={setSelectedPersonName}
-              placeholder="Search by Person Name"
-              className="w-full md:w-64"
-            />
-            <button   className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 scale-75 md:scale-100 md:px-4 md:py-2 md:text-base" onClick={handleSearchByPersonName}>
-              Search Person Name
-            </button>
-          </div>
-        </div>
-        {/* right */}
-        <div className="flex items-center  space-x-4 mb-4">
-          <a href="/records" className="btn bg-gray-500 text-white">
-            Back
+          <a href="/records" className="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors text-center">
+              Back
           </a>
-          <Link to="/replace" className="btn bg-green-400">
-            Replace Group
-          </Link>
+          </div>
+          {/* Center */}
+          <div className="flex flex-col lg:flex-row justify-center space-y-4 lg:space-y-0 lg:space-x-4">
+        <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
+          <Select
+            options={groupNames}
+            value={selectedGroup}
+            onChange={setSelectedGroup}
+            placeholder="Search by Group"
+            className="w-full sm:w-64"
+          />
+          <button onClick={handleSearchByGroup} className="w-full sm:w-auto px-4 py-2 bg-[#0c8f5b] text-white rounded hover:bg-[#0b8152] transition-colors">
+            Search
+          </button>
         </div>
-      </div>
+        <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
+          <Select
+            options={data.map(item => ({ value: item.personName, label: item.personName }))}
+            value={selectedPersonName}
+            onChange={setSelectedPersonName}
+            placeholder="Search by Person"
+            className="w-full sm:w-64"
+          />
+          <button onClick={handleSearchByPersonName} className="w-full sm:w-auto px-4 py-2 bg-[#0c8f5b] text-white rounded hover:bg-[#0b8152] transition-colors">
+            Search
+          </button>
+        </div>
+          </div>
+          
+          {/* Right */}
+          <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end space-y-4 sm:space-y-0 sm:space-x-4">
+            <Link to="/replace" className="w-full sm:w-auto px-4 py-2 bg-[#0a7249] text-white rounded hover:bg-[#0b8152] transition-colors text-center">
+              Replace Group
+            </Link>
+          </div>
+        </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className={`table ${tabledark} min-w-full`}>
-          <thead>
-            <tr>
-              <th scope="col">Unique Id</th>
-              <th scope="col">Client-Group</th>
-              <th scope="col">Entity-Type</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Pan</th>
-              <th scope="col">Phone</th>
-              <th scope="col"></th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((eachData) => (
-              <tr key={eachData._id}>
-                <th scope="row">{eachData._id}</th>
-                <td>{Array.isArray(eachData.groupName) ? eachData.groupName.join(", ") : eachData.groupName}</td>
-                <td>{eachData.entityName}</td>
-                <td>{eachData.personName}</td>
-                <td>{eachData.email}</td>
-                <td>{eachData.phoneNo}</td>
-                <td>{eachData.pan}</td>
-                {isAdmin && (
-                  <>
-                    <td>
-                      <Link to={`/update/${eachData._id}`}>
-                        <button
-                          className="btn btn-primary mx-1"
-                          onClick={() =>
-                            setToLocalStorage(
-                              eachData._id,
-                              eachData.personName,
-                              eachData.email,
-                              eachData.pan,
-                              eachData.phoneNo,
-                              eachData.groupName,
-                              eachData.entityName
-                            )
-                          }
-                        >
-                          Edit
-                        </button>
-                      </Link>
-                    </td>
-                    <td>
-                      <button
-                        className="btn btn-danger mx-1"
-                        onClick={() => handleDelete(eachData._id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </>
-                )}
+        {/* Table */}
+        <div className="overflow-x-auto bg-white shadow-md rounded-lg mt-8">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-[#0c8f5b]">
+              <tr >
+                {["Unique Id", "Client-Group", "Entity-Type", "Name", "Email", "Pan", "Phone", "", ""].map((header, index) => (
+                  <th key={index} scope="col" className="px-6 py-3  text-xs font-medium text-white uppercase tracking-wider">
+                    {header}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {data.map((eachData) => (
+                <tr key={eachData._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{eachData._id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{Array.isArray(eachData.groupName) ? eachData.groupName.join(", ") : eachData.groupName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{eachData.entityName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{eachData.personName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{eachData.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{eachData.phoneNo}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{eachData.pan}</td>
+                  {isAdmin && (
+                    <>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <Link to={`/update/${eachData._id}`} 
+                              onClick={() => setToLocalStorage(eachData._id, eachData.personName, eachData.email, eachData.pan, eachData.phoneNo, eachData.groupName, eachData.entityName)}
+                              className="text-[#0c8f5b] hover:text-[#0b8152]">
+                          Edit
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onClick={() => handleDelete(eachData._id)} className="text-red-600 hover:text-red-900">
+                          Delete
+                        </button>
+                      </td>
+                    </>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
