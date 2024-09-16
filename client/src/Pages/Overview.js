@@ -214,7 +214,7 @@ const Overview = () => {
                     <StaffSummaryExportButton staffData={formattedStaffData} /> 
                   </div>
                 </h2>
-                <table className="min-w-full bg-white dark:bg-gray-800 mb-4 border border-gray-300">
+                <table className="min-w-full bg-[#bce0da] dark:bg-gray-800 mb-4  border-gray-500 border-2">
                   <thead>
                     <tr>
                       <th className="py-2 px-4 border-b">Staff Name</th>
@@ -237,21 +237,22 @@ const Overview = () => {
               </div>
             )}
 
-            <div className="flex-1">
-              <label className="items-end text-lg font-semibold mb-2"></label>
+            <div className="flex-1 bg-[#bce0da] p-4 rounded-lg">
+              <label className="items-end text-lg font-semibold mb-2 block">Date Range</label>
               <DateRangePicker
                 ranges={[dateRange]}
                 onChange={handleDateChange}
-                className="mb-4"
+                className="custom-date-picker mb-4"
               />
             </div>
+
           </div>
 
           {isAdmin ? (
               <div className="flex items-center space-x-2">
               {/* Search by username */}
               <div className="flex-1">
-                <label className="block text-lg font-semibold mb-2">Staff Names</label>
+                <label className="block text-lg font-semibold mb-2 ">Staff Names</label>
                 <Select
                   isMulti
                   value={selectedStaff}
@@ -259,6 +260,18 @@ const Overview = () => {
                   options={staffNames}
                   className="mb-4 "
                   placeholder="Select Staff Names (Optional)"
+                  styles={{
+                    control: (provided, state) => ({
+                      ...provided,
+                      backgroundColor: '#bce0da', // Input background color
+                      borderColor: state.isFocused ? '#333' : '#555', // Darker border, changes on focus
+                      borderWidth: '2px', // Make the border thicker for visibility
+                      boxShadow: state.isFocused ? '0 0 5px rgba(0, 0, 0, 0.3)' : 'none', // Add shadow on focus
+                      '&:hover': {
+                        borderColor: '#333', // Darker border on hover
+                      },
+                    }),
+                  }}
                 />
               </div>
             
@@ -270,7 +283,8 @@ const Overview = () => {
                   value={projectSearch}
                   onChange={(e) => setProjectSearch(e.target.value)}
                   placeholder="Search projects"
-                  className="p-2 border rounded mb-4 w-2/3"
+                  className="p-2 rounded mb-4 w-2/3 bg-[#bce0da] border-2 border-[#333]"
+                  
                 />
               </div>
             
@@ -278,7 +292,7 @@ const Overview = () => {
               <div className="flex-none w-1/3">
                 <button
                   onClick={() => window.location.href = '/costs'}
-                  className="p-2 bg-green-500 text-white rounded mt-2 w-full"
+                  className="p-2 bg-[#0c8f5b] text-white rounded mt-2 w-full"
                 >
                   Set Salaries
                 </button>
@@ -287,15 +301,16 @@ const Overview = () => {
             
           ) : (
             <div className="flex-1">
-              <label className="block text-lg font-semibold mb-2">Project Search</label>
-              <input
-                type="text"
-                value={projectSearch}
-                onChange={(e) => setProjectSearch(e.target.value)}
-                placeholder="Search projects"
-                className="mb-4 p-2 border rounded mx-2"
-              />
-            </div>
+            <label className="block text-lg font-semibold mb-2">Project Search</label>
+            <input
+              type="text"
+              value={projectSearch}
+              onChange={(e) => setProjectSearch(e.target.value)}
+              placeholder="Search projects"
+              className="p-2 rounded mb-4 w-2/3 bg-[#bce0da] border-2 border-[#333]"
+              
+            />
+          </div>
           )}
 
           <div className="mb-4">
@@ -306,7 +321,7 @@ const Overview = () => {
               Total Cost: {formatCurrency(totalCost)}
             </p>
 
-            <table className="min-w-full bg-white dark:bg-gray-800 mb-4 border border-gray-300">
+            <table className="min-w-full bg-[#bce0da] dark:bg-gray-800 mb-4 border-2 border-gray-500">
               <thead>
                 <tr>
                   <th className="py-2 px-4 border-b">User Name</th>

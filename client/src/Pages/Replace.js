@@ -49,8 +49,8 @@ const UpdateGroupName = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">Update Group Name</h2>
-      <form onSubmit={handleUpdateGroupName} className="border p-4 rounded bg-light shadow-sm">
+      <h2 className="mb-4 font-bold text-xl">Update Group Name</h2>
+      <form onSubmit={handleUpdateGroupName} className=" border p-6 rounded bg-light shadow-[0_0_100px_50px_rgba(0,0,0,0.2)] max-w-md mx-auto ">
         <div className="form-group mb-3">
           <label className="form-label">Old Group Name</label>
           <Select

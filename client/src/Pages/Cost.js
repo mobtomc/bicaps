@@ -74,36 +74,41 @@ export default function CostPage() {
   return (
     <div className="p-6">
       <h1 className='text-2xl font-bold mb-6'>Manage Salaries</h1>
-      <form onSubmit={handleSubmit} className="mb-6">
-        <div className="mb-4">
-          <label className="block text-lg font-semibold mb-2">Staff Names</label>
-          <Select
-            isMulti
-            value={selectedStaff}
-            onChange={setSelectedStaff}
-            options={staffNames}
-            className="mb-4"
-            placeholder="Select Staff Names"
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="perHourCost" className="block text-lg font-semibold mb-2">Per Hour Cost:</label>
-          <input
-            type="number"
-            id="perHourCost"
-            value={perHourCost}
-            onChange={(e) => setPerHourCost(e.target.value)}
-            className="border border-gray-300 rounded p-2 w-full"
-            required
-          />
-        </div>
-        <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">Set Cost</button>
-      </form>
+      <form onSubmit={handleSubmit} className="bg-[#bce0da] p-4 rounded-lg shadow-md">
+  <div className="flex items-center space-x-4 mb-4">
+    <div className="flex-1">
+      <label className="block text-lg font-semibold mb-2">Staff Names</label>
+      <Select
+        isMulti
+        value={selectedStaff}
+        onChange={setSelectedStaff}
+        options={staffNames}
+        className="w-full bg-white"
+        placeholder="Select Staff Names"
+      />
+    </div>
+    <div className="flex-1">
+      <label htmlFor="perHourCost" className="block text-lg font-semibold mb-2">Per Hour Cost:</label>
+      <input
+        type="number"
+        id="perHourCost"
+        value={perHourCost}
+        onChange={(e) => setPerHourCost(e.target.value)}
+        className="border border-gray-300 rounded p-2 w-full bg-white"
+        required
+      />
+    </div>
+    <button type="submit" className="bg-[#0c8f5b] mt-8 text-white px-4 py-2 rounded flex-shrink-0">
+      Set Cost
+    </button>
+  </div>
+</form>
+
       {message && <p className="text-red-500 mb-4">{message}</p>}
 
-      <h2 className="text-xl font-semibold mb-4">Cost List</h2>
+      <h2 className="text-xl font-semibold mb-4 mt-4">Cost List</h2>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
+        <table className="min-w-full bg-[#bce0da] border border-gray-300 rounded-lg shadow-md">
           <thead className="bg-gray-100 border-b border-gray-300">
             <tr>
               <th className="py-3 px-4 text-gray-600 font-medium">User Name</th>
@@ -135,7 +140,7 @@ export default function CostPage() {
           </tbody>
         </table>
       </div>
-      <a href="/overview" className="inline-block mt-6 bg-green-300 text-white px-4 py-2 rounded">Back</a>
+      <a href="/overview" className="inline-block mt-6 bg-gray-500 text-white px-4 py-2 rounded">Back</a>
     </div>
   );
 

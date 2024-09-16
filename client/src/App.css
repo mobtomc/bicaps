@@ -2,10 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-.App {
-  text-align: center;
- 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #bce0da; 
+  width: 100%; 
 }
+.App {
+  text-align: center; 
+}
+
 
 .App-logo {
   height: 40vmin;
@@ -84,13 +91,8 @@
   width: 12rem;
 }
 
-.bg-gradient-to-r {
-  background-image: linear-gradient(to right, #f5f5f5, #e2e2e2);
-}
 
-.dark\:bg-gray-800 {
-  background-color: #2d3748;
-}
+
 
 .shadow-lg {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -98,4 +100,36 @@
 
 .rounded-lg {
   border-radius: 0.5rem;
+}
+/* Style the entire calendar wrapper */
+.custom-date-picker .rdrCalendarWrapper {
+  background-color: #bce0da; /* Set background for the entire date picker */
+  border-radius: 120px; /* Rounded outer border */
+}
+
+/* Ensure the outer border is rounded and content stays inside */
+.custom-date-picker .rdrDateRangePickerWrapper {
+  border-radius: 120px;
+  overflow: hidden;
+}
+
+/* Set background color for the sidebar with "Today", "Yesterday", etc. */
+.custom-date-picker .rdrDefinedRangesWrapper {
+  background-color: #bce0da; /* Ensure the sidebar has the same background color */
+}
+
+/* Set background and border radius for the "Today", "Yesterday" buttons */
+.custom-date-picker .rdrDefinedRangesItem {
+  background-color: #bce0da; /* Same background color */
+  border-radius: 80px; /* Rounded corners for the buttons */
+}
+
+/* Customize hover effect for "Today", "Yesterday", etc. */
+.custom-date-picker .rdrDefinedRangesItem:hover {
+  background-color: #a0d1c7; /* Slightly darker shade on hover */
+}
+
+/* Style the selected date range (active state) */
+.custom-date-picker .rdrDefinedRangesItem .rdrStaticRangeLabel {
+  color: #000; /* Ensure text color is readable */
 }

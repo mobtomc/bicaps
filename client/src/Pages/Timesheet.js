@@ -248,7 +248,7 @@ const Timesheet = () => {
           <h2 className="text-xl font-semibold">Logged in as: {user.fullName}</h2>
         </div>
       )}
-      <table className="min-w-full bg-white dark:bg-gray-800">
+      <table className="min-w-full dark:bg-gray-800 mt-4 bg-[#bce0da]">
         <thead>
           <tr>
            

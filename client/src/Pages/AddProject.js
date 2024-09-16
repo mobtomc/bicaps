@@ -156,7 +156,7 @@ const AddProject = () => {
 
   return (
     <div className="container mx-auto mt-5">
-      <form onSubmit={handleSubmit} className="border p-6 rounded bg-light shadow-[0_0_100px_50px_rgba(0,0,0,0.2)] max-w-md mx-auto">
+      <form onSubmit={handleSubmit} className="  border p-6 rounded bg-light shadow-[0_0_100px_50px_rgba(0,0,0,0.2)] max-w-md mx-auto ">
         <h3 className="text-2xl font-bold mb-6">Add Project</h3>
         <div className="mb-6">
           <label className="block text-gray-700 text-sm font-bold mb-2">Client Group/Person:</label>

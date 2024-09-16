@@ -151,9 +151,9 @@ const Update = () => {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary mx-2">Update</button>
+        <button type="submit" className="btn btn-primary bg-[#0c8f5b] mx-2">Update</button>
         <Link to="/records">
-          <button type="button" className="btn btn-secondary mx-2">Back</button>
+          <button type="button" className="btn btn-secondary bg-[#2b41a4] mx-2">Back</button>
         </Link>
       </form>
     </div>

@@ -138,19 +138,32 @@ const AttendanceOverview = () => {
             options={staffNames}
             className="w-full"
             placeholder="Select Staff Names (Optional)"
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: '#bce0da', // Input background color
+                borderColor: state.isFocused ? '#333' : '#555', // Darker border, changes on focus
+                borderWidth: '2px', // Make the border thicker for visibility
+                boxShadow: state.isFocused ? '0 0 5px rgba(0, 0, 0, 0.3)' : 'none', // Add shadow on focus
+                '&:hover': {
+                  borderColor: '#333', // Darker border on hover
+                },
+              }),
+            }}
             />
         </div>
         </div>
 
       )}
 
-      <div className="mb-4">
-        <DateRangePicker
-          ranges={[dateRange]}
-          onChange={handleDateChange}
-          className="mb-4"
-        />
-      </div>
+              <div className="flex-1 bg-[#bce0da] p-4 rounded-lg">
+              <label className="items-end text-lg font-semibold mb-2 block">Date Range</label>
+              <DateRangePicker
+                ranges={[dateRange]}
+                onChange={handleDateChange}
+                className="custom-date-picker mb-4"
+              />
+            </div>
 
       <div className="mb-4">
         <p className="text-lg font-semibold mb-2">
@@ -158,7 +171,7 @@ const AttendanceOverview = () => {
         </p>
       </div>
 
-      <table className="min-w-full bg-white dark:bg-gray-800 mb-4 border border-gray-300">
+      <table className="min-w-full bg-[#bce0da] dark:bg-gray-800 mb-4 border-2 border-gray-400">
         <thead>
           <tr>
             <th className="py-2 px-4 border-b">Staff Name</th>

@@ -134,8 +134,8 @@ const Records = () => {
           </div>
         </div>
         {/* right */}
-        <div className="flex items-center space-x-4 mb-4">
-          <a href="/records" className="btn bg-green-300">
+        <div className="flex items-center  space-x-4 mb-4">
+          <a href="/records" className="btn bg-gray-500 text-white">
             Back
           </a>
           <Link to="/replace" className="btn bg-green-400">

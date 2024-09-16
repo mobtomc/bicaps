@@ -61,7 +61,7 @@ const Live = () => {
     <div className="p-4">
       <h1 className="text-2xl font-semibold mb-4">Live Project Updates</h1>
       {/* Live Project Updates Table */}
-      <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-300">
+      <table className="min-w-full bg-[#bce0da] dark:bg-gray-800 border-2 border-gray-500">
         <thead>
           <tr>
             <th className="py-2 px-4 border-b">Staff Name</th>
@@ -107,7 +107,7 @@ const Live = () => {
 
       {/* Attendance Table */}
       <h1 className="text-2xl font-semibold mt-8 mb-4">Today's Attendance</h1>
-      <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-300">
+      <table className="min-w-full bg-[#bce0da] dark:bg-gray-800 border-2 border-gray-500">
         <thead>
           <tr>
             <th className="py-2 px-4 border-b">Staff Name</th>
