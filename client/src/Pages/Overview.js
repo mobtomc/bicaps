@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
-import { DateRangePicker } from 'react-date-range';
+import { DateRangePicker } from 'react-date-range'; 
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import axios from 'axios';
