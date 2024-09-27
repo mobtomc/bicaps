@@ -17,7 +17,7 @@ const Timesheet = () => {
   const [currentEntryIndex, setCurrentEntryIndex] = useState(null);
   const [description, setDescription] = useState('');
   const [expandedIndex, setExpandedIndex] = useState(null);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {

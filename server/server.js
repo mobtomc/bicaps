@@ -15,7 +15,8 @@ app.use(express.json());
 app.use(require('./routes/route'))
 app.use((req, res, next) => {
     res.status(404).send('Route not found');
-  });
+});
+
 // MongoDB Connection
 const con=require('./db/connection')
 con.then(db=>{
