@@ -11,7 +11,7 @@ This project is organized into two main folders:
 
 To download the essential packages, navigate to each folder and run the following command:
 
-```bash
+bash
 npm install
 To start both the frontend and backend servers, run the following command in each folder:
 
