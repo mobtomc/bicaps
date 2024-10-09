@@ -50,4 +50,4 @@ Use ExportButton for the Records page and StaffSummary for the Overview page.
 
 
 
-            ![Screenshot 2024-10-09 123016](https://github.com/user-attachments/assets/990f8dc3-8bfc-44cb-848c-0ca96474a64d)
+![Screenshot 2024-10-09 123016](https://github.com/user-attachments/assets/990f8dc3-8bfc-44cb-848c-0ca96474a64d)
