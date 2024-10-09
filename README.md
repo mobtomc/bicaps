@@ -11,7 +11,7 @@ This project is organized into two main folders:
 
 To download the essential packages, navigate to each folder and run the following command:
 
-bash
+```bash
 npm install
 To start both the frontend and backend servers, run the following command in each folder:
 
@@ -19,7 +19,7 @@ bash
 Copy code
 npm start
 The main file being rendered for the frontend is app.jsx located in the client folder.
-
+```
 Authentication
 Authentication is implemented using the Clerk SDK. To connect your own Clerk dashboard:
 
